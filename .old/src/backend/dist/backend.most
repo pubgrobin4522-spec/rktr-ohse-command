@@ -1,0 +1,481 @@
+// Version: 1.0.0
+type ActivityFeedItem__355436855 =
+  {
+    category : Text;
+    id : RecordId__634517021;
+    message : Text;
+    timestamp : Timestamp__301639476
+  };
+type AttachmentMeta__815787466 =
+  {
+    contentType : Text;
+    id : Text;
+    name : Text;
+    size : Nat;
+    storageHash : Text;
+    uploadedAt : Int
+  };
+type CapaRecord__696506886 =
+  {
+    actionPlan : Text;
+    createdAt : Timestamp__301639476;
+    department : Text;
+    id : RecordId__634517021;
+    owner : Text;
+    rootCause : Text;
+    status : CapaStatus__192825813;
+    targetDate : Timestamp__301639476;
+    title : Text;
+    updatedAt : Timestamp__301639476;
+    verificationDetails : ?Text
+  };
+type CapaStatus__192825813 = {#closed; #inProgress; #open; #verified};
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type DepartmentRecord__978223546 =
+  {head : Text; id : RecordId__634517021; location : Text; name : Text};
+type ESGEnvironmental__869674283 =
+  {
+    carbonEmissionIntensity : Float;
+    energyConsumption : Float;
+    envComplianceViolations : Float;
+    renewableEnergyUsage : Float;
+    wasteGenerated : Float;
+    wasteRecyclingRate : Float;
+    waterConsumption : Float;
+    waterIntensity : Float;
+    waterReuseRate : Float
+  };
+type ESGGovernance__192033269 =
+  {
+    antiCorruptionTrainingCoverage : Float;
+    codeOfConductViolations : Float;
+    complianceBreaches : Float;
+    dataPrivacyIncidents : Float;
+    policyComplianceScore : Float;
+    regulatoryPenalties : Float;
+    regulatoryViolations : Float;
+    whistleblowerComplaints : Float
+  };
+type ESGRecord__384563760 =
+  {
+    approvedAt : Timestamp__301639476;
+    approvedBy : Text;
+    dataSource : Text;
+    department : Text;
+    environmental : ESGEnvironmental__869674283;
+    governance : ESGGovernance__192033269;
+    id : RecordId__634517021;
+    notes : Text;
+    period : Text;
+    periodType : Text;
+    recordedAt : Timestamp__301639476;
+    recordedBy : UserId__158757552;
+    recordedByName : Text;
+    social : ESGSocial__552080202;
+    status : ESGStatus__522968560
+  };
+type ESGSocial__552080202 =
+  {
+    absenteeismRate : Float;
+    communityEngagementPrograms : Float;
+    contractorSafetyPerformance : Float;
+    employeeSatisfactionIndex : Float;
+    employeeTurnoverRate : Float;
+    fatalities : Float;
+    genderDiversityRatio : Float;
+    grievanceCases : Float;
+    ltifr : Float;
+    occupationalHealthCases : Float;
+    trainingHoursPerEmployee : Float;
+    trir : Float;
+    womenInWorkforce : Float
+  };
+type ESGStatus__522968560 = {#approved; #draft; #rejected; #submitted};
+type EmergencyContact__409124233 = {name : Text; phone : Text; role : Text};
+type EnvironmentRecord__796468981 =
+  {
+    createdAt : Timestamp__301639476;
+    id : RecordId__634517021;
+    location : Text;
+    notes : ?Text;
+    recordType : Text;
+    recordedBy : Text;
+    unit : Text;
+    value : Float
+  };
+type GasTestResults__124880118 =
+  {
+    flammableGas : Text;
+    oxygenLevel : Text;
+    testTime : Text;
+    testedBy : Text;
+    toxicGas : Text
+  };
+type HazardControl__251177640 =
+  {control : Text; hazard : Text; residualRisk : Text};
+type IncidentRecordV2__205602987 =
+  {
+    actionsTaken : ?Text;
+    areaBarricaded : ?Bool;
+    bodyPartAffected : ?Text;
+    contributingFactors : ?[Text];
+    correctiveAction : ?Text;
+    createdAt : Int;
+    daysLost : ?Nat;
+    department : Text;
+    description : Text;
+    firstAidGiven : ?Bool;
+    id : Text;
+    investigationDueDate : ?Text;
+    location : Text;
+    medicalTreatment : ?Bool;
+    natureOfInjury : ?Text;
+    personsInvolved : ?[PersonInvolved__892537450];
+    reportedBy : Text;
+    responsiblePerson : ?Text;
+    rootCause : ?Text;
+    rootCauseCategory : ?Text;
+    severity : Text;
+    status : IncidentStatus__708622128;
+    targetDate : ?Text;
+    teamLead : ?Text;
+    teamMembers : ?[Text];
+    ticketNumber : Text;
+    title : Text;
+    updatedAt : Int
+  };
+type IncidentRecord__367788537 =
+  {
+    actionsTaken : ?Text;
+    areaBarricaded : ?Bool;
+    attachments : ?[AttachmentMeta__815787466];
+    bodyPartAffected : ?Text;
+    contributingFactors : ?[Text];
+    correctiveAction : ?Text;
+    createdAt : Timestamp__301639476;
+    daysLost : ?Nat;
+    department : Text;
+    description : Text;
+    firstAidGiven : ?Bool;
+    id : RecordId__634517021;
+    investigationDueDate : ?Text;
+    location : Text;
+    medicalTreatment : ?Bool;
+    natureOfInjury : ?Text;
+    personsInvolved : ?[PersonInvolved__892537450];
+    reportedBy : Text;
+    responsiblePerson : ?Text;
+    rootCause : ?Text;
+    rootCauseCategory : ?Text;
+    severity : Text;
+    status : IncidentStatus__708622128;
+    targetDate : ?Text;
+    teamLead : ?Text;
+    teamMembers : ?[Text];
+    ticketNumber : Text;
+    title : Text;
+    updatedAt : Timestamp__301639476
+  };
+type IncidentStatus__708622128 =
+  {
+    #approved;
+    #closed;
+    #draft;
+    #escalated;
+    #overdue;
+    #rejected;
+    #submitted;
+    #underReview
+  };
+type InspectionRecord__540275885 =
+  {
+    area : Text;
+    createdAt : Timestamp__301639476;
+    findings : [Text];
+    id : RecordId__634517021;
+    inspectionDate : Timestamp__301639476;
+    inspector : Text;
+    score : Nat;
+    status : InspectionStatus__147801496;
+    title : Text
+  };
+type InspectionStatus__147801496 =
+  {#completed; #inProgress; #overdue; #scheduled};
+type Int__270357528 = Int__616954475;
+type Int__616954475 = Int;
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type LegacyIncidentRecord__556790644 =
+  {
+    correctiveAction : ?Text;
+    createdAt : Int;
+    department : Text;
+    description : Text;
+    id : Text;
+    location : Text;
+    reportedBy : Text;
+    rootCause : ?Text;
+    severity : Text;
+    status : IncidentStatus__708622128;
+    ticketNumber : Text;
+    title : Text;
+    updatedAt : Int
+  };
+type LegacyPermitRecord__865214717 =
+  {
+    approvedBy : ?Text;
+    createdAt : Int;
+    endTime : Int;
+    hazards : [Text];
+    id : Text;
+    jobDescription : Text;
+    location : Text;
+    permitNumber : Text;
+    permitType : PermitType__1068981851;
+    ppeRequired : [Text];
+    requestedBy : Text;
+    reviewedBy : ?Text;
+    startTime : Int;
+    status : PermitStatus__719432684
+  };
+type LegacyUserRecord__93257400 =
+  {
+    active : Bool;
+    department : Text;
+    email : Text;
+    id : Text;
+    name : Text;
+    role : UserRole__41952412
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type ObservationRecord__453530704 =
+  {
+    actions : [Text];
+    createdAt : Timestamp__301639476;
+    description : Text;
+    id : RecordId__634517021;
+    location : Text;
+    obsType : ObservationType__561387365;
+    reportedBy : Text;
+    status : ObservationStatus__377988550
+  };
+type ObservationStatus__377988550 = {#closed; #inProgress; #open};
+type ObservationType__561387365 = {#nearMiss; #unsafeAct; #unsafeCondition};
+type PermitRecord__504737684 =
+  {
+    approvedBy : ?Text;
+    createdAt : Timestamp__301639476;
+    emergencyContacts : ?[EmergencyContact__409124233];
+    endTime : Timestamp__301639476;
+    gasTestResults : ?GasTestResults__124880118;
+    hazardControls : ?[HazardControl__251177640];
+    hazards : [Text];
+    id : RecordId__634517021;
+    isolationTypes : ?[Text];
+    isolationVerifiedBy : ?Text;
+    jobDescription : Text;
+    location : Text;
+    lotoApplied : ?Bool;
+    permitNumber : Text;
+    permitType : PermitType__1068981851;
+    ppeRequired : [Text];
+    requestedBy : Text;
+    reviewedBy : ?Text;
+    signatures : ?PermitSignatures__754542373;
+    startTime : Timestamp__301639476;
+    status : PermitStatus__719432684;
+    supervisorOnDuty : ?Text;
+    toolboxTalk : ?ToolboxTalk__340845692
+  };
+type PermitSignatures__754542373 =
+  {
+    requestedBySignature : Text;
+    safetyOfficerSignature : Text;
+    supervisorSignature : Text
+  };
+type PermitStatus__719432684 =
+  {
+    #active;
+    #approved;
+    #closed;
+    #draft;
+    #expired;
+    #rejected;
+    #submitted;
+    #underReview;
+    #validated
+  };
+type PermitType__1068981851 =
+  {
+    #confinedSpace;
+    #electrical;
+    #excavation;
+    #heightWork;
+    #hotWork;
+    #lineBreaking
+  };
+type PersonInvolved__892537450 =
+  {
+    department : Text;
+    employeeId : Text;
+    injuryType : Text;
+    name : Text;
+    role : Text
+  };
+type RecordId__634517021 = Text;
+type RiskLevel__1067792797 = {#critical; #high; #low; #medium; #veryLow};
+type RiskRecord__144234028 =
+  {
+    controls : [Text];
+    createdAt : Timestamp__301639476;
+    createdBy : Text;
+    hazard : Text;
+    id : RecordId__634517021;
+    likelihood : Nat;
+    location : Text;
+    residualLikelihood : Nat;
+    residualSeverity : Nat;
+    riskLevel : RiskLevel__1067792797;
+    severity : Nat;
+    status : RiskStatus__231225041
+  };
+type RiskStatus__231225041 = {#approved; #draft; #submitted};
+type Time__796480547 = Int__270357528;
+type Time__900049286 = Time__796480547;
+type Timestamp__301639476 = Int;
+type ToolboxTalk__340845692 =
+  {
+    attendeesCount : Nat;
+    conductedAt : Text;
+    conductedBy : Text;
+    keyPoints : Text
+  };
+type TrainingRecord__375010159 =
+  {
+    completionDate : ?Timestamp__301639476;
+    course : Text;
+    employeeId : Text;
+    employeeName : Text;
+    expiryDate : ?Timestamp__301639476;
+    id : RecordId__634517021;
+    score : ?Nat;
+    status : TrainingStatus__261491668
+  };
+type TrainingStatus__261491668 =
+  {#completed; #notStarted; #overdue; #pending};
+type UserId__158757552 = Text;
+type UserRecord__195968172 =
+  {
+    active : Bool;
+    department : Text;
+    email : Text;
+    employeeNumber : Text;
+    id : UserId__158757552;
+    mobileNumber : Text;
+    name : Text;
+    role : UserRole__41952412
+  };
+type UserRole__41952412 =
+  {
+    #areaInCharge;
+    #contractorAdmin;
+    #ehsManager;
+    #employee;
+    #safetyOfficer;
+    #supervisor;
+    #systemAdmin
+  };
+actor {
+  stable activityFeed :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ActivityFeedItem__355436855]];
+      var elementIndex : Nat__490723111
+    };
+  stable capas :
+    {
+      var root : Node__46230540<Text, CapaRecord__696506886>;
+      var size : Nat__490723111
+    };
+  stable departments :
+    {
+      var root : Node__46230540<Text, DepartmentRecord__978223546>;
+      var size : Nat__490723111
+    };
+  stable environmentRecords :
+    {
+      var root : Node__46230540<Text, EnvironmentRecord__796468981>;
+      var size : Nat__490723111
+    };
+  stable esgRecords :
+    {
+      var root : Node__46230540<Text, ESGRecord__384563760>;
+      var size : Nat__490723111
+    };
+  stable incidents :
+    {
+      var root : Node__46230540<Text, LegacyIncidentRecord__556790644>;
+      var size : Nat__490723111
+    };
+  stable incidentsV2 :
+    {
+      var root : Node__46230540<Text, IncidentRecordV2__205602987>;
+      var size : Nat__490723111
+    };
+  stable incidentsV3 :
+    {
+      var root : Node__46230540<Text, IncidentRecord__367788537>;
+      var size : Nat__490723111
+    };
+  stable inspections :
+    {
+      var root : Node__46230540<Text, InspectionRecord__540275885>;
+      var size : Nat__490723111
+    };
+  stable notifLastRead :
+    {
+      var root : Node__46230540<Principal, Time__900049286>;
+      var size : Nat__490723111
+    };
+  stable observations :
+    {
+      var root : Node__46230540<Text, ObservationRecord__453530704>;
+      var size : Nat__490723111
+    };
+  stable permitCounter : {var nextId : Nat};
+  stable permits :
+    {
+      var root : Node__46230540<Text, LegacyPermitRecord__865214717>;
+      var size : Nat__490723111
+    };
+  stable permitsV2 :
+    {
+      var root : Node__46230540<Text, PermitRecord__504737684>;
+      var size : Nat__490723111
+    };
+  stable risks :
+    {
+      var root : Node__46230540<Text, RiskRecord__144234028>;
+      var size : Nat__490723111
+    };
+  stable trainingRecords :
+    {
+      var root : Node__46230540<Text, TrainingRecord__375010159>;
+      var size : Nat__490723111
+    };
+  stable users :
+    {
+      var root : Node__46230540<Text, LegacyUserRecord__93257400>;
+      var size : Nat__490723111
+    };
+  stable usersV2 :
+    {
+      var root : Node__46230540<Text, UserRecord__195968172>;
+      var size : Nat__490723111
+    }
+};

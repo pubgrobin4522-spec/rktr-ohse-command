@@ -1,0 +1,34 @@
+{
+  "overview": "Enterprise Occupational Health, Safety & Environment (OHSE) command center for Ramkrishna Titagarh Rail Wheels Limited. Features domain-restricted login for @rktrwheels.com employees, role-based access control, and 12 fully functional modules for incident reporting, permit management, risk assessment, training tracking, environmental monitoring, and compliance.",
+  "features": [
+    "Domain-restricted login for @rktrwheels.com employees with 6 role types",
+    "Enterprise dashboard with 8 animated KPI cards, safety score ring, incident trend charts, activity feed",
+    "Incident Reporting with multi-section forms, auto ticket numbers, and full approval workflow",
+    "Permit To Work with 6 permit types, countdown timers, QR codes, and workflow states",
+    "Risk Assessment with 5x5 risk matrix, hazard library, and control hierarchy pyramid",
+    "Inspections with audit calendar, checklists, findings tracker, and CAPA assignments",
+    "Training Matrix grid with certifications, expiry alerts, and competency tracking",
+    "Environment module with emission, water, energy, and waste tracking charts",
+    "CAPA Tracker with workflow states and action plan management",
+    "Safety Observation submission and tracking",
+    "Multi-chart Analytics dashboard with date range filtering",
+    "Admin Panel with user management, role assignment, and department setup",
+    "Collapsible sidebar with all 13 OHSE module links",
+    "Industrial dark/light theme (deep navy + safety green) with glassmorphism cards",
+    "Backend-stored mock data with full delete capability on all records",
+    "Framer Motion animations — page transitions, KPI counters, card hovers"
+  ],
+  "category": "productivity",
+  "tags": [
+    "ohse",
+    "safety",
+    "enterprise",
+    "ehs",
+    "manufacturing",
+    "compliance",
+    "incident-reporting",
+    "permit-management",
+    "risk-assessment"
+  ],
+  "last_updated": "2026-05-10T11:12:32.741Z"
+}
