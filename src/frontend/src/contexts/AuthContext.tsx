@@ -31,8 +31,13 @@ const BOOTSTRAP_ADMIN_EMAIL = "sumesh.j@rktrwheels.com";
 const BOOTSTRAP_ADMIN_NAME = "Sumesh J";
 
 function enforceBootstrapAdmin(u: AuthUser): AuthUser {
+  // Sumesh J is permanently System Admin — enforce it
   if (u.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL) {
     return { ...u, role: "systemAdmin", name: BOOTSTRAP_ADMIN_NAME };
+  }
+  // Any non-Sumesh user that somehow holds systemAdmin must be downgraded to employee
+  if (u.role === "systemAdmin") {
+    return { ...u, role: "employee" };
   }
   return u;
 }

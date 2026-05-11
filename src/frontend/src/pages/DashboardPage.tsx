@@ -81,23 +81,17 @@ function AnimatedCounter({
   );
 }
 
-// ─── Sparkline data ───────────────────────────────────────────────────────────
+// ─── Sparkline data ─────────────────────────────────────────────────────────
+// Empty arrays — sparklines will be flat until real data is submitted
 const sparklines: Record<string, { v: number }[]> = {
-  incidents: [{ v: 5 }, { v: 7 }, { v: 6 }, { v: 9 }, { v: 8 }, { v: 12 }],
-  ltifr: [
-    { v: 1.1 },
-    { v: 1.0 },
-    { v: 0.95 },
-    { v: 0.9 },
-    { v: 0.88 },
-    { v: 0.85 },
-  ],
-  nearMiss: [{ v: 8 }, { v: 10 }, { v: 9 }, { v: 11 }, { v: 12 }, { v: 14 }],
-  permits: [{ v: 3 }, { v: 5 }, { v: 4 }, { v: 6 }, { v: 5 }, { v: 7 }],
-  training: [{ v: 72 }, { v: 78 }, { v: 80 }, { v: 82 }, { v: 85 }, { v: 88 }],
-  audit: [{ v: 60 }, { v: 65 }, { v: 68 }, { v: 70 }, { v: 72 }, { v: 73 }],
-  highRisk: [{ v: 6 }, { v: 5 }, { v: 7 }, { v: 6 }, { v: 5 }, { v: 4 }],
-  envDev: [{ v: 1 }, { v: 3 }, { v: 2 }, { v: 3 }, { v: 2 }, { v: 2 }],
+  incidents: [],
+  ltifr: [],
+  nearMiss: [],
+  permits: [],
+  training: [],
+  audit: [],
+  highRisk: [],
+  envDev: [],
 };
 
 // ─── KPI Card ────────────────────────────────────────────────────────────────

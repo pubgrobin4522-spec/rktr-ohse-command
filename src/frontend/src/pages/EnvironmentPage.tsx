@@ -98,56 +98,23 @@ function groupByMonth(
   }));
 }
 
-const MOCK_WASTE = [
-  {
-    type: "Metals",
-    qty: 2400,
-    method: "Recycling",
-    date: "2026-04-05",
-    contractor: "GreenMet India",
-    manifest: "MNF-2026-041",
-  },
-  {
-    type: "Oil / Lubricants",
-    qty: 380,
-    method: "Incineration",
-    date: "2026-04-03",
-    contractor: "SafeDispose Ltd",
-    manifest: "MNF-2026-039",
-  },
-  {
-    type: "Electronic Waste",
-    qty: 95,
-    method: "Recycling",
-    date: "2026-03-28",
-    contractor: "EcoTech Solutions",
-    manifest: "MNF-2026-033",
-  },
-  {
-    type: "Chemical Waste",
-    qty: 145,
-    method: "Secure Landfill",
-    date: "2026-03-20",
-    contractor: "ChemSafe Corp",
-    manifest: "MNF-2026-028",
-  },
-  {
-    type: "Slag",
-    qty: 5800,
-    method: "Recycling",
-    date: "2026-03-15",
-    contractor: "SlagReuse Pvt",
-    manifest: "MNF-2026-025",
-  },
-];
+// No pre-filled waste records — table starts empty
+const MOCK_WASTE: {
+  type: string;
+  qty: number;
+  method: string;
+  date: string;
+  contractor: string;
+  manifest: string;
+}[] = [];
 
 const ASPECTS = [
-  { label: "Air Emissions", icon: "💨", level: "Significant" },
-  { label: "Water Effluent", icon: "💧", level: "Moderate" },
-  { label: "Hazardous Waste", icon: "⚠️", level: "High" },
-  { label: "Non-Hazardous Waste", icon: "♻️", level: "Low" },
-  { label: "Energy Use", icon: "⚡", level: "Significant" },
-  { label: "Land Use", icon: "🌱", level: "Low" },
+  { label: "Air Emissions", icon: "💨", level: "Not Assessed" },
+  { label: "Water Effluent", icon: "💧", level: "Not Assessed" },
+  { label: "Hazardous Waste", icon: "⚠️", level: "Not Assessed" },
+  { label: "Non-Hazardous Waste", icon: "♻️", level: "Not Assessed" },
+  { label: "Energy Use", icon: "⚡", level: "Not Assessed" },
+  { label: "Land Use", icon: "🌱", level: "Not Assessed" },
 ];
 
 const TABS = [
@@ -1125,7 +1092,9 @@ function OverviewTab() {
                       ? "text-orange-400 bg-orange-400/10 border-orange-400/20"
                       : a.level === "Moderate"
                         ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20"
-                        : "text-green-400 bg-green-400/10 border-green-400/20"
+                        : a.level === "Not Assessed"
+                          ? "text-white/40 bg-white/5 border-white/10"
+                          : "text-green-400 bg-green-400/10 border-green-400/20"
                   }`}
                 >
                   {a.level}
@@ -1532,10 +1501,10 @@ function SpillTab() {
 
 function WasteTab() {
   const wasteKpis = [
-    { label: "Total Generated", value: "8,820", unit: "kg", icon: "🏭" },
-    { label: "Recycled", value: "8,200", unit: "kg", icon: "♻️" },
-    { label: "Landfill", value: "145", unit: "kg", icon: "🗑️" },
-    { label: "Hazardous", value: "525", unit: "kg", icon: "☢️" },
+    { label: "Total Generated", value: "—", unit: "kg", icon: "🏗️" },
+    { label: "Recycled", value: "—", unit: "kg", icon: "♻️" },
+    { label: "Landfill", value: "—", unit: "kg", icon: "🗑️" },
+    { label: "Hazardous", value: "—", unit: "kg", icon: "☢️" },
   ];
 
   return (
@@ -1597,45 +1566,64 @@ function WasteTab() {
               </tr>
             </thead>
             <tbody>
-              {MOCK_WASTE.map((w, idx) => (
-                <tr
-                  key={w.manifest}
-                  className="hover:bg-white/3 transition-smooth"
-                  style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-                  data-ocid={`waste.item.${idx + 1}`}
-                >
-                  <td className="px-4 py-3">
-                    <span className="text-white/80 text-sm">{w.type}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-white font-medium text-sm">
-                      {w.qty.toLocaleString()}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full border ${
-                        w.method === "Recycling"
-                          ? "text-green-400 bg-green-400/10 border-green-400/20"
-                          : w.method === "Incineration"
-                            ? "text-orange-400 bg-orange-400/10 border-orange-400/20"
-                            : "text-red-400 bg-red-400/10 border-red-400/20"
-                      }`}
-                    >
-                      {w.method}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-white/60 text-sm">{w.date}</td>
-                  <td className="px-4 py-3 text-white/60 text-sm">
-                    {w.contractor}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="font-mono text-xs text-white/50">
-                      {w.manifest}
-                    </span>
+              {MOCK_WASTE.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-4 py-12 text-center"
+                    data-ocid="waste.empty_state"
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <Leaf className="w-8 h-8 text-white/20" />
+                      <p className="text-white/30 text-sm">
+                        No waste disposal records yet.
+                      </p>
+                    </div>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                MOCK_WASTE.map((w, idx) => (
+                  <tr
+                    key={w.manifest}
+                    className="hover:bg-white/3 transition-smooth"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                    data-ocid={`waste.item.${idx + 1}`}
+                  >
+                    <td className="px-4 py-3">
+                      <span className="text-white/80 text-sm">{w.type}</span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="text-white font-medium text-sm">
+                        {w.qty.toLocaleString()}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full border ${
+                          w.method === "Recycling"
+                            ? "text-green-400 bg-green-400/10 border-green-400/20"
+                            : w.method === "Incineration"
+                              ? "text-orange-400 bg-orange-400/10 border-orange-400/20"
+                              : "text-red-400 bg-red-400/10 border-red-400/20"
+                        }`}
+                      >
+                        {w.method}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-white/60 text-sm">
+                      {w.date}
+                    </td>
+                    <td className="px-4 py-3 text-white/60 text-sm">
+                      {w.contractor}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="font-mono text-xs text-white/50">
+                        {w.manifest}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

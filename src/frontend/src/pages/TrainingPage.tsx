@@ -63,26 +63,14 @@ const COURSES = [
 
 const COURSE_NAMES = COURSES.map((c) => c.name);
 
-const MATRIX_EMPLOYEES = [
-  { id: "E001", name: "Rajesh Kumar", dept: "Forging" },
-  { id: "E002", name: "Sunil Sharma", dept: "Heat Treatment" },
-  { id: "E003", name: "Arjun Singh", dept: "Operations" },
-  { id: "E004", name: "Priya Patel", dept: "EHS" },
-  { id: "E005", name: "Mehul Contractor", dept: "Maintenance" },
-  { id: "E006", name: "Vikram Desai", dept: "Utility Maintenance" },
-  { id: "E007", name: "Deepa Nair", dept: "Quality" },
-  { id: "E008", name: "Santosh Yadav", dept: "Machine Shop" },
-  { id: "E009", name: "Kavya Menon", dept: "Design & Engineering" },
-];
-
 const COURSE_DETAILS = [
   {
     id: "fire-safety",
     name: "Fire Safety",
     description: "Annual mandatory for all staff",
     duration: "4 hours",
-    enrolled: 148,
-    completed: 127,
+    enrolled: 0,
+    completed: 0,
     icon: Flame,
     color: "rgba(239,68,68,0.12)",
     border: "rgba(239,68,68,0.25)",
@@ -93,8 +81,8 @@ const COURSE_DETAILS = [
     name: "LOTO",
     description: "Lockout Tagout procedures",
     duration: "8 hours",
-    enrolled: 92,
-    completed: 71,
+    enrolled: 0,
+    completed: 0,
     icon: Lock,
     color: "rgba(234,179,8,0.12)",
     border: "rgba(234,179,8,0.25)",
@@ -105,8 +93,8 @@ const COURSE_DETAILS = [
     name: "Work at Height",
     description: "Fall prevention and harness use",
     duration: "6 hours",
-    enrolled: 76,
-    completed: 58,
+    enrolled: 0,
+    completed: 0,
     icon: MoveUp,
     color: "rgba(59,130,246,0.12)",
     border: "rgba(59,130,246,0.25)",
@@ -117,8 +105,8 @@ const COURSE_DETAILS = [
     name: "First Aid",
     description: "Basic first aid and CPR",
     duration: "16 hours",
-    enrolled: 210,
-    completed: 196,
+    enrolled: 0,
+    completed: 0,
     icon: Heart,
     color: "rgba(236,72,153,0.12)",
     border: "rgba(236,72,153,0.25)",
@@ -129,8 +117,8 @@ const COURSE_DETAILS = [
     name: "PPE",
     description: "Personal protective equipment selection and use",
     duration: "2 hours",
-    enrolled: 320,
-    completed: 312,
+    enrolled: 0,
+    completed: 0,
     icon: HardHat,
     color: "rgba(24,195,126,0.12)",
     border: "rgba(24,195,126,0.25)",
@@ -141,8 +129,8 @@ const COURSE_DETAILS = [
     name: "Crane Safety",
     description: "Overhead crane operation safety",
     duration: "8 hours",
-    enrolled: 44,
-    completed: 31,
+    enrolled: 0,
+    completed: 0,
     icon: Shield,
     color: "rgba(168,85,247,0.12)",
     border: "rgba(168,85,247,0.25)",
@@ -150,62 +138,16 @@ const COURSE_DETAILS = [
   },
 ];
 
-const INDUCTION_RECORDS = [
-  {
-    id: 1,
-    name: "Rajesh Kumar",
-    dept: "Forge Shop",
-    date: "2025-03-12",
-    by: "Arun Mehta",
-    type: "General",
-    cert: "IND-2025-0312",
-  },
-  {
-    id: 2,
-    name: "Priya Patel",
-    dept: "HTL Area",
-    date: "2025-03-20",
-    by: "Sunita Rao",
-    type: "Area-specific",
-    cert: "IND-2025-0320",
-  },
-  {
-    id: 3,
-    name: "Sunil Sharma",
-    dept: "RHF Furnace",
-    date: "2025-04-02",
-    by: "Arun Mehta",
-    type: "General",
-    cert: "IND-2025-0402",
-  },
-  {
-    id: 4,
-    name: "Contractor A (BuildCo)",
-    dept: "Maintenance Workshop",
-    date: "2025-04-15",
-    by: "Deepa Nair",
-    type: "Contractor",
-    cert: "IND-2025-0415",
-  },
-  {
-    id: 5,
-    name: "Arjun Singh",
-    dept: "Rolling Mill",
-    date: "2025-05-01",
-    by: "Sunita Rao",
-    type: "Area-specific",
-    cert: "IND-2025-0501",
-  },
-  {
-    id: 6,
-    name: "Vikram Desai",
-    dept: "Utility Area",
-    date: "2025-05-08",
-    by: "Arun Mehta",
-    type: "General",
-    cert: "IND-2025-0508",
-  },
-];
+// No pre-filled induction records — table starts empty
+const INDUCTION_RECORDS: {
+  id: number;
+  name: string;
+  dept: string;
+  date: string;
+  by: string;
+  type: string;
+  cert: string;
+}[] = [];
 
 // MATRIX_STATUS_SEED removed — matrix is now computed from live useTrainingRecords() data
 
@@ -662,6 +604,21 @@ function MatrixTab({
   onAdd,
   records,
 }: { onAdd: () => void; records: TrainingRecord[] }) {
+  // Derive unique employees from live training records
+  const liveEmployees = useMemo(() => {
+    const seen = new Map<string, { id: string; name: string; dept: string }>();
+    for (const r of records) {
+      if (!seen.has(r.employeeName)) {
+        seen.set(r.employeeName, {
+          id: r.employeeId ?? "",
+          name: r.employeeName,
+          dept: "",
+        });
+      }
+    }
+    return Array.from(seen.values());
+  }, [records]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -683,77 +640,109 @@ function MatrixTab({
         </Button>
       </div>
 
-      <div
-        className="rounded-xl overflow-auto"
-        style={{
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.07)",
-        }}
-      >
-        <table className="w-full min-w-max">
-          <thead>
-            <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-              <th
-                className="text-left text-xs font-semibold text-white/50 px-4 py-3 sticky left-0 z-10"
-                style={{ background: "rgba(8,20,38,0.9)" }}
-              >
-                Employee
-              </th>
-              <th
-                className="text-xs font-semibold text-white/50 px-3 py-3 text-center whitespace-nowrap"
-                style={{ background: "rgba(8,20,38,0.9)" }}
-              >
-                Dept
-              </th>
-              {COURSE_NAMES.map((c) => (
+      {liveEmployees.length === 0 ? (
+        <div
+          className="rounded-xl p-12 text-center"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.07)",
+          }}
+          data-ocid="training.matrix.empty_state"
+        >
+          <GraduationCap className="w-10 h-10 mx-auto mb-3 text-white/20" />
+          <p className="text-white/30 text-sm">
+            No training records yet. Add a training record to populate the
+            matrix.
+          </p>
+          <Button
+            onClick={onAdd}
+            size="sm"
+            className="mt-4 gap-1.5"
+            style={{
+              background: "rgba(24,195,126,0.15)",
+              color: "#18C37E",
+              border: "1px solid rgba(24,195,126,0.3)",
+            }}
+            data-ocid="training.matrix.add_button"
+          >
+            <Plus className="w-4 h-4" /> Add First Record
+          </Button>
+        </div>
+      ) : (
+        <div
+          className="rounded-xl overflow-auto"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.07)",
+          }}
+        >
+          <table className="w-full min-w-max">
+            <thead>
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
                 <th
-                  key={c}
-                  className="text-xs font-semibold text-white/50 px-3 py-3 text-center whitespace-nowrap"
-                  style={{ minWidth: "7rem" }}
+                  className="text-left text-xs font-semibold text-white/50 px-4 py-3 sticky left-0 z-10"
+                  style={{ background: "rgba(8,20,38,0.9)" }}
                 >
-                  {c}
+                  Employee
                 </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {MATRIX_EMPLOYEES.map((emp, i) => (
-              <motion.tr
-                key={emp.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="hover:bg-white/[0.02] transition-colors"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-              >
-                <td
-                  className="px-4 py-3 sticky left-0 z-10"
-                  style={{ background: "rgba(8,20,38,0.92)" }}
+                <th
+                  className="text-xs font-semibold text-white/50 px-3 py-3 text-center whitespace-nowrap"
+                  style={{ background: "rgba(8,20,38,0.9)" }}
                 >
-                  <div className="font-medium text-sm text-white whitespace-nowrap">
-                    {emp.name}
-                  </div>
-                  <div className="text-xs text-white/30">{emp.id}</div>
-                </td>
-                <td className="px-3 py-3 text-center">
-                  <span className="text-xs text-white/40 whitespace-nowrap">
-                    {emp.dept}
-                  </span>
-                </td>
-                {COURSE_NAMES.map((course) => (
-                  <td key={course} className="px-3 py-3 text-center">
-                    <div className="flex justify-center">
-                      <MatrixCell
-                        status={deriveMatrixStatus(records, emp.name, course)}
-                      />
-                    </div>
-                  </td>
+                  ID
+                </th>
+                {COURSE_NAMES.map((c) => (
+                  <th
+                    key={c}
+                    className="text-xs font-semibold text-white/50 px-3 py-3 text-center whitespace-nowrap"
+                    style={{ minWidth: "7rem" }}
+                  >
+                    {c}
+                  </th>
                 ))}
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              </tr>
+            </thead>
+            <tbody>
+              {liveEmployees.map((emp, i) => (
+                <motion.tr
+                  key={emp.name}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="hover:bg-white/[0.02] transition-colors"
+                  style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                >
+                  <td
+                    className="px-4 py-3 sticky left-0 z-10"
+                    style={{ background: "rgba(8,20,38,0.92)" }}
+                  >
+                    <div className="font-medium text-sm text-white whitespace-nowrap">
+                      {emp.name}
+                    </div>
+                    {emp.id && (
+                      <div className="text-xs text-white/30">{emp.id}</div>
+                    )}
+                  </td>
+                  <td className="px-3 py-3 text-center">
+                    <span className="text-xs text-white/40 whitespace-nowrap">
+                      {emp.id || "—"}
+                    </span>
+                  </td>
+                  {COURSE_NAMES.map((course) => (
+                    <td key={course} className="px-3 py-3 text-center">
+                      <div className="flex justify-center">
+                        <MatrixCell
+                          status={deriveMatrixStatus(records, emp.name, course)}
+                        />
+                      </div>
+                    </td>
+                  ))}
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="flex flex-wrap gap-4 px-1">

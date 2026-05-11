@@ -210,6 +210,35 @@ export default function AdminRolesTab() {
         </p>
       </div>
 
+      {/* System Admin read-only notice */}
+      <div
+        className="flex items-start gap-3 rounded-xl px-4 py-3 text-sm"
+        style={{
+          background: "rgba(168,85,247,0.08)",
+          border: "1px solid rgba(168,85,247,0.25)",
+        }}
+        data-ocid="admin.roles.sysadmin_notice"
+      >
+        <Lock
+          className="w-4 h-4 flex-shrink-0 mt-0.5"
+          style={{ color: "#a855f7" }}
+        />
+        <span className="text-muted-foreground">
+          <span className="font-semibold" style={{ color: "#a855f7" }}>
+            System Admin
+          </span>{" "}
+          permissions are read-only and cannot be modified. The System Admin
+          role is held exclusively by{" "}
+          <span
+            className="font-mono text-xs px-1.5 py-0.5 rounded"
+            style={{ background: "rgba(168,85,247,0.15)", color: "#c084fc" }}
+          >
+            sumesh.j@rktrwheels.com
+          </span>
+          .
+        </span>
+      </div>
+
       {/* Permission Matrix */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -326,16 +355,48 @@ export default function AdminRolesTab() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07 }}
               className="glass rounded-xl p-4"
-              style={{ background: "rgba(8,20,38,0.5)" }}
+              style={{
+                background:
+                  role.key === "systemAdmin"
+                    ? "rgba(168,85,247,0.07)"
+                    : "rgba(8,20,38,0.5)",
+                border:
+                  role.key === "systemAdmin"
+                    ? "1px solid rgba(168,85,247,0.25)"
+                    : undefined,
+              }}
             >
-              <span
-                className={`text-xs px-2 py-1 rounded font-medium ${role.color} mb-2 inline-block`}
-              >
-                {role.label}
-              </span>
+              <div className="flex items-center gap-2 mb-2">
+                <span
+                  className={`text-xs px-2 py-1 rounded font-medium ${role.color} inline-block`}
+                >
+                  {role.label}
+                </span>
+                {role.key === "systemAdmin" && (
+                  <span
+                    className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded"
+                    style={{
+                      background: "rgba(168,85,247,0.15)",
+                      color: "#a855f7",
+                      border: "1px solid rgba(168,85,247,0.3)",
+                    }}
+                    title="sumesh.j@rktrwheels.com — permanent, read-only"
+                  >
+                    <Lock className="w-2.5 h-2.5" />1 user only
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 {ROLE_DESCRIPTIONS[role.key]}
               </p>
+              {role.key === "systemAdmin" && (
+                <p
+                  className="mt-2 text-[11px] font-mono"
+                  style={{ color: "#c084fc" }}
+                >
+                  sumesh.j@rktrwheels.com
+                </p>
+              )}
             </motion.div>
           ))}
         </div>

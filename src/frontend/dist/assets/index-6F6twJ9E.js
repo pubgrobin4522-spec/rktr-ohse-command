@@ -30680,6 +30680,9 @@ function enforceBootstrapAdmin(u2) {
   if (u2.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL$1) {
     return { ...u2, role: "systemAdmin", name: BOOTSTRAP_ADMIN_NAME };
   }
+  if (u2.role === "systemAdmin") {
+    return { ...u2, role: "employee" };
+  }
   return u2;
 }
 function AuthProvider({ children }) {
@@ -48903,6 +48906,41 @@ function AdminRolesTab() {
       /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-lg font-display font-semibold text-foreground mb-1", children: "Roles & Permissions" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Permission matrix is fixed and reflects system policy. Contact System Admin to request changes." })
     ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        className: "flex items-start gap-3 rounded-xl px-4 py-3 text-sm",
+        style: {
+          background: "rgba(168,85,247,0.08)",
+          border: "1px solid rgba(168,85,247,0.25)"
+        },
+        "data-ocid": "admin.roles.sysadmin_notice",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Lock,
+            {
+              className: "w-4 h-4 flex-shrink-0 mt-0.5",
+              style: { color: "#a855f7" }
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-muted-foreground", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold", style: { color: "#a855f7" }, children: "System Admin" }),
+            " ",
+            "permissions are read-only and cannot be modified. The System Admin role is held exclusively by",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: "font-mono text-xs px-1.5 py-0.5 rounded",
+                style: { background: "rgba(168,85,247,0.15)", color: "#c084fc" },
+                children: "sumesh.j@rktrwheels.com"
+              }
+            ),
+            "."
+          ] })
+        ]
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       motion.div,
       {
@@ -49007,16 +49045,45 @@ function AdminRolesTab() {
           animate: { opacity: 1, y: 0 },
           transition: { delay: i * 0.07 },
           className: "glass rounded-xl p-4",
-          style: { background: "rgba(8,20,38,0.5)" },
+          style: {
+            background: role.key === "systemAdmin" ? "rgba(168,85,247,0.07)" : "rgba(8,20,38,0.5)",
+            border: role.key === "systemAdmin" ? "1px solid rgba(168,85,247,0.25)" : void 0
+          },
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "span",
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mb-2", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: `text-xs px-2 py-1 rounded font-medium ${role.color} inline-block`,
+                  children: role.label
+                }
+              ),
+              role.key === "systemAdmin" && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "span",
+                {
+                  className: "inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded",
+                  style: {
+                    background: "rgba(168,85,247,0.15)",
+                    color: "#a855f7",
+                    border: "1px solid rgba(168,85,247,0.3)"
+                  },
+                  title: "sumesh.j@rktrwheels.com — permanent, read-only",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Lock, { className: "w-2.5 h-2.5" }),
+                    "1 user only"
+                  ]
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground leading-relaxed", children: ROLE_DESCRIPTIONS[role.key] }),
+            role.key === "systemAdmin" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
               {
-                className: `text-xs px-2 py-1 rounded font-medium ${role.color} mb-2 inline-block`,
-                children: role.label
+                className: "mt-2 text-[11px] font-mono",
+                style: { color: "#c084fc" },
+                children: "sumesh.j@rktrwheels.com"
               }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground leading-relaxed", children: ROLE_DESCRIPTIONS[role.key] })
+            )
           ]
         },
         role.key
@@ -49582,6 +49649,48 @@ function AdminUserTab() {
     }
   }
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-5", "data-ocid": "admin.users.section", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        className: "flex items-start gap-3 rounded-xl px-4 py-3 text-sm",
+        style: {
+          background: "rgba(168,85,247,0.08)",
+          border: "1px solid rgba(168,85,247,0.25)"
+        },
+        "data-ocid": "admin.users.sysadmin_notice",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5",
+              style: {
+                background: "rgba(168,85,247,0.2)",
+                border: "1px solid rgba(168,85,247,0.4)"
+              },
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(Crown, { className: "w-3.5 h-3.5", style: { color: "#a855f7" } })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold", style: { color: "#a855f7" }, children: "System Admin is permanently reserved:" }),
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-muted-foreground", children: [
+              "Only",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: "font-mono text-xs px-1.5 py-0.5 rounded",
+                  style: { background: "rgba(168,85,247,0.15)", color: "#c084fc" },
+                  children: "sumesh.j@rktrwheels.com"
+                }
+              ),
+              " ",
+              "holds the System Admin role. This cannot be changed, duplicated, or assigned to any other user."
+            ] })
+          ] })
+        ]
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(StatCard$3, { label: "Total Users", value: users.length, color: "#18C37E" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -102588,7 +102697,7 @@ function AnalyticsPage() {
     const toastId = ue.loading("Generating PDF report…");
     try {
       const { jsPDF } = await __vitePreload(async () => {
-        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-3atH3TcM.js").then((n2) => n2.j);
+        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-DPKm-kit.js").then((n2) => n2.j);
         return { jsPDF: jsPDF2 };
       }, true ? [] : void 0);
       const doc = new jsPDF({
@@ -106399,21 +106508,14 @@ function AnimatedCounter({
   ] });
 }
 const sparklines = {
-  incidents: [{ v: 5 }, { v: 7 }, { v: 6 }, { v: 9 }, { v: 8 }, { v: 12 }],
-  ltifr: [
-    { v: 1.1 },
-    { v: 1 },
-    { v: 0.95 },
-    { v: 0.9 },
-    { v: 0.88 },
-    { v: 0.85 }
-  ],
-  nearMiss: [{ v: 8 }, { v: 10 }, { v: 9 }, { v: 11 }, { v: 12 }, { v: 14 }],
-  permits: [{ v: 3 }, { v: 5 }, { v: 4 }, { v: 6 }, { v: 5 }, { v: 7 }],
-  training: [{ v: 72 }, { v: 78 }, { v: 80 }, { v: 82 }, { v: 85 }, { v: 88 }],
-  audit: [{ v: 60 }, { v: 65 }, { v: 68 }, { v: 70 }, { v: 72 }, { v: 73 }],
-  highRisk: [{ v: 6 }, { v: 5 }, { v: 7 }, { v: 6 }, { v: 5 }, { v: 4 }],
-  envDev: [{ v: 1 }, { v: 3 }, { v: 2 }, { v: 3 }, { v: 2 }, { v: 2 }]
+  incidents: [],
+  ltifr: [],
+  nearMiss: [],
+  permits: [],
+  training: [],
+  audit: [],
+  highRisk: [],
+  envDev: []
 };
 function KpiCard$2({
   label,
@@ -108439,67 +108541,6 @@ const GOV_KPIS = [
   }
 ];
 const ALL_KPIS = [...ENV_KPIS, ...SOCIAL_KPIS, ...GOV_KPIS];
-function makeMockRecord(period, idx) {
-  const base = 17356896e5 + idx * 30 * 86400 * 1e3;
-  return {
-    id: `esg-mock-${String(idx + 1).padStart(3, "0")}`,
-    period,
-    periodType: "monthly",
-    department: "EHS",
-    status: ESGStatus.approved,
-    recordedAt: BigInt(base) * BigInt(1e6),
-    approvedAt: BigInt(base + 86400 * 1e3) * BigInt(1e6),
-    recordedBy: "sumesh.j@rktrwheels.com",
-    recordedByName: "Sumesh J",
-    approvedBy: "Sumesh J",
-    dataSource: "SAP EHS Module",
-    notes: `Monthly ESG data for ${period}`,
-    environmental: {
-      carbonEmissionIntensity: +(1.62 - idx * 0.025).toFixed(3),
-      energyConsumption: 982e3 - idx * 5200,
-      renewableEnergyUsage: +(17.5 + idx * 1.6).toFixed(1),
-      waterConsumption: 19400 - idx * 220,
-      waterIntensity: +(2.82 - idx * 0.06).toFixed(2),
-      waterReuseRate: +(31 + idx * 1.4).toFixed(1),
-      wasteGenerated: 558 - idx * 9,
-      wasteRecyclingRate: +(67 + idx * 1.8).toFixed(1),
-      envComplianceViolations: idx < 2 ? 1 : 0
-    },
-    social: {
-      ltifr: +(1.22 - idx * 0.04).toFixed(2),
-      trir: +(2.84 - idx * 0.09).toFixed(2),
-      fatalities: 0,
-      employeeTurnoverRate: +(8.6 - idx * 0.12).toFixed(1),
-      absenteeismRate: +(3.25 - idx * 0.06).toFixed(2),
-      trainingHoursPerEmployee: +(17.5 + idx * 1.3).toFixed(1),
-      employeeSatisfactionIndex: 71 + idx,
-      genderDiversityRatio: +(10.8 + idx * 0.35).toFixed(1),
-      womenInWorkforce: +(10.8 + idx * 0.35).toFixed(1),
-      contractorSafetyPerformance: +(90.5 + idx * 0.6).toFixed(1),
-      occupationalHealthCases: idx < 4 ? 4 : 3,
-      grievanceCases: 2,
-      communityEngagementPrograms: 4 + (idx > 2 ? 1 : 0)
-    },
-    governance: {
-      complianceBreaches: idx < 1 ? 1 : 0,
-      regulatoryViolations: 0,
-      regulatoryPenalties: idx < 1 ? 25e3 : 0,
-      whistleblowerComplaints: idx === 1 ? 1 : 0,
-      antiCorruptionTrainingCoverage: 82 + idx * 2,
-      codeOfConductViolations: 0,
-      policyComplianceScore: 87 + idx,
-      dataPrivacyIncidents: 0
-    }
-  };
-}
-const MOCK_RECORDS = [
-  "2026-01",
-  "2026-02",
-  "2026-03",
-  "2026-04",
-  "2026-05",
-  "2026-06"
-].map((p2, i) => makeMockRecord(p2, i));
 function fmtNum(v2, dec2 = 1) {
   if (!Number.isFinite(v2)) return "0";
   return v2 % 1 === 0 ? String(v2) : v2.toFixed(dec2);
@@ -109387,13 +109428,7 @@ function ESGPage() {
     "systemAdmin"
   ].includes((user == null ? void 0 : user.role) ?? "");
   const canDelete = (r2) => (user == null ? void 0 : user.role) === "systemAdmin" || (user == null ? void 0 : user.role) === "ehsManager" || r2.status === ESGStatus.draft && r2.recordedBy === (user == null ? void 0 : user.email);
-  const allRecords = reactExports.useMemo(() => {
-    const ids = new Set((backendRecs ?? []).map((r2) => r2.id));
-    return [
-      ...MOCK_RECORDS.filter((m2) => !ids.has(m2.id)),
-      ...backendRecs ?? []
-    ];
-  }, [backendRecs]);
+  const allRecords = reactExports.useMemo(() => backendRecs ?? [], [backendRecs]);
   const filteredRecords = reactExports.useMemo(
     () => periodFilter === "all" ? allRecords : allRecords.filter((r2) => r2.periodType === periodFilter),
     [allRecords, periodFilter]
@@ -109487,7 +109522,7 @@ function ESGPage() {
     const tid = ue.loading("Generating PDF report…");
     try {
       const { jsPDF } = await __vitePreload(async () => {
-        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-3atH3TcM.js").then((n3) => n3.j);
+        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-DPKm-kit.js").then((n3) => n3.j);
         return { jsPDF: jsPDF2 };
       }, true ? [] : void 0);
       const doc = new jsPDF({
@@ -110244,55 +110279,14 @@ function groupByMonth(recs, matchFn) {
     value: Math.round(map2[m2] * 10) / 10
   }));
 }
-const MOCK_WASTE = [
-  {
-    type: "Metals",
-    qty: 2400,
-    method: "Recycling",
-    date: "2026-04-05",
-    contractor: "GreenMet India",
-    manifest: "MNF-2026-041"
-  },
-  {
-    type: "Oil / Lubricants",
-    qty: 380,
-    method: "Incineration",
-    date: "2026-04-03",
-    contractor: "SafeDispose Ltd",
-    manifest: "MNF-2026-039"
-  },
-  {
-    type: "Electronic Waste",
-    qty: 95,
-    method: "Recycling",
-    date: "2026-03-28",
-    contractor: "EcoTech Solutions",
-    manifest: "MNF-2026-033"
-  },
-  {
-    type: "Chemical Waste",
-    qty: 145,
-    method: "Secure Landfill",
-    date: "2026-03-20",
-    contractor: "ChemSafe Corp",
-    manifest: "MNF-2026-028"
-  },
-  {
-    type: "Slag",
-    qty: 5800,
-    method: "Recycling",
-    date: "2026-03-15",
-    contractor: "SlagReuse Pvt",
-    manifest: "MNF-2026-025"
-  }
-];
+const MOCK_WASTE = [];
 const ASPECTS = [
-  { label: "Air Emissions", icon: "💨", level: "Significant" },
-  { label: "Water Effluent", icon: "💧", level: "Moderate" },
-  { label: "Hazardous Waste", icon: "⚠️", level: "High" },
-  { label: "Non-Hazardous Waste", icon: "♻️", level: "Low" },
-  { label: "Energy Use", icon: "⚡", level: "Significant" },
-  { label: "Land Use", icon: "🌱", level: "Low" }
+  { label: "Air Emissions", icon: "💨", level: "Not Assessed" },
+  { label: "Water Effluent", icon: "💧", level: "Not Assessed" },
+  { label: "Hazardous Waste", icon: "⚠️", level: "Not Assessed" },
+  { label: "Non-Hazardous Waste", icon: "♻️", level: "Not Assessed" },
+  { label: "Energy Use", icon: "⚡", level: "Not Assessed" },
+  { label: "Land Use", icon: "🌱", level: "Not Assessed" }
 ];
 const TABS$1 = [
   "Overview",
@@ -111291,7 +111285,7 @@ function OverviewTab() {
                   /* @__PURE__ */ jsxRuntimeExports.jsx(
                     "span",
                     {
-                      className: `text-xs px-2 py-0.5 rounded-full border font-medium ${a2.level === "High" || a2.level === "Significant" ? "text-orange-400 bg-orange-400/10 border-orange-400/20" : a2.level === "Moderate" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" : "text-green-400 bg-green-400/10 border-green-400/20"}`,
+                      className: `text-xs px-2 py-0.5 rounded-full border font-medium ${a2.level === "High" || a2.level === "Significant" ? "text-orange-400 bg-orange-400/10 border-orange-400/20" : a2.level === "Moderate" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" : a2.level === "Not Assessed" ? "text-white/40 bg-white/5 border-white/10" : "text-green-400 bg-green-400/10 border-green-400/20"}`,
                       children: a2.level
                     }
                   )
@@ -111608,10 +111602,10 @@ function SpillTab() {
 }
 function WasteTab() {
   const wasteKpis = [
-    { label: "Total Generated", value: "8,820", unit: "kg", icon: "🏭" },
-    { label: "Recycled", value: "8,200", unit: "kg", icon: "♻️" },
-    { label: "Landfill", value: "145", unit: "kg", icon: "🗑️" },
-    { label: "Hazardous", value: "525", unit: "kg", icon: "☢️" }
+    { label: "Total Generated", value: "—", unit: "kg", icon: "🏗️" },
+    { label: "Recycled", value: "—", unit: "kg", icon: "♻️" },
+    { label: "Landfill", value: "—", unit: "kg", icon: "🗑️" },
+    { label: "Hazardous", value: "—", unit: "kg", icon: "☢️" }
   ];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     motion.div,
@@ -111661,7 +111655,18 @@ function WasteTab() {
             },
             h2
           )) }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { children: MOCK_WASTE.map((w2, idx) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { children: MOCK_WASTE.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("tr", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "td",
+            {
+              colSpan: 6,
+              className: "px-4 py-12 text-center",
+              "data-ocid": "waste.empty_state",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Leaf, { className: "w-8 h-8 text-white/20" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-white/30 text-sm", children: "No waste disposal records yet." })
+              ] })
+            }
+          ) }) : MOCK_WASTE.map((w2, idx) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "tr",
             {
               className: "hover:bg-white/3 transition-smooth",
@@ -120556,7 +120561,7 @@ function PermitQrCard({ permit }) {
   const handleDownloadPdf = async () => {
     if (!qrDataUrl) return;
     const { jsPDF } = await __vitePreload(async () => {
-      const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-3atH3TcM.js").then((n2) => n2.j);
+      const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-DPKm-kit.js").then((n2) => n2.j);
       return { jsPDF: jsPDF2 };
     }, true ? [] : void 0);
     const hazardRows = permit.hazardControls ?? [];
@@ -125546,25 +125551,14 @@ const COURSES = [
   { id: "crane-safety", name: "Crane Safety", duration: "8 hrs", icon: Shield }
 ];
 const COURSE_NAMES = COURSES.map((c2) => c2.name);
-const MATRIX_EMPLOYEES = [
-  { id: "E001", name: "Rajesh Kumar", dept: "Forging" },
-  { id: "E002", name: "Sunil Sharma", dept: "Heat Treatment" },
-  { id: "E003", name: "Arjun Singh", dept: "Operations" },
-  { id: "E004", name: "Priya Patel", dept: "EHS" },
-  { id: "E005", name: "Mehul Contractor", dept: "Maintenance" },
-  { id: "E006", name: "Vikram Desai", dept: "Utility Maintenance" },
-  { id: "E007", name: "Deepa Nair", dept: "Quality" },
-  { id: "E008", name: "Santosh Yadav", dept: "Machine Shop" },
-  { id: "E009", name: "Kavya Menon", dept: "Design & Engineering" }
-];
 const COURSE_DETAILS = [
   {
     id: "fire-safety",
     name: "Fire Safety",
     description: "Annual mandatory for all staff",
     duration: "4 hours",
-    enrolled: 148,
-    completed: 127,
+    enrolled: 0,
+    completed: 0,
     icon: Flame,
     color: "rgba(239,68,68,0.12)",
     border: "rgba(239,68,68,0.25)",
@@ -125575,8 +125569,8 @@ const COURSE_DETAILS = [
     name: "LOTO",
     description: "Lockout Tagout procedures",
     duration: "8 hours",
-    enrolled: 92,
-    completed: 71,
+    enrolled: 0,
+    completed: 0,
     icon: Lock,
     color: "rgba(234,179,8,0.12)",
     border: "rgba(234,179,8,0.25)",
@@ -125587,8 +125581,8 @@ const COURSE_DETAILS = [
     name: "Work at Height",
     description: "Fall prevention and harness use",
     duration: "6 hours",
-    enrolled: 76,
-    completed: 58,
+    enrolled: 0,
+    completed: 0,
     icon: MoveUp,
     color: "rgba(59,130,246,0.12)",
     border: "rgba(59,130,246,0.25)",
@@ -125599,8 +125593,8 @@ const COURSE_DETAILS = [
     name: "First Aid",
     description: "Basic first aid and CPR",
     duration: "16 hours",
-    enrolled: 210,
-    completed: 196,
+    enrolled: 0,
+    completed: 0,
     icon: Heart,
     color: "rgba(236,72,153,0.12)",
     border: "rgba(236,72,153,0.25)",
@@ -125611,8 +125605,8 @@ const COURSE_DETAILS = [
     name: "PPE",
     description: "Personal protective equipment selection and use",
     duration: "2 hours",
-    enrolled: 320,
-    completed: 312,
+    enrolled: 0,
+    completed: 0,
     icon: HardHat,
     color: "rgba(24,195,126,0.12)",
     border: "rgba(24,195,126,0.25)",
@@ -125623,70 +125617,15 @@ const COURSE_DETAILS = [
     name: "Crane Safety",
     description: "Overhead crane operation safety",
     duration: "8 hours",
-    enrolled: 44,
-    completed: 31,
+    enrolled: 0,
+    completed: 0,
     icon: Shield,
     color: "rgba(168,85,247,0.12)",
     border: "rgba(168,85,247,0.25)",
     iconColor: "#a855f7"
   }
 ];
-const INDUCTION_RECORDS = [
-  {
-    id: 1,
-    name: "Rajesh Kumar",
-    dept: "Forge Shop",
-    date: "2025-03-12",
-    by: "Arun Mehta",
-    type: "General",
-    cert: "IND-2025-0312"
-  },
-  {
-    id: 2,
-    name: "Priya Patel",
-    dept: "HTL Area",
-    date: "2025-03-20",
-    by: "Sunita Rao",
-    type: "Area-specific",
-    cert: "IND-2025-0320"
-  },
-  {
-    id: 3,
-    name: "Sunil Sharma",
-    dept: "RHF Furnace",
-    date: "2025-04-02",
-    by: "Arun Mehta",
-    type: "General",
-    cert: "IND-2025-0402"
-  },
-  {
-    id: 4,
-    name: "Contractor A (BuildCo)",
-    dept: "Maintenance Workshop",
-    date: "2025-04-15",
-    by: "Deepa Nair",
-    type: "Contractor",
-    cert: "IND-2025-0415"
-  },
-  {
-    id: 5,
-    name: "Arjun Singh",
-    dept: "Rolling Mill",
-    date: "2025-05-01",
-    by: "Sunita Rao",
-    type: "Area-specific",
-    cert: "IND-2025-0501"
-  },
-  {
-    id: 6,
-    name: "Vikram Desai",
-    dept: "Utility Area",
-    date: "2025-05-08",
-    by: "Arun Mehta",
-    type: "General",
-    cert: "IND-2025-0508"
-  }
-];
+const INDUCTION_RECORDS = [];
 function tsToDate(ts) {
   if (!ts) return "—";
   return new Date(Number(ts) / 1e6).toLocaleDateString("en-IN", {
@@ -126097,6 +126036,19 @@ function MatrixTab({
   onAdd,
   records
 }) {
+  const liveEmployees = reactExports.useMemo(() => {
+    const seen2 = /* @__PURE__ */ new Map();
+    for (const r2 of records) {
+      if (!seen2.has(r2.employeeName)) {
+        seen2.set(r2.employeeName, {
+          id: r2.employeeId ?? "",
+          name: r2.employeeName,
+          dept: ""
+        });
+      }
+    }
+    return Array.from(seen2.values());
+  }, [records]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-6", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
@@ -126117,7 +126069,39 @@ function MatrixTab({
         }
       )
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
+    liveEmployees.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        className: "rounded-xl p-12 text-center",
+        style: {
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.07)"
+        },
+        "data-ocid": "training.matrix.empty_state",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(GraduationCap, { className: "w-10 h-10 mx-auto mb-3 text-white/20" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-white/30 text-sm", children: "No training records yet. Add a training record to populate the matrix." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            Button,
+            {
+              onClick: onAdd,
+              size: "sm",
+              className: "mt-4 gap-1.5",
+              style: {
+                background: "rgba(24,195,126,0.15)",
+                color: "#18C37E",
+                border: "1px solid rgba(24,195,126,0.3)"
+              },
+              "data-ocid": "training.matrix.add_button",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "w-4 h-4" }),
+                " Add First Record"
+              ]
+            }
+          )
+        ]
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
       {
         className: "rounded-xl overflow-auto",
@@ -126140,7 +126124,7 @@ function MatrixTab({
               {
                 className: "text-xs font-semibold text-white/50 px-3 py-3 text-center whitespace-nowrap",
                 style: { background: "rgba(8,20,38,0.9)" },
-                children: "Dept"
+                children: "ID"
               }
             ),
             COURSE_NAMES.map((c2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -126153,7 +126137,7 @@ function MatrixTab({
               c2
             ))
           ] }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { children: MATRIX_EMPLOYEES.map((emp, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { children: liveEmployees.map((emp, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
             motion.tr,
             {
               initial: { opacity: 0, x: -10 },
@@ -126169,11 +126153,11 @@ function MatrixTab({
                     style: { background: "rgba(8,20,38,0.92)" },
                     children: [
                       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "font-medium text-sm text-white whitespace-nowrap", children: emp.name }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs text-white/30", children: emp.id })
+                      emp.id && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs text-white/30", children: emp.id })
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-3 py-3 text-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-white/40 whitespace-nowrap", children: emp.dept }) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-3 py-3 text-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-white/40 whitespace-nowrap", children: emp.id || "—" }) }),
                 COURSE_NAMES.map((course) => /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-3 py-3 text-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                   MatrixCell,
                   {
@@ -126182,7 +126166,7 @@ function MatrixTab({
                 ) }) }, course))
               ]
             },
-            emp.id
+            emp.name
           )) })
         ] })
       }

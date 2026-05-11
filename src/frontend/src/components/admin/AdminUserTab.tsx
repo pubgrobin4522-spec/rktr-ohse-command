@@ -213,6 +213,42 @@ export default function AdminUserTab() {
 
   return (
     <div className="space-y-5" data-ocid="admin.users.section">
+      {/* System Admin Notice Banner */}
+      <div
+        className="flex items-start gap-3 rounded-xl px-4 py-3 text-sm"
+        style={{
+          background: "rgba(168,85,247,0.08)",
+          border: "1px solid rgba(168,85,247,0.25)",
+        }}
+        data-ocid="admin.users.sysadmin_notice"
+      >
+        <span
+          className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5"
+          style={{
+            background: "rgba(168,85,247,0.2)",
+            border: "1px solid rgba(168,85,247,0.4)",
+          }}
+        >
+          <Crown className="w-3.5 h-3.5" style={{ color: "#a855f7" }} />
+        </span>
+        <div className="min-w-0">
+          <span className="font-semibold" style={{ color: "#a855f7" }}>
+            System Admin is permanently reserved:
+          </span>{" "}
+          <span className="text-muted-foreground">
+            Only{" "}
+            <span
+              className="font-mono text-xs px-1.5 py-0.5 rounded"
+              style={{ background: "rgba(168,85,247,0.15)", color: "#c084fc" }}
+            >
+              sumesh.j@rktrwheels.com
+            </span>{" "}
+            holds the System Admin role. This cannot be changed, duplicated, or
+            assigned to any other user.
+          </span>
+        </div>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard label="Total Users" value={users.length} color="#18C37E" />

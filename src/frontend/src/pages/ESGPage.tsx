@@ -395,69 +395,7 @@ const GOV_KPIS: KpiDef[] = [
 
 const ALL_KPIS = [...ENV_KPIS, ...SOCIAL_KPIS, ...GOV_KPIS];
 
-// ─── Mock data (Jan–Jun 2026) ─────────────────────────────────────────────────────────
-function makeMockRecord(period: string, idx: number): ESGRecord {
-  const base = 1735689600000 + idx * 30 * 86400 * 1000;
-  return {
-    id: `esg-mock-${String(idx + 1).padStart(3, "0")}`,
-    period,
-    periodType: "monthly",
-    department: "EHS",
-    status: ESGStatus.approved,
-    recordedAt: BigInt(base) * BigInt(1_000_000),
-    approvedAt: BigInt(base + 86400 * 1000) * BigInt(1_000_000),
-    recordedBy: "sumesh.j@rktrwheels.com",
-    recordedByName: "Sumesh J",
-    approvedBy: "Sumesh J",
-    dataSource: "SAP EHS Module",
-    notes: `Monthly ESG data for ${period}`,
-    environmental: {
-      carbonEmissionIntensity: +(1.62 - idx * 0.025).toFixed(3),
-      energyConsumption: 982000 - idx * 5200,
-      renewableEnergyUsage: +(17.5 + idx * 1.6).toFixed(1),
-      waterConsumption: 19400 - idx * 220,
-      waterIntensity: +(2.82 - idx * 0.06).toFixed(2),
-      waterReuseRate: +(31 + idx * 1.4).toFixed(1),
-      wasteGenerated: 558 - idx * 9,
-      wasteRecyclingRate: +(67 + idx * 1.8).toFixed(1),
-      envComplianceViolations: idx < 2 ? 1 : 0,
-    },
-    social: {
-      ltifr: +(1.22 - idx * 0.04).toFixed(2),
-      trir: +(2.84 - idx * 0.09).toFixed(2),
-      fatalities: 0,
-      employeeTurnoverRate: +(8.6 - idx * 0.12).toFixed(1),
-      absenteeismRate: +(3.25 - idx * 0.06).toFixed(2),
-      trainingHoursPerEmployee: +(17.5 + idx * 1.3).toFixed(1),
-      employeeSatisfactionIndex: 71 + idx,
-      genderDiversityRatio: +(10.8 + idx * 0.35).toFixed(1),
-      womenInWorkforce: +(10.8 + idx * 0.35).toFixed(1),
-      contractorSafetyPerformance: +(90.5 + idx * 0.6).toFixed(1),
-      occupationalHealthCases: idx < 4 ? 4 : 3,
-      grievanceCases: 2,
-      communityEngagementPrograms: 4 + (idx > 2 ? 1 : 0),
-    },
-    governance: {
-      complianceBreaches: idx < 1 ? 1 : 0,
-      regulatoryViolations: 0,
-      regulatoryPenalties: idx < 1 ? 25000 : 0,
-      whistleblowerComplaints: idx === 1 ? 1 : 0,
-      antiCorruptionTrainingCoverage: 82 + idx * 2,
-      codeOfConductViolations: 0,
-      policyComplianceScore: 87 + idx,
-      dataPrivacyIncidents: 0,
-    },
-  };
-}
-
-const MOCK_RECORDS: ESGRecord[] = [
-  "2026-01",
-  "2026-02",
-  "2026-03",
-  "2026-04",
-  "2026-05",
-  "2026-06",
-].map((p, i) => makeMockRecord(p, i));
+// No pre-filled ESG records — data comes entirely from real backend submissions
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 function fmtNum(v: number, dec = 1): string {
@@ -1398,13 +1336,7 @@ export default function ESGPage() {
     user?.role === "ehsManager" ||
     (r.status === ESGStatus.draft && r.recordedBy === user?.email);
 
-  const allRecords = useMemo(() => {
-    const ids = new Set((backendRecs ?? []).map((r) => r.id));
-    return [
-      ...MOCK_RECORDS.filter((m) => !ids.has(m.id)),
-      ...(backendRecs ?? []),
-    ];
-  }, [backendRecs]);
+  const allRecords = useMemo(() => backendRecs ?? [], [backendRecs]);
 
   const filteredRecords = useMemo(
     () =>
