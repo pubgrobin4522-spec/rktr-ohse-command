@@ -8,7 +8,7 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
+export const Result_1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
 export const AttachmentMeta = IDL.Record({
   'id' : IDL.Text,
   'contentType' : IDL.Text,
@@ -38,7 +38,7 @@ export const CapaRecord = IDL.Record({
   'department' : IDL.Text,
   'rootCause' : IDL.Text,
 });
-export const Result_2 = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
+export const Result_3 = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
 export const DepartmentRecord = IDL.Record({
   'id' : RecordId,
   'head' : IDL.Text,
@@ -318,6 +318,7 @@ export const TrainingRecord = IDL.Record({
   'course' : IDL.Text,
 });
 export const UserRole = IDL.Variant({
+  'departmentHOD' : IDL.Null,
   'supervisor' : IDL.Null,
   'systemAdmin' : IDL.Null,
   'ehsManager' : IDL.Null,
@@ -393,7 +394,7 @@ export const DashboardStats = IDL.Record({
   'totalIncidents' : IDL.Nat,
   'moduleOpenCounts' : ModuleOpenCounts,
 });
-export const Result_4 = IDL.Variant({
+export const Result_5 = IDL.Variant({
   'ok' : IDL.Vec(AttachmentMeta),
   'err' : IDL.Text,
 });
@@ -402,35 +403,40 @@ export const AuthSession = IDL.Record({
   'expiresAt' : Timestamp,
   'userId' : UserId,
 });
-export const Result_3 = IDL.Variant({ 'ok' : AuthSession, 'err' : IDL.Text });
-export const Result_1 = IDL.Variant({ 'ok' : ESGRecord, 'err' : IDL.Text });
+export const Result_4 = IDL.Variant({ 'ok' : AuthSession, 'err' : IDL.Text });
+export const Result_2 = IDL.Variant({ 'ok' : ESGRecord, 'err' : IDL.Text });
+export const Result = IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text });
 
 export const idlService = IDL.Service({
-  'activateUser' : IDL.Func([IDL.Text], [Result], []),
-  'addIncidentAttachment' : IDL.Func([IDL.Text, AttachmentMeta], [Result], []),
+  'activateUser' : IDL.Func([IDL.Text], [Result_1], []),
+  'addIncidentAttachment' : IDL.Func(
+      [IDL.Text, AttachmentMeta],
+      [Result_1],
+      [],
+    ),
   'calculateESGScore' : IDL.Func([], [IDL.Float64], ['query']),
-  'createCapa' : IDL.Func([CapaRecord], [Result_2], []),
-  'createDepartment' : IDL.Func([DepartmentRecord], [Result_2], []),
-  'createESGRecord' : IDL.Func([ESGRecord], [Result_2], []),
-  'createEnvironmentRecord' : IDL.Func([EnvironmentRecord], [Result_2], []),
-  'createIncident' : IDL.Func([IncidentRecord], [Result_2], []),
-  'createInspection' : IDL.Func([InspectionRecord], [Result_2], []),
-  'createObservation' : IDL.Func([ObservationRecord], [Result_2], []),
-  'createPermit' : IDL.Func([PermitRecord], [Result_2], []),
-  'createRisk' : IDL.Func([RiskRecord], [Result_2], []),
-  'createTrainingRecord' : IDL.Func([TrainingRecord], [Result_2], []),
-  'createUser' : IDL.Func([UserRecord], [Result_2], []),
-  'deleteCapa' : IDL.Func([IDL.Text], [Result], []),
-  'deleteDepartment' : IDL.Func([IDL.Text], [Result], []),
-  'deleteESGRecord' : IDL.Func([IDL.Text], [Result], []),
-  'deleteEnvironmentRecord' : IDL.Func([IDL.Text], [Result], []),
-  'deleteIncident' : IDL.Func([IDL.Text], [Result], []),
-  'deleteInspection' : IDL.Func([IDL.Text], [Result], []),
-  'deleteObservation' : IDL.Func([IDL.Text], [Result], []),
-  'deletePermit' : IDL.Func([IDL.Text], [Result], []),
-  'deleteRisk' : IDL.Func([IDL.Text], [Result], []),
-  'deleteTrainingRecord' : IDL.Func([IDL.Text], [Result], []),
-  'deleteUser' : IDL.Func([IDL.Text], [Result], []),
+  'createCapa' : IDL.Func([CapaRecord], [Result_3], []),
+  'createDepartment' : IDL.Func([DepartmentRecord], [Result_3], []),
+  'createESGRecord' : IDL.Func([ESGRecord], [Result_3], []),
+  'createEnvironmentRecord' : IDL.Func([EnvironmentRecord], [Result_3], []),
+  'createIncident' : IDL.Func([IncidentRecord], [Result_3], []),
+  'createInspection' : IDL.Func([InspectionRecord], [Result_3], []),
+  'createObservation' : IDL.Func([ObservationRecord], [Result_3], []),
+  'createPermit' : IDL.Func([PermitRecord], [Result_3], []),
+  'createRisk' : IDL.Func([RiskRecord], [Result_3], []),
+  'createTrainingRecord' : IDL.Func([TrainingRecord], [Result_3], []),
+  'createUser' : IDL.Func([UserRecord], [Result_3], []),
+  'deleteCapa' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteDepartment' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteESGRecord' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteEnvironmentRecord' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteIncident' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteInspection' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteObservation' : IDL.Func([IDL.Text], [Result_1], []),
+  'deletePermit' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteRisk' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteTrainingRecord' : IDL.Func([IDL.Text], [Result_1], []),
+  'deleteUser' : IDL.Func([IDL.Text], [Result_1], []),
   'getActivityFeed' : IDL.Func([], [IDL.Vec(ActivityFeedItem)], ['query']),
   'getCapas' : IDL.Func([], [IDL.Vec(CapaRecord)], ['query']),
   'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
@@ -447,7 +453,7 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getIncident' : IDL.Func([IDL.Text], [IDL.Opt(IncidentRecord)], ['query']),
-  'getIncidentAttachments' : IDL.Func([IDL.Text], [Result_4], ['query']),
+  'getIncidentAttachments' : IDL.Func([IDL.Text], [Result_5], ['query']),
   'getIncidents' : IDL.Func([], [IDL.Vec(IncidentRecord)], ['query']),
   'getInspections' : IDL.Func([], [IDL.Vec(InspectionRecord)], ['query']),
   'getNotifLastRead' : IDL.Func([], [IDL.Opt(IDL.Int)], ['query']),
@@ -457,47 +463,49 @@ export const idlService = IDL.Service({
   'getRisks' : IDL.Func([], [IDL.Vec(RiskRecord)], ['query']),
   'getTrainingRecords' : IDL.Func([], [IDL.Vec(TrainingRecord)], ['query']),
   'getUsers' : IDL.Func([], [IDL.Vec(UserRecord)], ['query']),
-  'login' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
+  'login' : IDL.Func([IDL.Text, IDL.Text], [Result_4], []),
   'markNotificationsRead' : IDL.Func([], [], []),
-  'removeIncidentAttachment' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
+  'removeIncidentAttachment' : IDL.Func([IDL.Text, IDL.Text], [Result_1], []),
   'runDeadlineChecks' : IDL.Func([], [], []),
   'seedMockData' : IDL.Func([], [IDL.Text], []),
+  'sendMobileOtp' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
   'sendTestNotification' : IDL.Func([], [IDL.Text], []),
-  'updateCapa' : IDL.Func([IDL.Text, CapaRecord], [Result], []),
-  'updateCapaStatus' : IDL.Func([IDL.Text, CapaStatus], [Result], []),
-  'updateESGRecord' : IDL.Func([ESGRecord], [Result_2], []),
+  'updateCapa' : IDL.Func([IDL.Text, CapaRecord], [Result_1], []),
+  'updateCapaStatus' : IDL.Func([IDL.Text, CapaStatus], [Result_1], []),
+  'updateESGRecord' : IDL.Func([ESGRecord], [Result_3], []),
   'updateESGStatus' : IDL.Func(
       [IDL.Text, ESGStatus, IDL.Text, Timestamp],
+      [Result_2],
+      [],
+    ),
+  'updateIncident' : IDL.Func([IDL.Text, IncidentRecord], [Result_1], []),
+  'updateIncidentStatus' : IDL.Func([IDL.Text, IncidentStatus], [Result_1], []),
+  'updateInspectionStatus' : IDL.Func(
+      [IDL.Text, InspectionStatus],
       [Result_1],
       [],
     ),
-  'updateIncident' : IDL.Func([IDL.Text, IncidentRecord], [Result], []),
-  'updateIncidentStatus' : IDL.Func([IDL.Text, IncidentStatus], [Result], []),
-  'updateInspectionStatus' : IDL.Func(
-      [IDL.Text, InspectionStatus],
-      [Result],
-      [],
-    ),
-  'updateObservation' : IDL.Func([IDL.Text, ObservationRecord], [Result], []),
+  'updateObservation' : IDL.Func([IDL.Text, ObservationRecord], [Result_1], []),
   'updateObservationStatus' : IDL.Func(
       [IDL.Text, ObservationStatus],
-      [Result],
+      [Result_1],
       [],
     ),
   'updatePermitStatus' : IDL.Func(
       [IDL.Text, PermitStatus, IDL.Text, IDL.Text],
-      [Result],
+      [Result_1],
       [],
     ),
-  'updateRiskStatus' : IDL.Func([IDL.Text, RiskStatus], [Result], []),
-  'updateTrainingStatus' : IDL.Func([IDL.Text, TrainingStatus], [Result], []),
-  'updateUser' : IDL.Func([IDL.Text, UserRecord], [Result], []),
+  'updateRiskStatus' : IDL.Func([IDL.Text, RiskStatus], [Result_1], []),
+  'updateTrainingStatus' : IDL.Func([IDL.Text, TrainingStatus], [Result_1], []),
+  'updateUser' : IDL.Func([IDL.Text, UserRecord], [Result_1], []),
+  'verifyMobileOtp' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
-  const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
+  const Result_1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
   const AttachmentMeta = IDL.Record({
     'id' : IDL.Text,
     'contentType' : IDL.Text,
@@ -527,7 +535,7 @@ export const idlFactory = ({ IDL }) => {
     'department' : IDL.Text,
     'rootCause' : IDL.Text,
   });
-  const Result_2 = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
+  const Result_3 = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
   const DepartmentRecord = IDL.Record({
     'id' : RecordId,
     'head' : IDL.Text,
@@ -807,6 +815,7 @@ export const idlFactory = ({ IDL }) => {
     'course' : IDL.Text,
   });
   const UserRole = IDL.Variant({
+    'departmentHOD' : IDL.Null,
     'supervisor' : IDL.Null,
     'systemAdmin' : IDL.Null,
     'ehsManager' : IDL.Null,
@@ -882,7 +891,7 @@ export const idlFactory = ({ IDL }) => {
     'totalIncidents' : IDL.Nat,
     'moduleOpenCounts' : ModuleOpenCounts,
   });
-  const Result_4 = IDL.Variant({
+  const Result_5 = IDL.Variant({
     'ok' : IDL.Vec(AttachmentMeta),
     'err' : IDL.Text,
   });
@@ -891,39 +900,40 @@ export const idlFactory = ({ IDL }) => {
     'expiresAt' : Timestamp,
     'userId' : UserId,
   });
-  const Result_3 = IDL.Variant({ 'ok' : AuthSession, 'err' : IDL.Text });
-  const Result_1 = IDL.Variant({ 'ok' : ESGRecord, 'err' : IDL.Text });
+  const Result_4 = IDL.Variant({ 'ok' : AuthSession, 'err' : IDL.Text });
+  const Result_2 = IDL.Variant({ 'ok' : ESGRecord, 'err' : IDL.Text });
+  const Result = IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text });
   
   return IDL.Service({
-    'activateUser' : IDL.Func([IDL.Text], [Result], []),
+    'activateUser' : IDL.Func([IDL.Text], [Result_1], []),
     'addIncidentAttachment' : IDL.Func(
         [IDL.Text, AttachmentMeta],
-        [Result],
+        [Result_1],
         [],
       ),
     'calculateESGScore' : IDL.Func([], [IDL.Float64], ['query']),
-    'createCapa' : IDL.Func([CapaRecord], [Result_2], []),
-    'createDepartment' : IDL.Func([DepartmentRecord], [Result_2], []),
-    'createESGRecord' : IDL.Func([ESGRecord], [Result_2], []),
-    'createEnvironmentRecord' : IDL.Func([EnvironmentRecord], [Result_2], []),
-    'createIncident' : IDL.Func([IncidentRecord], [Result_2], []),
-    'createInspection' : IDL.Func([InspectionRecord], [Result_2], []),
-    'createObservation' : IDL.Func([ObservationRecord], [Result_2], []),
-    'createPermit' : IDL.Func([PermitRecord], [Result_2], []),
-    'createRisk' : IDL.Func([RiskRecord], [Result_2], []),
-    'createTrainingRecord' : IDL.Func([TrainingRecord], [Result_2], []),
-    'createUser' : IDL.Func([UserRecord], [Result_2], []),
-    'deleteCapa' : IDL.Func([IDL.Text], [Result], []),
-    'deleteDepartment' : IDL.Func([IDL.Text], [Result], []),
-    'deleteESGRecord' : IDL.Func([IDL.Text], [Result], []),
-    'deleteEnvironmentRecord' : IDL.Func([IDL.Text], [Result], []),
-    'deleteIncident' : IDL.Func([IDL.Text], [Result], []),
-    'deleteInspection' : IDL.Func([IDL.Text], [Result], []),
-    'deleteObservation' : IDL.Func([IDL.Text], [Result], []),
-    'deletePermit' : IDL.Func([IDL.Text], [Result], []),
-    'deleteRisk' : IDL.Func([IDL.Text], [Result], []),
-    'deleteTrainingRecord' : IDL.Func([IDL.Text], [Result], []),
-    'deleteUser' : IDL.Func([IDL.Text], [Result], []),
+    'createCapa' : IDL.Func([CapaRecord], [Result_3], []),
+    'createDepartment' : IDL.Func([DepartmentRecord], [Result_3], []),
+    'createESGRecord' : IDL.Func([ESGRecord], [Result_3], []),
+    'createEnvironmentRecord' : IDL.Func([EnvironmentRecord], [Result_3], []),
+    'createIncident' : IDL.Func([IncidentRecord], [Result_3], []),
+    'createInspection' : IDL.Func([InspectionRecord], [Result_3], []),
+    'createObservation' : IDL.Func([ObservationRecord], [Result_3], []),
+    'createPermit' : IDL.Func([PermitRecord], [Result_3], []),
+    'createRisk' : IDL.Func([RiskRecord], [Result_3], []),
+    'createTrainingRecord' : IDL.Func([TrainingRecord], [Result_3], []),
+    'createUser' : IDL.Func([UserRecord], [Result_3], []),
+    'deleteCapa' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteDepartment' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteESGRecord' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteEnvironmentRecord' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteIncident' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteInspection' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteObservation' : IDL.Func([IDL.Text], [Result_1], []),
+    'deletePermit' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteRisk' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteTrainingRecord' : IDL.Func([IDL.Text], [Result_1], []),
+    'deleteUser' : IDL.Func([IDL.Text], [Result_1], []),
     'getActivityFeed' : IDL.Func([], [IDL.Vec(ActivityFeedItem)], ['query']),
     'getCapas' : IDL.Func([], [IDL.Vec(CapaRecord)], ['query']),
     'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
@@ -940,7 +950,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getIncident' : IDL.Func([IDL.Text], [IDL.Opt(IncidentRecord)], ['query']),
-    'getIncidentAttachments' : IDL.Func([IDL.Text], [Result_4], ['query']),
+    'getIncidentAttachments' : IDL.Func([IDL.Text], [Result_5], ['query']),
     'getIncidents' : IDL.Func([], [IDL.Vec(IncidentRecord)], ['query']),
     'getInspections' : IDL.Func([], [IDL.Vec(InspectionRecord)], ['query']),
     'getNotifLastRead' : IDL.Func([], [IDL.Opt(IDL.Int)], ['query']),
@@ -950,41 +960,55 @@ export const idlFactory = ({ IDL }) => {
     'getRisks' : IDL.Func([], [IDL.Vec(RiskRecord)], ['query']),
     'getTrainingRecords' : IDL.Func([], [IDL.Vec(TrainingRecord)], ['query']),
     'getUsers' : IDL.Func([], [IDL.Vec(UserRecord)], ['query']),
-    'login' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
+    'login' : IDL.Func([IDL.Text, IDL.Text], [Result_4], []),
     'markNotificationsRead' : IDL.Func([], [], []),
-    'removeIncidentAttachment' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
+    'removeIncidentAttachment' : IDL.Func([IDL.Text, IDL.Text], [Result_1], []),
     'runDeadlineChecks' : IDL.Func([], [], []),
     'seedMockData' : IDL.Func([], [IDL.Text], []),
+    'sendMobileOtp' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
     'sendTestNotification' : IDL.Func([], [IDL.Text], []),
-    'updateCapa' : IDL.Func([IDL.Text, CapaRecord], [Result], []),
-    'updateCapaStatus' : IDL.Func([IDL.Text, CapaStatus], [Result], []),
-    'updateESGRecord' : IDL.Func([ESGRecord], [Result_2], []),
+    'updateCapa' : IDL.Func([IDL.Text, CapaRecord], [Result_1], []),
+    'updateCapaStatus' : IDL.Func([IDL.Text, CapaStatus], [Result_1], []),
+    'updateESGRecord' : IDL.Func([ESGRecord], [Result_3], []),
     'updateESGStatus' : IDL.Func(
         [IDL.Text, ESGStatus, IDL.Text, Timestamp],
+        [Result_2],
+        [],
+      ),
+    'updateIncident' : IDL.Func([IDL.Text, IncidentRecord], [Result_1], []),
+    'updateIncidentStatus' : IDL.Func(
+        [IDL.Text, IncidentStatus],
         [Result_1],
         [],
       ),
-    'updateIncident' : IDL.Func([IDL.Text, IncidentRecord], [Result], []),
-    'updateIncidentStatus' : IDL.Func([IDL.Text, IncidentStatus], [Result], []),
     'updateInspectionStatus' : IDL.Func(
         [IDL.Text, InspectionStatus],
-        [Result],
+        [Result_1],
         [],
       ),
-    'updateObservation' : IDL.Func([IDL.Text, ObservationRecord], [Result], []),
+    'updateObservation' : IDL.Func(
+        [IDL.Text, ObservationRecord],
+        [Result_1],
+        [],
+      ),
     'updateObservationStatus' : IDL.Func(
         [IDL.Text, ObservationStatus],
-        [Result],
+        [Result_1],
         [],
       ),
     'updatePermitStatus' : IDL.Func(
         [IDL.Text, PermitStatus, IDL.Text, IDL.Text],
-        [Result],
+        [Result_1],
         [],
       ),
-    'updateRiskStatus' : IDL.Func([IDL.Text, RiskStatus], [Result], []),
-    'updateTrainingStatus' : IDL.Func([IDL.Text, TrainingStatus], [Result], []),
-    'updateUser' : IDL.Func([IDL.Text, UserRecord], [Result], []),
+    'updateRiskStatus' : IDL.Func([IDL.Text, RiskStatus], [Result_1], []),
+    'updateTrainingStatus' : IDL.Func(
+        [IDL.Text, TrainingStatus],
+        [Result_1],
+        [],
+      ),
+    'updateUser' : IDL.Func([IDL.Text, UserRecord], [Result_1], []),
+    'verifyMobileOtp' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
   });
 };
 

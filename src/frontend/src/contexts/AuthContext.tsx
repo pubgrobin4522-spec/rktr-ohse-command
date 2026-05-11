@@ -87,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await actor.login(email, password);
       if (result.__kind__ === "err") {
-        // Map backend error messages to friendly user-facing messages
         const raw = result.err;
         if (
           raw.toLowerCase().includes("inactive") ||
@@ -111,21 +110,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         return { success: false, error: raw };
       }
-      // Fetch the full user record from the backend using the userId in the session
       const session = result.ok;
       const allUsers = await actor.getUsers();
       const backendUser = allUsers.find((u) => u.id === session.userId);
-      const pendingKey = `rktr_reg_${email.toLowerCase()}`;
-      const pendingExtra = (() => {
-        try {
-          return JSON.parse(localStorage.getItem(pendingKey) ?? "{}") as {
-            employeeNumber?: string;
-            mobileNumber?: string;
-          };
-        } catch {
-          return {};
-        }
-      })();
       const authUser: AuthUser = backendUser
         ? {
             id: backendUser.id,
@@ -133,8 +120,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             email: backendUser.email,
             role: backendUser.role as AuthUser["role"],
             department: backendUser.department,
-            employeeNumber: pendingExtra.employeeNumber,
-            mobileNumber: pendingExtra.mobileNumber,
+            employeeNumber: backendUser.employeeNumber,
+            mobileNumber: backendUser.mobileNumber,
           }
         : {
             id: session.userId,
@@ -186,17 +173,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         active: false,
       });
       if (result.__kind__ === "err") {
-        return { success: false, error: result.err };
+        const raw = result.err.toLowerCase();
+        if (
+          raw.includes("already") ||
+          raw.includes("exists") ||
+          raw.includes("taken") ||
+          raw.includes("duplicate")
+        ) {
+          return {
+            success: false,
+            error:
+              "Email already registered. Please sign in or use a different email.",
+          };
+        }
+        return {
+          success: false,
+          error: "Registration failed. Please try again.",
+        };
       }
-      // Store enriched fields locally (backend schema doesn't carry these yet)
-      const pendingKey = `rktr_reg_${email.trim().toLowerCase()}`;
-      localStorage.setItem(
-        pendingKey,
-        JSON.stringify({
-          employeeNumber: employeeNumber.trim(),
-          mobileNumber: mobileNumber.trim(),
-        }),
-      );
+      // Do NOT auto-login — account is pending activation
       return { success: true };
     } catch {
       return {

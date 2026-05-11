@@ -314,6 +314,7 @@ type ObservationRecord__453530704 =
   };
 type ObservationStatus__377988550 = {#closed; #inProgress; #open};
 type ObservationType__561387365 = {#nearMiss; #unsafeAct; #unsafeCondition};
+type OtpRecord__515533055 = {expires : Int; mobileNumber : Text; otp : Text};
 type PermitRecord__504737684 =
   {
     approvedBy : ?Text;
@@ -434,6 +435,7 @@ type UserRole__41952412 =
   {
     #areaInCharge;
     #contractorAdmin;
+    #departmentHOD;
     #ehsManager;
     #employee;
     #safetyOfficer;
@@ -502,6 +504,11 @@ actor {
       var root : Node__46230540<Text, ObservationRecord__453530704>;
       var size : Nat__490723111
     };
+  stable otpStore :
+    {
+      var root : Node__46230540<Text, OtpRecord__515533055>;
+      var size : Nat__490723111
+    };
   stable permitCounter : {var nextId : Nat};
   stable permits :
     {
@@ -517,6 +524,12 @@ actor {
     {
       var root : Node__46230540<Text, PermitRecord__504737684>;
       var size : Nat__490723111
+    };
+  stable registrationEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ActivityFeedItem__355436855]];
+      var elementIndex : Nat__490723111
     };
   stable risks :
     {

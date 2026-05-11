@@ -352,10 +352,8 @@ export default function PermitForm({
   };
 
   const userRole = user?.role ?? "";
-  const canDraft =
-    userRole === "employee" ||
-    userRole === "supervisor" ||
-    userRole === "systemAdmin";
+  // Only supervisors and system admin can raise/draft permits
+  const canRaiseDraft = userRole === "supervisor" || userRole === "systemAdmin";
 
   const needsGasTesting =
     form.permitType === PermitType.hotWork ||
@@ -1277,7 +1275,7 @@ export default function PermitForm({
           Cancel
         </Button>
         <div className="flex gap-2">
-          {canDraft && (
+          {canRaiseDraft && (
             <Button
               type="button"
               variant="outline"
@@ -1290,9 +1288,7 @@ export default function PermitForm({
               Save as Draft
             </Button>
           )}
-          {(userRole === "employee" ||
-            userRole === "supervisor" ||
-            userRole === "systemAdmin") && (
+          {canRaiseDraft && (
             <Button
               type="button"
               className="gap-2 font-semibold"
@@ -1307,7 +1303,7 @@ export default function PermitForm({
               data-ocid="permits.submit_button"
             >
               <Send className="w-4 h-4" />
-              {isPending ? "Submitting…" : "Submit for Approval"}
+              {isPending ? "Submitting…" : "Submit for Review"}
             </Button>
           )}
         </div>

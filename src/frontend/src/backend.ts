@@ -109,7 +109,7 @@ export interface TrainingRecord {
 export type Timestamp = bigint;
 export type Result_2 = {
     __kind__: "ok";
-    ok: string;
+    ok: ESGRecord;
 } | {
     __kind__: "err";
     err: string;
@@ -149,9 +149,16 @@ export interface AuthSession {
     expiresAt: Timestamp;
     userId: UserId;
 }
+export type Result_5 = {
+    __kind__: "ok";
+    ok: Array<AttachmentMeta>;
+} | {
+    __kind__: "err";
+    err: string;
+};
 export type Result_1 = {
     __kind__: "ok";
-    ok: ESGRecord;
+    ok: null;
 } | {
     __kind__: "err";
     err: string;
@@ -169,7 +176,7 @@ export interface UserRecord {
 export type RecordId = string;
 export type Result_4 = {
     __kind__: "ok";
-    ok: Array<AttachmentMeta>;
+    ok: AuthSession;
 } | {
     __kind__: "err";
     err: string;
@@ -342,14 +349,14 @@ export interface GasTestResults {
 export type UserId = string;
 export type Result = {
     __kind__: "ok";
-    ok: null;
+    ok: boolean;
 } | {
     __kind__: "err";
     err: string;
 };
 export type Result_3 = {
     __kind__: "ok";
-    ok: AuthSession;
+    ok: string;
 } | {
     __kind__: "err";
     err: string;
@@ -504,6 +511,7 @@ export enum TrainingStatus {
     overdue = "overdue"
 }
 export enum UserRole {
+    departmentHOD = "departmentHOD",
     supervisor = "supervisor",
     systemAdmin = "systemAdmin",
     ehsManager = "ehsManager",
@@ -513,31 +521,31 @@ export enum UserRole {
     contractorAdmin = "contractorAdmin"
 }
 export interface backendInterface {
-    activateUser(id: string): Promise<Result>;
-    addIncidentAttachment(incidentId: string, attachment: AttachmentMeta): Promise<Result>;
+    activateUser(id: string): Promise<Result_1>;
+    addIncidentAttachment(incidentId: string, attachment: AttachmentMeta): Promise<Result_1>;
     calculateESGScore(): Promise<number>;
-    createCapa(capa: CapaRecord): Promise<Result_2>;
-    createDepartment(dept: DepartmentRecord): Promise<Result_2>;
-    createESGRecord(record: ESGRecord): Promise<Result_2>;
-    createEnvironmentRecord(record: EnvironmentRecord): Promise<Result_2>;
-    createIncident(incident: IncidentRecord): Promise<Result_2>;
-    createInspection(inspection: InspectionRecord): Promise<Result_2>;
-    createObservation(obs: ObservationRecord): Promise<Result_2>;
-    createPermit(permit: PermitRecord): Promise<Result_2>;
-    createRisk(risk: RiskRecord): Promise<Result_2>;
-    createTrainingRecord(record: TrainingRecord): Promise<Result_2>;
-    createUser(user: UserRecord): Promise<Result_2>;
-    deleteCapa(id: string): Promise<Result>;
-    deleteDepartment(id: string): Promise<Result>;
-    deleteESGRecord(id: string): Promise<Result>;
-    deleteEnvironmentRecord(id: string): Promise<Result>;
-    deleteIncident(id: string): Promise<Result>;
-    deleteInspection(id: string): Promise<Result>;
-    deleteObservation(id: string): Promise<Result>;
-    deletePermit(id: string): Promise<Result>;
-    deleteRisk(id: string): Promise<Result>;
-    deleteTrainingRecord(id: string): Promise<Result>;
-    deleteUser(id: string): Promise<Result>;
+    createCapa(capa: CapaRecord): Promise<Result_3>;
+    createDepartment(dept: DepartmentRecord): Promise<Result_3>;
+    createESGRecord(record: ESGRecord): Promise<Result_3>;
+    createEnvironmentRecord(record: EnvironmentRecord): Promise<Result_3>;
+    createIncident(incident: IncidentRecord): Promise<Result_3>;
+    createInspection(inspection: InspectionRecord): Promise<Result_3>;
+    createObservation(obs: ObservationRecord): Promise<Result_3>;
+    createPermit(permit: PermitRecord): Promise<Result_3>;
+    createRisk(risk: RiskRecord): Promise<Result_3>;
+    createTrainingRecord(record: TrainingRecord): Promise<Result_3>;
+    createUser(user: UserRecord): Promise<Result_3>;
+    deleteCapa(id: string): Promise<Result_1>;
+    deleteDepartment(id: string): Promise<Result_1>;
+    deleteESGRecord(id: string): Promise<Result_1>;
+    deleteEnvironmentRecord(id: string): Promise<Result_1>;
+    deleteIncident(id: string): Promise<Result_1>;
+    deleteInspection(id: string): Promise<Result_1>;
+    deleteObservation(id: string): Promise<Result_1>;
+    deletePermit(id: string): Promise<Result_1>;
+    deleteRisk(id: string): Promise<Result_1>;
+    deleteTrainingRecord(id: string): Promise<Result_1>;
+    deleteUser(id: string): Promise<Result_1>;
     getActivityFeed(): Promise<Array<ActivityFeedItem>>;
     getCapas(): Promise<Array<CapaRecord>>;
     getDashboardStats(): Promise<DashboardStats>;
@@ -546,7 +554,7 @@ export interface backendInterface {
     getESGRecordsByPeriod(period: string): Promise<Array<ESGRecord>>;
     getEnvironmentRecords(): Promise<Array<EnvironmentRecord>>;
     getIncident(id: string): Promise<IncidentRecord | null>;
-    getIncidentAttachments(incidentId: string): Promise<Result_4>;
+    getIncidentAttachments(incidentId: string): Promise<Result_5>;
     getIncidents(): Promise<Array<IncidentRecord>>;
     getInspections(): Promise<Array<InspectionRecord>>;
     getNotifLastRead(): Promise<bigint | null>;
@@ -556,55 +564,57 @@ export interface backendInterface {
     getRisks(): Promise<Array<RiskRecord>>;
     getTrainingRecords(): Promise<Array<TrainingRecord>>;
     getUsers(): Promise<Array<UserRecord>>;
-    login(email: string, password: string): Promise<Result_3>;
+    login(email: string, password: string): Promise<Result_4>;
     markNotificationsRead(): Promise<void>;
-    removeIncidentAttachment(incidentId: string, attachmentId: string): Promise<Result>;
+    removeIncidentAttachment(incidentId: string, attachmentId: string): Promise<Result_1>;
     runDeadlineChecks(): Promise<void>;
     seedMockData(): Promise<string>;
+    sendMobileOtp(email: string, mobileNumber: string): Promise<Result_3>;
     sendTestNotification(): Promise<string>;
-    updateCapa(id: string, capa: CapaRecord): Promise<Result>;
-    updateCapaStatus(id: string, status: CapaStatus): Promise<Result>;
-    updateESGRecord(record: ESGRecord): Promise<Result_2>;
-    updateESGStatus(id: string, status: ESGStatus, approvedBy: string, approvedAt: Timestamp): Promise<Result_1>;
-    updateIncident(id: string, incident: IncidentRecord): Promise<Result>;
-    updateIncidentStatus(id: string, status: IncidentStatus): Promise<Result>;
-    updateInspectionStatus(id: string, status: InspectionStatus): Promise<Result>;
-    updateObservation(id: string, obs: ObservationRecord): Promise<Result>;
-    updateObservationStatus(id: string, status: ObservationStatus): Promise<Result>;
-    updatePermitStatus(id: string, status: PermitStatus, callerId: string, callerRole: string): Promise<Result>;
-    updateRiskStatus(id: string, status: RiskStatus): Promise<Result>;
-    updateTrainingStatus(id: string, status: TrainingStatus): Promise<Result>;
-    updateUser(id: string, user: UserRecord): Promise<Result>;
+    updateCapa(id: string, capa: CapaRecord): Promise<Result_1>;
+    updateCapaStatus(id: string, status: CapaStatus): Promise<Result_1>;
+    updateESGRecord(record: ESGRecord): Promise<Result_3>;
+    updateESGStatus(id: string, status: ESGStatus, approvedBy: string, approvedAt: Timestamp): Promise<Result_2>;
+    updateIncident(id: string, incident: IncidentRecord): Promise<Result_1>;
+    updateIncidentStatus(id: string, status: IncidentStatus): Promise<Result_1>;
+    updateInspectionStatus(id: string, status: InspectionStatus): Promise<Result_1>;
+    updateObservation(id: string, obs: ObservationRecord): Promise<Result_1>;
+    updateObservationStatus(id: string, status: ObservationStatus): Promise<Result_1>;
+    updatePermitStatus(id: string, status: PermitStatus, callerId: string, callerRole: string): Promise<Result_1>;
+    updateRiskStatus(id: string, status: RiskStatus): Promise<Result_1>;
+    updateTrainingStatus(id: string, status: TrainingStatus): Promise<Result_1>;
+    updateUser(id: string, user: UserRecord): Promise<Result_1>;
+    verifyMobileOtp(email: string, otp: string): Promise<Result>;
 }
-import type { AttachmentMeta as _AttachmentMeta, AuthSession as _AuthSession, CapaRecord as _CapaRecord, CapaStatus as _CapaStatus, ESGEnvironmental as _ESGEnvironmental, ESGGovernance as _ESGGovernance, ESGRecord as _ESGRecord, ESGSocial as _ESGSocial, ESGStatus as _ESGStatus, EmergencyContact as _EmergencyContact, EnvironmentRecord as _EnvironmentRecord, GasTestResults as _GasTestResults, HazardControl as _HazardControl, IncidentRecord as _IncidentRecord, IncidentStatus as _IncidentStatus, InspectionRecord as _InspectionRecord, InspectionStatus as _InspectionStatus, ObservationRecord as _ObservationRecord, ObservationStatus as _ObservationStatus, ObservationType as _ObservationType, PermitRecord as _PermitRecord, PermitSignatures as _PermitSignatures, PermitStatus as _PermitStatus, PermitType as _PermitType, PersonInvolved as _PersonInvolved, RecordId as _RecordId, Result as _Result, Result_1 as _Result_1, Result_2 as _Result_2, Result_3 as _Result_3, Result_4 as _Result_4, RiskLevel as _RiskLevel, RiskRecord as _RiskRecord, RiskStatus as _RiskStatus, Timestamp as _Timestamp, ToolboxTalk as _ToolboxTalk, TrainingRecord as _TrainingRecord, TrainingStatus as _TrainingStatus, UserId as _UserId, UserRecord as _UserRecord, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { AttachmentMeta as _AttachmentMeta, AuthSession as _AuthSession, CapaRecord as _CapaRecord, CapaStatus as _CapaStatus, ESGEnvironmental as _ESGEnvironmental, ESGGovernance as _ESGGovernance, ESGRecord as _ESGRecord, ESGSocial as _ESGSocial, ESGStatus as _ESGStatus, EmergencyContact as _EmergencyContact, EnvironmentRecord as _EnvironmentRecord, GasTestResults as _GasTestResults, HazardControl as _HazardControl, IncidentRecord as _IncidentRecord, IncidentStatus as _IncidentStatus, InspectionRecord as _InspectionRecord, InspectionStatus as _InspectionStatus, ObservationRecord as _ObservationRecord, ObservationStatus as _ObservationStatus, ObservationType as _ObservationType, PermitRecord as _PermitRecord, PermitSignatures as _PermitSignatures, PermitStatus as _PermitStatus, PermitType as _PermitType, PersonInvolved as _PersonInvolved, RecordId as _RecordId, Result as _Result, Result_1 as _Result_1, Result_2 as _Result_2, Result_3 as _Result_3, Result_4 as _Result_4, Result_5 as _Result_5, RiskLevel as _RiskLevel, RiskRecord as _RiskRecord, RiskStatus as _RiskStatus, Timestamp as _Timestamp, ToolboxTalk as _ToolboxTalk, TrainingRecord as _TrainingRecord, TrainingStatus as _TrainingStatus, UserId as _UserId, UserRecord as _UserRecord, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async activateUser(arg0: string): Promise<Result> {
+    async activateUser(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.activateUser(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.activateUser(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async addIncidentAttachment(arg0: string, arg1: AttachmentMeta): Promise<Result> {
+    async addIncidentAttachment(arg0: string, arg1: AttachmentMeta): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.addIncidentAttachment(arg0, arg1);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.addIncidentAttachment(arg0, arg1);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
     async calculateESGScore(): Promise<number> {
@@ -621,312 +631,312 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createCapa(arg0: CapaRecord): Promise<Result_2> {
+    async createCapa(arg0: CapaRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createCapa(to_candid_CapaRecord_n3(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createCapa(to_candid_CapaRecord_n3(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createDepartment(arg0: DepartmentRecord): Promise<Result_2> {
+    async createDepartment(arg0: DepartmentRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createDepartment(arg0);
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createDepartment(arg0);
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createESGRecord(arg0: ESGRecord): Promise<Result_2> {
+    async createESGRecord(arg0: ESGRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createESGRecord(to_candid_ESGRecord_n9(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createESGRecord(to_candid_ESGRecord_n9(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createEnvironmentRecord(arg0: EnvironmentRecord): Promise<Result_2> {
+    async createEnvironmentRecord(arg0: EnvironmentRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createEnvironmentRecord(to_candid_EnvironmentRecord_n13(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createEnvironmentRecord(to_candid_EnvironmentRecord_n13(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createIncident(arg0: IncidentRecord): Promise<Result_2> {
+    async createIncident(arg0: IncidentRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createIncident(to_candid_IncidentRecord_n15(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createIncident(to_candid_IncidentRecord_n15(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createInspection(arg0: InspectionRecord): Promise<Result_2> {
+    async createInspection(arg0: InspectionRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createInspection(to_candid_InspectionRecord_n19(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createInspection(to_candid_InspectionRecord_n19(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createObservation(arg0: ObservationRecord): Promise<Result_2> {
+    async createObservation(arg0: ObservationRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createObservation(to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createObservation(to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createPermit(arg0: PermitRecord): Promise<Result_2> {
+    async createPermit(arg0: PermitRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createPermit(to_candid_PermitRecord_n29(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createPermit(to_candid_PermitRecord_n29(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createRisk(arg0: RiskRecord): Promise<Result_2> {
+    async createRisk(arg0: RiskRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createRisk(to_candid_RiskRecord_n35(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createRisk(to_candid_RiskRecord_n35(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createTrainingRecord(arg0: TrainingRecord): Promise<Result_2> {
+    async createTrainingRecord(arg0: TrainingRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createTrainingRecord(to_candid_TrainingRecord_n41(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createTrainingRecord(to_candid_TrainingRecord_n41(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createUser(arg0: UserRecord): Promise<Result_2> {
+    async createUser(arg0: UserRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.createUser(to_candid_UserRecord_n45(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.createUser(to_candid_UserRecord_n45(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteCapa(arg0: string): Promise<Result> {
+    async deleteCapa(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteCapa(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteCapa(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteDepartment(arg0: string): Promise<Result> {
+    async deleteDepartment(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteDepartment(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteDepartment(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteESGRecord(arg0: string): Promise<Result> {
+    async deleteESGRecord(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteESGRecord(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteESGRecord(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteEnvironmentRecord(arg0: string): Promise<Result> {
+    async deleteEnvironmentRecord(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteEnvironmentRecord(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteEnvironmentRecord(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteIncident(arg0: string): Promise<Result> {
+    async deleteIncident(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteIncident(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteIncident(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteInspection(arg0: string): Promise<Result> {
+    async deleteInspection(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteInspection(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteInspection(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteObservation(arg0: string): Promise<Result> {
+    async deleteObservation(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteObservation(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteObservation(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deletePermit(arg0: string): Promise<Result> {
+    async deletePermit(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deletePermit(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deletePermit(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteRisk(arg0: string): Promise<Result> {
+    async deleteRisk(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteRisk(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteRisk(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteTrainingRecord(arg0: string): Promise<Result> {
+    async deleteTrainingRecord(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteTrainingRecord(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteTrainingRecord(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteUser(arg0: string): Promise<Result> {
+    async deleteUser(arg0: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteUser(arg0);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteUser(arg0);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
     async getActivityFeed(): Promise<Array<ActivityFeedItem>> {
@@ -1041,18 +1051,18 @@ export class Backend implements backendInterface {
             return from_candid_opt_n63(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getIncidentAttachments(arg0: string): Promise<Result_4> {
+    async getIncidentAttachments(arg0: string): Promise<Result_5> {
         if (this.processError) {
             try {
                 const result = await this.actor.getIncidentAttachments(arg0);
-                return from_candid_Result_4_n73(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_5_n73(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getIncidentAttachments(arg0);
-            return from_candid_Result_4_n73(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_5_n73(this._uploadFile, this._downloadFile, result);
         }
     }
     async getIncidents(): Promise<Array<IncidentRecord>> {
@@ -1181,18 +1191,18 @@ export class Backend implements backendInterface {
             return from_candid_vec_n115(this._uploadFile, this._downloadFile, result);
         }
     }
-    async login(arg0: string, arg1: string): Promise<Result_3> {
+    async login(arg0: string, arg1: string): Promise<Result_4> {
         if (this.processError) {
             try {
                 const result = await this.actor.login(arg0, arg1);
-                return from_candid_Result_3_n120(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_4_n120(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.login(arg0, arg1);
-            return from_candid_Result_3_n120(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_4_n120(this._uploadFile, this._downloadFile, result);
         }
     }
     async markNotificationsRead(): Promise<void> {
@@ -1209,18 +1219,18 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async removeIncidentAttachment(arg0: string, arg1: string): Promise<Result> {
+    async removeIncidentAttachment(arg0: string, arg1: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.removeIncidentAttachment(arg0, arg1);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.removeIncidentAttachment(arg0, arg1);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
     async runDeadlineChecks(): Promise<void> {
@@ -1251,6 +1261,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async sendMobileOtp(arg0: string, arg1: string): Promise<Result_3> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.sendMobileOtp(arg0, arg1);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.sendMobileOtp(arg0, arg1);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async sendTestNotification(): Promise<string> {
         if (this.processError) {
             try {
@@ -1265,186 +1289,200 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateCapa(arg0: string, arg1: CapaRecord): Promise<Result> {
+    async updateCapa(arg0: string, arg1: CapaRecord): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateCapa(arg0, to_candid_CapaRecord_n3(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateCapa(arg0, to_candid_CapaRecord_n3(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateCapaStatus(arg0: string, arg1: CapaStatus): Promise<Result> {
+    async updateCapaStatus(arg0: string, arg1: CapaStatus): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateCapaStatus(arg0, to_candid_CapaStatus_n5(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateCapaStatus(arg0, to_candid_CapaStatus_n5(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateESGRecord(arg0: ESGRecord): Promise<Result_2> {
+    async updateESGRecord(arg0: ESGRecord): Promise<Result_3> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateESGRecord(to_candid_ESGRecord_n9(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateESGRecord(to_candid_ESGRecord_n9(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateESGStatus(arg0: string, arg1: ESGStatus, arg2: string, arg3: Timestamp): Promise<Result_1> {
+    async updateESGStatus(arg0: string, arg1: ESGStatus, arg2: string, arg3: Timestamp): Promise<Result_2> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateESGStatus(arg0, to_candid_ESGStatus_n11(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-                return from_candid_Result_1_n122(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_2_n122(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateESGStatus(arg0, to_candid_ESGStatus_n11(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-            return from_candid_Result_1_n122(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_2_n122(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateIncident(arg0: string, arg1: IncidentRecord): Promise<Result> {
+    async updateIncident(arg0: string, arg1: IncidentRecord): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateIncident(arg0, to_candid_IncidentRecord_n15(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateIncident(arg0, to_candid_IncidentRecord_n15(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateIncidentStatus(arg0: string, arg1: IncidentStatus): Promise<Result> {
+    async updateIncidentStatus(arg0: string, arg1: IncidentStatus): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateIncidentStatus(arg0, to_candid_IncidentStatus_n17(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateIncidentStatus(arg0, to_candid_IncidentStatus_n17(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateInspectionStatus(arg0: string, arg1: InspectionStatus): Promise<Result> {
+    async updateInspectionStatus(arg0: string, arg1: InspectionStatus): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateInspectionStatus(arg0, to_candid_InspectionStatus_n21(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateInspectionStatus(arg0, to_candid_InspectionStatus_n21(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateObservation(arg0: string, arg1: ObservationRecord): Promise<Result> {
+    async updateObservation(arg0: string, arg1: ObservationRecord): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateObservation(arg0, to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateObservation(arg0, to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateObservationStatus(arg0: string, arg1: ObservationStatus): Promise<Result> {
+    async updateObservationStatus(arg0: string, arg1: ObservationStatus): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateObservationStatus(arg0, to_candid_ObservationStatus_n25(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateObservationStatus(arg0, to_candid_ObservationStatus_n25(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updatePermitStatus(arg0: string, arg1: PermitStatus, arg2: string, arg3: string): Promise<Result> {
+    async updatePermitStatus(arg0: string, arg1: PermitStatus, arg2: string, arg3: string): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updatePermitStatus(arg0, to_candid_PermitStatus_n31(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updatePermitStatus(arg0, to_candid_PermitStatus_n31(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateRiskStatus(arg0: string, arg1: RiskStatus): Promise<Result> {
+    async updateRiskStatus(arg0: string, arg1: RiskStatus): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateRiskStatus(arg0, to_candid_RiskStatus_n37(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateRiskStatus(arg0, to_candid_RiskStatus_n37(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateTrainingStatus(arg0: string, arg1: TrainingStatus): Promise<Result> {
+    async updateTrainingStatus(arg0: string, arg1: TrainingStatus): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateTrainingStatus(arg0, to_candid_TrainingStatus_n43(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateTrainingStatus(arg0, to_candid_TrainingStatus_n43(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateUser(arg0: string, arg1: UserRecord): Promise<Result> {
+    async updateUser(arg0: string, arg1: UserRecord): Promise<Result_1> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateUser(arg0, to_candid_UserRecord_n45(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateUser(arg0, to_candid_UserRecord_n45(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async verifyMobileOtp(arg0: string, arg1: string): Promise<Result> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.verifyMobileOtp(arg0, arg1);
+                return from_candid_Result_n124(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.verifyMobileOtp(arg0, arg1);
+            return from_candid_Result_n124(this._uploadFile, this._downloadFile, result);
         }
     }
 }
@@ -1493,20 +1531,23 @@ function from_candid_PermitStatus_n92(_uploadFile: (file: ExternalBlob) => Promi
 function from_candid_PermitType_n96(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _PermitType): PermitType {
     return from_candid_variant_n97(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n122(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_1): Result_1 {
+function from_candid_Result_1_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_1): Result_1 {
+    return from_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_2_n122(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_2): Result_2 {
     return from_candid_variant_n123(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_2_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_2): Result_2 {
+function from_candid_Result_3_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_3): Result_3 {
     return from_candid_variant_n8(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_3_n120(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_3): Result_3 {
+function from_candid_Result_4_n120(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_4): Result_4 {
     return from_candid_variant_n121(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_4_n73(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_4): Result_4 {
+function from_candid_Result_5_n73(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_5): Result_5 {
     return from_candid_variant_n74(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result): Result {
-    return from_candid_variant_n2(_uploadFile, _downloadFile, value);
+function from_candid_Result_n124(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result): Result {
+    return from_candid_variant_n125(_uploadFile, _downloadFile, value);
 }
 function from_candid_RiskLevel_n107(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _RiskLevel): RiskLevel {
     return from_candid_variant_n108(_uploadFile, _downloadFile, value);
@@ -2064,6 +2105,8 @@ function from_candid_variant_n113(_uploadFile: (file: ExternalBlob) => Promise<U
     return "notStarted" in value ? TrainingStatus.notStarted : "pending" in value ? TrainingStatus.pending : "completed" in value ? TrainingStatus.completed : "overdue" in value ? TrainingStatus.overdue : value;
 }
 function from_candid_variant_n119(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    departmentHOD: null;
+} | {
     supervisor: null;
 } | {
     systemAdmin: null;
@@ -2078,7 +2121,7 @@ function from_candid_variant_n119(_uploadFile: (file: ExternalBlob) => Promise<U
 } | {
     contractorAdmin: null;
 }): UserRole {
-    return "supervisor" in value ? UserRole.supervisor : "systemAdmin" in value ? UserRole.systemAdmin : "ehsManager" in value ? UserRole.ehsManager : "areaInCharge" in value ? UserRole.areaInCharge : "employee" in value ? UserRole.employee : "safetyOfficer" in value ? UserRole.safetyOfficer : "contractorAdmin" in value ? UserRole.contractorAdmin : value;
+    return "departmentHOD" in value ? UserRole.departmentHOD : "supervisor" in value ? UserRole.supervisor : "systemAdmin" in value ? UserRole.systemAdmin : "ehsManager" in value ? UserRole.ehsManager : "areaInCharge" in value ? UserRole.areaInCharge : "employee" in value ? UserRole.employee : "safetyOfficer" in value ? UserRole.safetyOfficer : "contractorAdmin" in value ? UserRole.contractorAdmin : value;
 }
 function from_candid_variant_n121(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     ok: _AuthSession;
@@ -2113,6 +2156,25 @@ function from_candid_variant_n123(_uploadFile: (file: ExternalBlob) => Promise<U
     return "ok" in value ? {
         __kind__: "ok",
         ok: from_candid_ESGRecord_n56(_uploadFile, _downloadFile, value.ok)
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n125(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: boolean;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: boolean;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
     } : "err" in value ? {
         __kind__: "err",
         err: value.err
@@ -3072,6 +3134,8 @@ function to_candid_variant_n44(_uploadFile: (file: ExternalBlob) => Promise<Uint
     } : value;
 }
 function to_candid_variant_n48(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
+    departmentHOD: null;
+} | {
     supervisor: null;
 } | {
     systemAdmin: null;
@@ -3086,7 +3150,9 @@ function to_candid_variant_n48(_uploadFile: (file: ExternalBlob) => Promise<Uint
 } | {
     contractorAdmin: null;
 } {
-    return value == UserRole.supervisor ? {
+    return value == UserRole.departmentHOD ? {
+        departmentHOD: null
+    } : value == UserRole.supervisor ? {
         supervisor: null
     } : value == UserRole.systemAdmin ? {
         systemAdmin: null

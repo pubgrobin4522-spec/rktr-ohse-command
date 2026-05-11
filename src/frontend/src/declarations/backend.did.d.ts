@@ -307,15 +307,17 @@ export interface PersonInvolved {
   'department' : string,
 }
 export type RecordId = string;
-export type Result = { 'ok' : null } |
+export type Result = { 'ok' : boolean } |
   { 'err' : string };
-export type Result_1 = { 'ok' : ESGRecord } |
+export type Result_1 = { 'ok' : null } |
   { 'err' : string };
-export type Result_2 = { 'ok' : string } |
+export type Result_2 = { 'ok' : ESGRecord } |
   { 'err' : string };
-export type Result_3 = { 'ok' : AuthSession } |
+export type Result_3 = { 'ok' : string } |
   { 'err' : string };
-export type Result_4 = { 'ok' : Array<AttachmentMeta> } |
+export type Result_4 = { 'ok' : AuthSession } |
+  { 'err' : string };
+export type Result_5 = { 'ok' : Array<AttachmentMeta> } |
   { 'err' : string };
 export type RiskLevel = { 'low' : null } |
   { 'high' : null } |
@@ -377,7 +379,8 @@ export interface UserRecord {
   'employeeNumber' : string,
   'department' : string,
 }
-export type UserRole = { 'supervisor' : null } |
+export type UserRole = { 'departmentHOD' : null } |
+  { 'supervisor' : null } |
   { 'systemAdmin' : null } |
   { 'ehsManager' : null } |
   { 'areaInCharge' : null } |
@@ -385,31 +388,31 @@ export type UserRole = { 'supervisor' : null } |
   { 'safetyOfficer' : null } |
   { 'contractorAdmin' : null };
 export interface _SERVICE {
-  'activateUser' : ActorMethod<[string], Result>,
-  'addIncidentAttachment' : ActorMethod<[string, AttachmentMeta], Result>,
+  'activateUser' : ActorMethod<[string], Result_1>,
+  'addIncidentAttachment' : ActorMethod<[string, AttachmentMeta], Result_1>,
   'calculateESGScore' : ActorMethod<[], number>,
-  'createCapa' : ActorMethod<[CapaRecord], Result_2>,
-  'createDepartment' : ActorMethod<[DepartmentRecord], Result_2>,
-  'createESGRecord' : ActorMethod<[ESGRecord], Result_2>,
-  'createEnvironmentRecord' : ActorMethod<[EnvironmentRecord], Result_2>,
-  'createIncident' : ActorMethod<[IncidentRecord], Result_2>,
-  'createInspection' : ActorMethod<[InspectionRecord], Result_2>,
-  'createObservation' : ActorMethod<[ObservationRecord], Result_2>,
-  'createPermit' : ActorMethod<[PermitRecord], Result_2>,
-  'createRisk' : ActorMethod<[RiskRecord], Result_2>,
-  'createTrainingRecord' : ActorMethod<[TrainingRecord], Result_2>,
-  'createUser' : ActorMethod<[UserRecord], Result_2>,
-  'deleteCapa' : ActorMethod<[string], Result>,
-  'deleteDepartment' : ActorMethod<[string], Result>,
-  'deleteESGRecord' : ActorMethod<[string], Result>,
-  'deleteEnvironmentRecord' : ActorMethod<[string], Result>,
-  'deleteIncident' : ActorMethod<[string], Result>,
-  'deleteInspection' : ActorMethod<[string], Result>,
-  'deleteObservation' : ActorMethod<[string], Result>,
-  'deletePermit' : ActorMethod<[string], Result>,
-  'deleteRisk' : ActorMethod<[string], Result>,
-  'deleteTrainingRecord' : ActorMethod<[string], Result>,
-  'deleteUser' : ActorMethod<[string], Result>,
+  'createCapa' : ActorMethod<[CapaRecord], Result_3>,
+  'createDepartment' : ActorMethod<[DepartmentRecord], Result_3>,
+  'createESGRecord' : ActorMethod<[ESGRecord], Result_3>,
+  'createEnvironmentRecord' : ActorMethod<[EnvironmentRecord], Result_3>,
+  'createIncident' : ActorMethod<[IncidentRecord], Result_3>,
+  'createInspection' : ActorMethod<[InspectionRecord], Result_3>,
+  'createObservation' : ActorMethod<[ObservationRecord], Result_3>,
+  'createPermit' : ActorMethod<[PermitRecord], Result_3>,
+  'createRisk' : ActorMethod<[RiskRecord], Result_3>,
+  'createTrainingRecord' : ActorMethod<[TrainingRecord], Result_3>,
+  'createUser' : ActorMethod<[UserRecord], Result_3>,
+  'deleteCapa' : ActorMethod<[string], Result_1>,
+  'deleteDepartment' : ActorMethod<[string], Result_1>,
+  'deleteESGRecord' : ActorMethod<[string], Result_1>,
+  'deleteEnvironmentRecord' : ActorMethod<[string], Result_1>,
+  'deleteIncident' : ActorMethod<[string], Result_1>,
+  'deleteInspection' : ActorMethod<[string], Result_1>,
+  'deleteObservation' : ActorMethod<[string], Result_1>,
+  'deletePermit' : ActorMethod<[string], Result_1>,
+  'deleteRisk' : ActorMethod<[string], Result_1>,
+  'deleteTrainingRecord' : ActorMethod<[string], Result_1>,
+  'deleteUser' : ActorMethod<[string], Result_1>,
   'getActivityFeed' : ActorMethod<[], Array<ActivityFeedItem>>,
   'getCapas' : ActorMethod<[], Array<CapaRecord>>,
   'getDashboardStats' : ActorMethod<[], DashboardStats>,
@@ -418,7 +421,7 @@ export interface _SERVICE {
   'getESGRecordsByPeriod' : ActorMethod<[string], Array<ESGRecord>>,
   'getEnvironmentRecords' : ActorMethod<[], Array<EnvironmentRecord>>,
   'getIncident' : ActorMethod<[string], [] | [IncidentRecord]>,
-  'getIncidentAttachments' : ActorMethod<[string], Result_4>,
+  'getIncidentAttachments' : ActorMethod<[string], Result_5>,
   'getIncidents' : ActorMethod<[], Array<IncidentRecord>>,
   'getInspections' : ActorMethod<[], Array<InspectionRecord>>,
   'getNotifLastRead' : ActorMethod<[], [] | [bigint]>,
@@ -428,31 +431,36 @@ export interface _SERVICE {
   'getRisks' : ActorMethod<[], Array<RiskRecord>>,
   'getTrainingRecords' : ActorMethod<[], Array<TrainingRecord>>,
   'getUsers' : ActorMethod<[], Array<UserRecord>>,
-  'login' : ActorMethod<[string, string], Result_3>,
+  'login' : ActorMethod<[string, string], Result_4>,
   'markNotificationsRead' : ActorMethod<[], undefined>,
-  'removeIncidentAttachment' : ActorMethod<[string, string], Result>,
+  'removeIncidentAttachment' : ActorMethod<[string, string], Result_1>,
   'runDeadlineChecks' : ActorMethod<[], undefined>,
   'seedMockData' : ActorMethod<[], string>,
+  'sendMobileOtp' : ActorMethod<[string, string], Result_3>,
   'sendTestNotification' : ActorMethod<[], string>,
-  'updateCapa' : ActorMethod<[string, CapaRecord], Result>,
-  'updateCapaStatus' : ActorMethod<[string, CapaStatus], Result>,
-  'updateESGRecord' : ActorMethod<[ESGRecord], Result_2>,
+  'updateCapa' : ActorMethod<[string, CapaRecord], Result_1>,
+  'updateCapaStatus' : ActorMethod<[string, CapaStatus], Result_1>,
+  'updateESGRecord' : ActorMethod<[ESGRecord], Result_3>,
   'updateESGStatus' : ActorMethod<
     [string, ESGStatus, string, Timestamp],
+    Result_2
+  >,
+  'updateIncident' : ActorMethod<[string, IncidentRecord], Result_1>,
+  'updateIncidentStatus' : ActorMethod<[string, IncidentStatus], Result_1>,
+  'updateInspectionStatus' : ActorMethod<[string, InspectionStatus], Result_1>,
+  'updateObservation' : ActorMethod<[string, ObservationRecord], Result_1>,
+  'updateObservationStatus' : ActorMethod<
+    [string, ObservationStatus],
     Result_1
   >,
-  'updateIncident' : ActorMethod<[string, IncidentRecord], Result>,
-  'updateIncidentStatus' : ActorMethod<[string, IncidentStatus], Result>,
-  'updateInspectionStatus' : ActorMethod<[string, InspectionStatus], Result>,
-  'updateObservation' : ActorMethod<[string, ObservationRecord], Result>,
-  'updateObservationStatus' : ActorMethod<[string, ObservationStatus], Result>,
   'updatePermitStatus' : ActorMethod<
     [string, PermitStatus, string, string],
-    Result
+    Result_1
   >,
-  'updateRiskStatus' : ActorMethod<[string, RiskStatus], Result>,
-  'updateTrainingStatus' : ActorMethod<[string, TrainingStatus], Result>,
-  'updateUser' : ActorMethod<[string, UserRecord], Result>,
+  'updateRiskStatus' : ActorMethod<[string, RiskStatus], Result_1>,
+  'updateTrainingStatus' : ActorMethod<[string, TrainingStatus], Result_1>,
+  'updateUser' : ActorMethod<[string, UserRecord], Result_1>,
+  'verifyMobileOtp' : ActorMethod<[string, string], Result>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

@@ -103,6 +103,7 @@ export const ROLE_LABELS: Record<string, string> = {
   employee: "Employee",
   supervisor: "Supervisor",
   areaInCharge: "Area In-Charge",
+  departmentHOD: "Department HOD",
   safetyOfficer: "Safety Officer",
   ehsManager: "EHS Manager",
   contractorAdmin: "Contractor Admin",

@@ -5,6 +5,7 @@ module {
     #employee;
     #supervisor;
     #areaInCharge;
+    #departmentHOD;
     #safetyOfficer;
     #ehsManager;
     #contractorAdmin;
@@ -26,5 +27,11 @@ module {
     userId : Common.UserId;
     token : Text;
     expiresAt : Common.Timestamp;
+  };
+
+  public type OtpRecord = {
+    otp : Text;
+    expires : Int;
+    mobileNumber : Text;
   };
 };

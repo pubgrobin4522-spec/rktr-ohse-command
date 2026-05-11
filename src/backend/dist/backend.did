@@ -2,6 +2,7 @@ type UserRole =
  variant {
    areaInCharge;
    contractorAdmin;
+   departmentHOD;
    ehsManager;
    employee;
    safetyOfficer;
@@ -82,30 +83,35 @@ type RiskLevel =
    medium;
    veryLow;
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: text;
    ok: vec AttachmentMeta;
  };
-type Result_3 = 
+type Result_4 = 
  variant {
    err: text;
    ok: AuthSession;
  };
-type Result_2 = 
+type Result_3 = 
  variant {
    err: text;
    ok: text;
  };
-type Result_1 = 
+type Result_2 = 
  variant {
    err: text;
    ok: ESGRecord;
  };
-type Result = 
+type Result_1 = 
  variant {
    err: text;
    ok;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok: bool;
  };
 type RecordId = text;
 type PersonInvolved = 
@@ -453,32 +459,32 @@ type ActivityFeedItem =
    timestamp: Timestamp;
  };
 service : {
-  activateUser: (id: text) -> (Result);
+  activateUser: (id: text) -> (Result_1);
   addIncidentAttachment: (incidentId: text, attachment: AttachmentMeta) ->
-   (Result);
+   (Result_1);
   calculateESGScore: () -> (float64) query;
-  createCapa: (capa: CapaRecord) -> (Result_2);
-  createDepartment: (dept: DepartmentRecord) -> (Result_2);
-  createESGRecord: ("record": ESGRecord) -> (Result_2);
-  createEnvironmentRecord: ("record": EnvironmentRecord) -> (Result_2);
-  createIncident: (incident: IncidentRecord) -> (Result_2);
-  createInspection: (inspection: InspectionRecord) -> (Result_2);
-  createObservation: (obs: ObservationRecord) -> (Result_2);
-  createPermit: (permit: PermitRecord) -> (Result_2);
-  createRisk: (risk: RiskRecord) -> (Result_2);
-  createTrainingRecord: ("record": TrainingRecord) -> (Result_2);
-  createUser: (user: UserRecord) -> (Result_2);
-  deleteCapa: (id: text) -> (Result);
-  deleteDepartment: (id: text) -> (Result);
-  deleteESGRecord: (id: text) -> (Result);
-  deleteEnvironmentRecord: (id: text) -> (Result);
-  deleteIncident: (id: text) -> (Result);
-  deleteInspection: (id: text) -> (Result);
-  deleteObservation: (id: text) -> (Result);
-  deletePermit: (id: text) -> (Result);
-  deleteRisk: (id: text) -> (Result);
-  deleteTrainingRecord: (id: text) -> (Result);
-  deleteUser: (id: text) -> (Result);
+  createCapa: (capa: CapaRecord) -> (Result_3);
+  createDepartment: (dept: DepartmentRecord) -> (Result_3);
+  createESGRecord: ("record": ESGRecord) -> (Result_3);
+  createEnvironmentRecord: ("record": EnvironmentRecord) -> (Result_3);
+  createIncident: (incident: IncidentRecord) -> (Result_3);
+  createInspection: (inspection: InspectionRecord) -> (Result_3);
+  createObservation: (obs: ObservationRecord) -> (Result_3);
+  createPermit: (permit: PermitRecord) -> (Result_3);
+  createRisk: (risk: RiskRecord) -> (Result_3);
+  createTrainingRecord: ("record": TrainingRecord) -> (Result_3);
+  createUser: (user: UserRecord) -> (Result_3);
+  deleteCapa: (id: text) -> (Result_1);
+  deleteDepartment: (id: text) -> (Result_1);
+  deleteESGRecord: (id: text) -> (Result_1);
+  deleteEnvironmentRecord: (id: text) -> (Result_1);
+  deleteIncident: (id: text) -> (Result_1);
+  deleteInspection: (id: text) -> (Result_1);
+  deleteObservation: (id: text) -> (Result_1);
+  deletePermit: (id: text) -> (Result_1);
+  deleteRisk: (id: text) -> (Result_1);
+  deleteTrainingRecord: (id: text) -> (Result_1);
+  deleteUser: (id: text) -> (Result_1);
   getActivityFeed: () -> (vec ActivityFeedItem) query;
   getCapas: () -> (vec CapaRecord) query;
   getDashboardStats: () -> (DashboardStats) query;
@@ -487,7 +493,7 @@ service : {
   getESGRecordsByPeriod: (period: text) -> (vec ESGRecord) query;
   getEnvironmentRecords: () -> (vec EnvironmentRecord) query;
   getIncident: (id: text) -> (opt IncidentRecord) query;
-  getIncidentAttachments: (incidentId: text) -> (Result_4) query;
+  getIncidentAttachments: (incidentId: text) -> (Result_5) query;
   getIncidents: () -> (vec IncidentRecord) query;
   getInspections: () -> (vec InspectionRecord) query;
   getNotifLastRead: () -> (opt int) query;
@@ -497,26 +503,29 @@ service : {
   getRisks: () -> (vec RiskRecord) query;
   getTrainingRecords: () -> (vec TrainingRecord) query;
   getUsers: () -> (vec UserRecord) query;
-  login: (email: text, password: text) -> (Result_3);
+  login: (email: text, password: text) -> (Result_4);
   markNotificationsRead: () -> ();
   removeIncidentAttachment: (incidentId: text, attachmentId: text) ->
-   (Result);
+   (Result_1);
   runDeadlineChecks: () -> ();
   seedMockData: () -> (text);
+  sendMobileOtp: (email: text, mobileNumber: text) -> (Result_3);
   sendTestNotification: () -> (text);
-  updateCapa: (id: text, capa: CapaRecord) -> (Result);
-  updateCapaStatus: (id: text, status: CapaStatus) -> (Result);
-  updateESGRecord: ("record": ESGRecord) -> (Result_2);
+  updateCapa: (id: text, capa: CapaRecord) -> (Result_1);
+  updateCapaStatus: (id: text, status: CapaStatus) -> (Result_1);
+  updateESGRecord: ("record": ESGRecord) -> (Result_3);
   updateESGStatus: (id: text, status: ESGStatus, approvedBy: text,
-   approvedAt: Timestamp) -> (Result_1);
-  updateIncident: (id: text, incident: IncidentRecord) -> (Result);
-  updateIncidentStatus: (id: text, status: IncidentStatus) -> (Result);
-  updateInspectionStatus: (id: text, status: InspectionStatus) -> (Result);
-  updateObservation: (id: text, obs: ObservationRecord) -> (Result);
-  updateObservationStatus: (id: text, status: ObservationStatus) -> (Result);
+   approvedAt: Timestamp) -> (Result_2);
+  updateIncident: (id: text, incident: IncidentRecord) -> (Result_1);
+  updateIncidentStatus: (id: text, status: IncidentStatus) -> (Result_1);
+  updateInspectionStatus: (id: text, status: InspectionStatus) -> (Result_1);
+  updateObservation: (id: text, obs: ObservationRecord) -> (Result_1);
+  updateObservationStatus: (id: text, status: ObservationStatus) ->
+   (Result_1);
   updatePermitStatus: (id: text, status: PermitStatus, callerId: text,
-   callerRole: text) -> (Result);
-  updateRiskStatus: (id: text, status: RiskStatus) -> (Result);
-  updateTrainingStatus: (id: text, status: TrainingStatus) -> (Result);
-  updateUser: (id: text, user: UserRecord) -> (Result);
+   callerRole: text) -> (Result_1);
+  updateRiskStatus: (id: text, status: RiskStatus) -> (Result_1);
+  updateTrainingStatus: (id: text, status: TrainingStatus) -> (Result_1);
+  updateUser: (id: text, user: UserRecord) -> (Result_1);
+  verifyMobileOtp: (email: text, otp: text) -> (Result);
 }

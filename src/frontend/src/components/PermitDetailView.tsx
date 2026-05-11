@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { STATUS_COLORS } from "@/types";
 import {
+  AlertTriangle,
   ArrowLeft,
   CheckCircle,
   Clock,
@@ -74,13 +75,17 @@ const PERMIT_TYPE_CONFIG: Record<
 };
 
 const WORKFLOW_STEPS = [
-  { key: "draft", label: "Draft" },
-  { key: "submitted", label: "Submitted" },
-  { key: "underReview", label: "Under Review" },
-  { key: "validated", label: "Validated" },
-  { key: "approved", label: "Approved" },
-  { key: "active", label: "Active" },
-  { key: "closed", label: "Closed" },
+  { key: "draft", label: "Draft", sub: "Raised by Supervisor" },
+  { key: "submitted", label: "Submitted", sub: "Awaiting area review" },
+  {
+    key: "underReview",
+    label: "Under Review",
+    sub: "Area In-Charge confirms precautions",
+  },
+  { key: "validated", label: "Validated", sub: "Department HOD confirmed" },
+  { key: "approved", label: "Approved", sub: "Safety Officer approved" },
+  { key: "active", label: "Active", sub: "Permit in progress" },
+  { key: "closed", label: "Closed", sub: "Work completed" },
 ];
 
 function WorkflowStepper({ currentStatus }: { currentStatus: string }) {
@@ -90,34 +95,49 @@ function WorkflowStepper({ currentStatus }: { currentStatus: string }) {
     currentStatus === "rejected" || currentStatus === "expired";
 
   return (
-    <div className="flex items-center gap-1 overflow-x-auto pb-1">
+    <div className="flex items-start gap-1 overflow-x-auto pb-1">
       {WORKFLOW_STEPS.map((step, i) => {
         const isDone = !isRejected && i <= currentIdx;
         const isCurrent = step.key === currentStatus;
         return (
-          <div key={step.key} className="flex items-center gap-1 shrink-0">
-            <div
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-smooth"
-              style={{
-                background: isDone
-                  ? "rgba(24,195,126,0.2)"
-                  : "rgba(255,255,255,0.05)",
-                border: `1px solid ${
-                  isDone ? "rgba(24,195,126,0.4)" : "rgba(255,255,255,0.1)"
-                }`,
-                color: isCurrent
-                  ? "#18C37E"
-                  : isDone
-                    ? "rgba(24,195,126,0.8)"
-                    : "rgba(255,255,255,0.35)",
-              }}
-            >
-              {isDone && <CheckCircle className="w-3 h-3" />}
-              {step.label}
+          <div key={step.key} className="flex items-start gap-1 shrink-0">
+            <div className="flex flex-col items-center gap-0.5">
+              <div
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-smooth"
+                style={{
+                  background: isDone
+                    ? "rgba(24,195,126,0.2)"
+                    : "rgba(255,255,255,0.05)",
+                  border: `1px solid ${
+                    isDone ? "rgba(24,195,126,0.4)" : "rgba(255,255,255,0.1)"
+                  }`,
+                  color: isCurrent
+                    ? "#18C37E"
+                    : isDone
+                      ? "rgba(24,195,126,0.8)"
+                      : "rgba(255,255,255,0.35)",
+                }}
+              >
+                {isDone && <CheckCircle className="w-3 h-3" />}
+                {step.label}
+              </div>
+              {step.sub && (
+                <p
+                  className="text-[10px] text-center leading-tight px-1"
+                  style={{
+                    color: isCurrent
+                      ? "rgba(24,195,126,0.7)"
+                      : "rgba(255,255,255,0.2)",
+                    maxWidth: "90px",
+                  }}
+                >
+                  {step.sub}
+                </p>
+              )}
             </div>
             {i < WORKFLOW_STEPS.length - 1 && (
               <div
-                className="w-5 h-px"
+                className="w-5 h-px mt-3 shrink-0"
                 style={{
                   background:
                     isDone && !isRejected
@@ -168,17 +188,28 @@ function PermitQrCard({ permit }: { permit: PermitRecord }) {
       .catch(() => setQrError(true));
   }, [qrPayload]);
 
+  // Top 3 hazards for the QR card summary
+  const topHazards = (permit.hazardControls ?? []).slice(0, 3);
+  const extraHazards = (permit.hazardControls?.length ?? 0) - 3;
+
   const handleDownloadPdf = async () => {
     if (!qrDataUrl) return;
     const { jsPDF } = await import("jspdf");
+
+    // Calculate dynamic height based on number of hazards
+    const hazardRows = permit.hazardControls ?? [];
+    const extraHeight =
+      hazardRows.length > 0 ? 10 + hazardRows.length * 8 + 6 : 0;
+    const pageH = 120 + extraHeight;
+
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
-      format: [85, 120],
+      format: [85, pageH],
     });
 
     doc.setFillColor(8, 20, 38);
-    doc.rect(0, 0, 85, 120, "F");
+    doc.rect(0, 0, 85, pageH, "F");
 
     doc.setFillColor(24, 195, 126);
     doc.rect(0, 0, 85, 18, "F");
@@ -218,12 +249,53 @@ function PermitQrCard({ permit }: { permit: PermitRecord }) {
       y += 6;
     }
 
+    // Hazard Controls section
+    if (hazardRows.length > 0) {
+      y += 2;
+      // Section header bar
+      doc.setFillColor(234, 179, 8);
+      doc.rect(8, y, 69, 5, "F");
+      doc.setTextColor(8, 20, 38);
+      doc.setFontSize(6.5);
+      doc.setFont("helvetica", "bold");
+      doc.text(`KEY HAZARDS & CONTROLS (${hazardRows.length})`, 42.5, y + 3.5, {
+        align: "center",
+      });
+      y += 7;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(6);
+      for (const hc of hazardRows) {
+        const riskLabel = hc.residualRisk ?? "Low";
+        const riskColor: [number, number, number] =
+          riskLabel === "High"
+            ? [239, 68, 68]
+            : riskLabel === "Medium"
+              ? [234, 179, 8]
+              : [24, 195, 126];
+        doc.setTextColor(riskColor[0], riskColor[1], riskColor[2]);
+        doc.text("\u2022", 9, y);
+        doc.setTextColor(210, 230, 250);
+        doc.text(hc.hazard.substring(0, 36), 13, y);
+        doc.setTextColor(riskColor[0], riskColor[1], riskColor[2]);
+        doc.text(`[${riskLabel}]`, 77, y, { align: "right" });
+        if (hc.control) {
+          y += 4;
+          doc.setTextColor(140, 160, 180);
+          doc.text(`  Controls: ${hc.control.substring(0, 42)}`, 13, y);
+        }
+        y += 5;
+      }
+    }
+
+    // Footer
+    const footerY = pageH - 5;
     doc.setDrawColor(24, 195, 126);
     doc.setLineWidth(0.3);
-    doc.line(8, 115, 77, 115);
+    doc.line(8, footerY - 3, 77, footerY - 3);
     doc.setTextColor(24, 195, 126);
     doc.setFontSize(6);
-    doc.text("Scan QR to view full permit details", 42.5, 118, {
+    doc.text("Scan QR to view full permit details", 42.5, footerY, {
       align: "center",
     });
 
@@ -367,6 +439,61 @@ function PermitQrCard({ permit }: { permit: PermitRecord }) {
           </div>
         </div>
 
+        {/* Key Hazards summary on card */}
+        {topHazards.length > 0 && (
+          <div
+            style={{
+              borderTop: "1px solid rgba(234,179,8,0.3)",
+              background: "rgba(234,179,8,0.06)",
+              padding: "8px 12px",
+            }}
+          >
+            <p
+              className="text-[10px] font-bold uppercase tracking-wide mb-1"
+              style={{ color: "rgba(234,179,8,0.8)" }}
+            >
+              Key Hazards
+            </p>
+            <ul className="space-y-0.5">
+              {topHazards.map((hc) => {
+                const riskColor =
+                  hc.residualRisk === "High"
+                    ? "#ef4444"
+                    : hc.residualRisk === "Medium"
+                      ? "#eab308"
+                      : "#18C37E";
+                return (
+                  <li
+                    key={hc.hazard}
+                    className="flex items-center justify-between gap-1"
+                  >
+                    <span
+                      className="text-[10px] truncate"
+                      style={{ color: "rgba(255,255,255,0.7)" }}
+                    >
+                      • {hc.hazard}
+                    </span>
+                    <span
+                      className="text-[9px] font-semibold flex-shrink-0"
+                      style={{ color: riskColor }}
+                    >
+                      {hc.residualRisk ?? "Low"}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+            {extraHazards > 0 && (
+              <p
+                className="text-[10px] mt-0.5"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
+                +{extraHazards} more hazard{extraHazards !== 1 ? "s" : ""}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Footer */}
         <div
           className="px-3 py-1.5 text-center"
@@ -450,6 +577,8 @@ function CountdownTimer({ endTime }: { endTime: bigint }) {
 
 // Role-based action rules per status
 // Returns list of allowed actions for the given role at the given status
+// Role-based action rules per status
+// Returns list of allowed actions for the given role at the given status
 function getRoleActions(
   status: string,
   role: string,
@@ -461,8 +590,11 @@ function getRoleActions(
   color: string;
   variant: "default" | "destructive" | "outline";
 }[] {
-  const REJECT_ROLES = ["safetyOfficer", "ehsManager", "areaInCharge"];
-  const _REJECT_STATES = ["submitted", "underReview", "validated", "approved"];
+  const isSumesh = userEmail === "sumesh.j@rktrwheels.com";
+  const canApprove = role === "safetyOfficer" || isSumesh;
+  // Only supervisor or systemAdmin can close (not employee)
+  const canClose = role === "supervisor" || isSumesh;
+
   const rejectAction = {
     label: "Reject",
     nextStatus: PermitStatus.rejected,
@@ -471,16 +603,13 @@ function getRoleActions(
     variant: "destructive" as const,
   };
 
-  const isSumesh = userEmail === "sumesh.j@rktrwheels.com";
-  const canApprove = role === "safetyOfficer" || isSumesh;
-  const canClose = role === "supervisor" || role === "employee" || isSumesh;
-
   switch (status) {
     case "draft":
-      if (role === "supervisor" || role === "employee" || isSumesh) {
+      // Only supervisors (and systemAdmin) can submit from draft
+      if (role === "supervisor" || isSumesh) {
         return [
           {
-            label: "Submit for Approval",
+            label: "Submit for Review",
             nextStatus: PermitStatus.submitted,
             icon: <CheckCircle className="w-4 h-4" />,
             color: "#18C37E",
@@ -491,6 +620,7 @@ function getRoleActions(
       return [];
 
     case "submitted":
+      // Area In-Charge takes for review and confirms precautions
       if (role === "areaInCharge" || isSumesh) {
         return [
           {
@@ -500,17 +630,17 @@ function getRoleActions(
             color: "#eab308",
             variant: "default",
           },
-          ...(REJECT_ROLES.includes(role) || isSumesh ? [rejectAction] : []),
+          rejectAction,
         ];
       }
-      if (REJECT_ROLES.includes(role)) return [rejectAction];
       return [];
 
     case "underReview":
-      if (role === "areaInCharge" || isSumesh) {
+      // Department HOD validates — confirms all precautions in place
+      if (role === "departmentHOD" || isSumesh) {
         return [
           {
-            label: "Mark as Validated",
+            label: "Validate — Precautions Confirmed",
             nextStatus: PermitStatus.validated,
             icon: <CheckCircle className="w-4 h-4" />,
             color: "#06b6d4",
@@ -519,14 +649,14 @@ function getRoleActions(
           rejectAction,
         ];
       }
-      if (REJECT_ROLES.includes(role)) return [rejectAction];
       return [];
 
     case "validated":
+      // Safety Officer or Sumesh J approves
       if (canApprove) {
         return [
           {
-            label: "Approve",
+            label: "Approve Permit",
             nextStatus: PermitStatus.approved,
             icon: <CheckCircle className="w-4 h-4" />,
             color: "#18C37E",
@@ -535,10 +665,10 @@ function getRoleActions(
           rejectAction,
         ];
       }
-      if (role === "areaInCharge") return [rejectAction];
       return [];
 
     case "approved":
+      // Safety Officer or Sumesh J activates
       if (canApprove) {
         return [
           {
@@ -551,10 +681,10 @@ function getRoleActions(
           rejectAction,
         ];
       }
-      if (role === "areaInCharge") return [rejectAction];
       return [];
 
     case "active":
+      // Only supervisor or systemAdmin can close
       if (canClose) {
         return [
           {
@@ -574,20 +704,21 @@ function getRoleActions(
 }
 
 // Friendly waiting message for users who can't act at this step
+// Friendly waiting message for users who can't act at this step
 function getWaitingMessage(status: string): string {
   switch (status) {
     case "draft":
-      return "Waiting for supervisor or employee to submit for approval";
+      return "Waiting for Supervisor to submit for review";
     case "submitted":
-      return "Waiting for Area In-Charge to take for review";
+      return "Waiting for Area In-Charge to review precautions";
     case "underReview":
-      return "Waiting for Area In-Charge to validate";
+      return "Waiting for Department HOD to validate";
     case "validated":
-      return "Waiting for Safety Officer (or Sumesh J) to approve";
+      return "Waiting for Safety Officer or System Admin to approve";
     case "approved":
-      return "Waiting for activation";
+      return "Waiting for Safety Officer to activate the permit";
     case "active":
-      return "Waiting for supervisor or employee to close the permit";
+      return "Waiting for Supervisor to close the permit";
     default:
       return "No further action required";
   }
@@ -769,21 +900,147 @@ export default function PermitDetailView({
             </div>
           </div>
 
-          {/* Hazards & PPE */}
-          {(permit.hazards.length > 0 || permit.ppeRequired.length > 0) && (
-            <div
-              className="rounded-xl p-5"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {permit.hazards.length > 0 && (
-                  <div>
-                    <p className="text-xs text-white/40 mb-2 uppercase tracking-wider">
-                      Identified Hazards
-                    </p>
+          {/* Identified Hazards & Control Measures — prominent section for all non-draft statuses */}
+          {permit.status !== "draft" && (
+            <>
+              {/* Hazard Controls — detailed view with residual risk badges */}
+              {permit.hazardControls && permit.hazardControls.length > 0 && (
+                <div
+                  className="rounded-xl overflow-hidden"
+                  style={{
+                    border: "2px solid rgba(234,179,8,0.4)",
+                    background: "rgba(234,179,8,0.04)",
+                  }}
+                  data-ocid="permits.hazard_controls_section"
+                >
+                  {/* Section header */}
+                  <div
+                    className="flex items-center gap-2 px-5 py-3"
+                    style={{
+                      background: "rgba(234,179,8,0.12)",
+                      borderBottom: "1px solid rgba(234,179,8,0.25)",
+                    }}
+                  >
+                    <AlertTriangle
+                      className="w-4 h-4 shrink-0"
+                      style={{ color: "#eab308" }}
+                    />
+                    <h4
+                      className="text-sm font-bold"
+                      style={{ color: "#eab308" }}
+                    >
+                      Identified Hazards &amp; Control Measures
+                    </h4>
+                    <span
+                      className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full"
+                      style={{
+                        background: "rgba(234,179,8,0.2)",
+                        color: "#eab308",
+                        border: "1px solid rgba(234,179,8,0.3)",
+                      }}
+                    >
+                      {permit.hazardControls.length} hazard
+                      {permit.hazardControls.length !== 1 ? "s" : ""} identified
+                    </span>
+                  </div>
+                  {/* Hazard rows */}
+                  <div
+                    className="divide-y"
+                    style={{ borderColor: "rgba(234,179,8,0.12)" }}
+                  >
+                    {permit.hazardControls.map((hc, idx) => {
+                      const riskColor =
+                        hc.residualRisk === "High"
+                          ? {
+                              bg: "rgba(239,68,68,0.2)",
+                              text: "#ef4444",
+                              border: "rgba(239,68,68,0.35)",
+                            }
+                          : hc.residualRisk === "Medium"
+                            ? {
+                                bg: "rgba(234,179,8,0.2)",
+                                text: "#eab308",
+                                border: "rgba(234,179,8,0.35)",
+                              }
+                            : {
+                                bg: "rgba(24,195,126,0.2)",
+                                text: "#18C37E",
+                                border: "rgba(24,195,126,0.35)",
+                              };
+                      return (
+                        <div
+                          // biome-ignore lint/suspicious/noArrayIndexKey: static display list
+                          key={`hc-${idx}`}
+                          className="px-5 py-3"
+                          data-ocid={`permits.hazard_control_item.${idx + 1}`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start gap-2 min-w-0 flex-1">
+                              <AlertTriangle
+                                className="w-3.5 h-3.5 mt-0.5 shrink-0"
+                                style={{ color: "#f97316" }}
+                              />
+                              <div className="min-w-0">
+                                <p className="text-sm font-semibold text-white leading-snug">
+                                  {hc.hazard}
+                                </p>
+                                {hc.control && (
+                                  <p
+                                    className="text-xs mt-1 leading-relaxed"
+                                    style={{ color: "rgba(255,255,255,0.55)" }}
+                                  >
+                                    <span
+                                      style={{
+                                        color: "rgba(255,255,255,0.35)",
+                                      }}
+                                    >
+                                      Controls:{" "}
+                                    </span>
+                                    {hc.control}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <span
+                              className="text-xs font-semibold px-2 py-1 rounded-full shrink-0"
+                              style={{
+                                background: riskColor.bg,
+                                color: riskColor.text,
+                                border: `1px solid ${riskColor.border}`,
+                              }}
+                            >
+                              {hc.residualRisk ?? "Low"} Risk
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Fallback: plain hazards list if no detailed hazardControls */}
+              {(!permit.hazardControls || permit.hazardControls.length === 0) &&
+                permit.hazards.length > 0 && (
+                  <div
+                    className="rounded-xl p-5"
+                    style={{
+                      border: "2px solid rgba(234,179,8,0.3)",
+                      background: "rgba(234,179,8,0.04)",
+                    }}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <AlertTriangle
+                        className="w-4 h-4"
+                        style={{ color: "#eab308" }}
+                      />
+                      <p
+                        className="text-sm font-bold"
+                        style={{ color: "#eab308" }}
+                      >
+                        Identified Hazards
+                      </p>
+                    </div>
                     <ul className="space-y-1">
                       {permit.hazards.map((h) => (
                         <li
@@ -797,30 +1054,37 @@ export default function PermitDetailView({
                     </ul>
                   </div>
                 )}
-                {permit.ppeRequired.length > 0 && (
-                  <div>
-                    <p className="text-xs text-white/40 mb-2 uppercase tracking-wider">
-                      Required PPE
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {permit.ppeRequired.map((p) => (
-                        <span
-                          key={p}
-                          className="text-xs px-2 py-0.5 rounded-full"
-                          style={{
-                            background: "rgba(24,195,126,0.1)",
-                            color: "#18C37E",
-                            border: "1px solid rgba(24,195,126,0.2)",
-                          }}
-                        >
-                          {p}
-                        </span>
-                      ))}
-                    </div>
+
+              {/* Required PPE */}
+              {permit.ppeRequired.length > 0 && (
+                <div
+                  className="rounded-xl p-4"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                  }}
+                >
+                  <p className="text-xs text-white/40 mb-2 uppercase tracking-wider">
+                    Required PPE
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {permit.ppeRequired.map((p) => (
+                      <span
+                        key={p}
+                        className="text-xs px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "rgba(24,195,126,0.1)",
+                          color: "#18C37E",
+                          border: "1px solid rgba(24,195,126,0.2)",
+                        }}
+                      >
+                        {p}
+                      </span>
+                    ))}
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Workflow Actions */}

@@ -28,6 +28,7 @@ module {
     inspections : Map.Map<Text, InspectionTypes.InspectionRecord>;
     environmentRecords : Map.Map<Text, EnvTypes.EnvironmentRecord>;
     departments : Map.Map<Text, DeptTypes.DepartmentRecord>;
+    registrationEvents : List.List<DashTypes.ActivityFeedItem>;
   };
 
   public func getDashboardStats(state : State) : DashTypes.DashboardStats {
@@ -249,7 +250,29 @@ module {
   };
 
   public func getActivityFeed(state : State) : [DashTypes.ActivityFeedItem] {
-    state.activityFeed.toArray();
+    // Merge activity feed with up to 3 most recent registration events
+    let regArray = state.registrationEvents.toArray();
+    let regCount = if (regArray.size() < 3) regArray.size() else 3;
+    let regSlice = Array.tabulate(regCount, func(i) = regArray[regArray.size() - regCount + i]);
+    let combined = List.empty<DashTypes.ActivityFeedItem>();
+    for (item in regSlice.values()) { combined.add(item) };
+    for (item in state.activityFeed.toArray().values()) { combined.add(item) };
+    combined.toArray();
+  };
+
+  public func addRegistrationEvent(
+    registrationEvents : List.List<DashTypes.ActivityFeedItem>,
+    name : Text,
+    email : Text,
+    timestamp : Int,
+  ) : () {
+    let id = "reg_" # email;
+    registrationEvents.add({
+      id;
+      message = name # " registered \u{2014} pending activation";
+      timestamp;
+      category = "registration";
+    });
   };
 
   public func seedMockData(state : State) : Text {

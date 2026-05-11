@@ -2,6 +2,7 @@ import Map "mo:core/Map";
 import List "mo:core/List";
 import Timer "mo:core/Timer";
 
+
 import UsersMixin "mixins/users-api";
 import IncidentsMixin "mixins/incidents-api";
 import PermitsMixin "mixins/permits-api";
@@ -30,6 +31,7 @@ import ESGMixin "mixins/esg-api";
 import ESGTypes "types/esg";
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
+
 
 
 actor {
@@ -151,7 +153,9 @@ actor {
 
   let departments = Map.empty<Text, DeptTypes.DepartmentRecord>();
   let activityFeed = List.empty<DashTypes.ActivityFeedItem>();
+  let registrationEvents = List.empty<DashTypes.ActivityFeedItem>();
   let notifLastRead = Map.empty<Principal, Time.Time>();
+  let otpStore = Map.empty<Text, UserTypes.OtpRecord>();
 
   // Helper to convert frozen 6-value LegacyPermitType to the current 8-value PermitType
   func legacyPermitTypeToNew(pt : LegacyPermitType) : PermitTypes.PermitType {
@@ -286,8 +290,8 @@ actor {
     };
   };
 
-  // --- Mixin includes ---
-  include UsersMixin(usersV2);
+  // ── Mixin includes ───
+  include UsersMixin(usersV2, registrationEvents, otpStore);
   include IncidentsMixin(incidentsV3, usersV2);
   include PermitsMixin(permitsV3, permitCounter, usersV2);
   include RisksMixin(risks);
@@ -298,7 +302,7 @@ actor {
   include ObservationsMixin(observationsV2);
   include DepartmentsMixin(departments);
   include ESGMixin(esgRecords, usersV2);
-  include DashboardMixin(incidentsV3, permitsV3, risks, trainingRecords, observationsV2, activityFeed, usersV2, capas, inspections, environmentRecords, departments, notifLastRead);
+  include DashboardMixin(incidentsV3, permitsV3, risks, trainingRecords, observationsV2, activityFeed, usersV2, capas, inspections, environmentRecords, departments, notifLastRead, registrationEvents);
   include NotificationsMixin(usersV2, incidentsV3, permitsV3, capas, trainingRecords, inspections);
 
   // 24-hour deadline check timer — registered once at actor init

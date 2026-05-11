@@ -17,6 +17,7 @@ import {
   Search,
   Settings,
   Sun,
+  UserPlus,
   Zap,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -51,8 +52,12 @@ export function Header({ onMenuClick }: HeaderProps) {
     return srv;
   })();
 
-  // Map category to dot colour type
-  function notifType(category: string): "success" | "warning" | "danger" {
+  // Map category + optional type_ to colour type
+  function notifType(
+    category: string,
+    type_?: string,
+  ): "success" | "warning" | "danger" | "registration" {
+    if (type_ === "registration") return "registration";
     const c = category.toLowerCase();
     if (
       c.includes("incident") ||
@@ -66,7 +71,8 @@ export function Header({ onMenuClick }: HeaderProps) {
       c.includes("near") ||
       c.includes("pending") ||
       c.includes("submitted") ||
-      c.includes("observation")
+      c.includes("observation") ||
+      c.includes("registration")
     )
       return "warning";
     return "success";
@@ -88,7 +94,10 @@ export function Header({ onMenuClick }: HeaderProps) {
     id: String(item.id),
     text: item.message,
     time: relativeTime(item.timestamp),
-    type: notifType(item.category),
+    type: notifType(
+      item.category,
+      (item as ActivityFeedItem & { type_?: string }).type_,
+    ),
     timestamp: item.timestamp,
   }));
 
@@ -294,17 +303,29 @@ export function Header({ onMenuClick }: HeaderProps) {
                     key={n.id}
                     className="px-4 py-3 border-b border-white/5 hover:bg-white/5 transition-smooth cursor-pointer"
                   >
-                    <div className="flex items-start gap-2">
-                      <div
-                        className={cn(
-                          "w-2 h-2 rounded-full mt-1.5 flex-shrink-0",
-                          n.type === "success"
-                            ? "bg-[#18C37E]"
-                            : n.type === "warning"
-                              ? "bg-yellow-400"
-                              : "bg-red-400",
-                        )}
-                      />
+                    <div className="flex items-start gap-2.5">
+                      {n.type === "registration" ? (
+                        <div
+                          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                          style={{ background: "rgba(251,191,36,0.15)" }}
+                        >
+                          <UserPlus
+                            className="w-3 h-3"
+                            style={{ color: "#fbbf24" }}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className={cn(
+                            "w-2 h-2 rounded-full mt-1.5 flex-shrink-0",
+                            n.type === "success"
+                              ? "bg-[#18C37E]"
+                              : n.type === "warning"
+                                ? "bg-yellow-400"
+                                : "bg-red-400",
+                          )}
+                        />
+                      )}
                       <div className="min-w-0">
                         <p className="text-xs text-white/80 leading-relaxed">
                           {n.text}

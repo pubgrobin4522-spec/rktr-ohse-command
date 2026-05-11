@@ -15,6 +15,7 @@ import {
 import { STATUS_COLORS } from "@/types";
 import {
   AlertTriangle,
+  ArrowLeft,
   Check,
   Clock,
   Container,
@@ -429,7 +430,51 @@ export default function PermitsPage() {
     [createPermit],
   );
 
+  // Only supervisors and system admin can create permits
+  const canRaisePermit =
+    user?.role === "supervisor" || user?.role === "systemAdmin";
+
   if (view === "create") {
+    if (!canRaisePermit) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-6 flex items-center justify-center min-h-[60vh]"
+        >
+          <div
+            className="rounded-2xl p-8 max-w-md w-full text-center"
+            style={{
+              background: "rgba(59,130,246,0.06)",
+              border: "1px solid rgba(59,130,246,0.2)",
+            }}
+          >
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+              style={{ background: "rgba(59,130,246,0.15)" }}
+            >
+              <FileCheck className="w-7 h-7" style={{ color: "#3b82f6" }} />
+            </div>
+            <h3 className="font-display font-bold text-lg text-white mb-2">
+              Permit Creation Restricted
+            </h3>
+            <p className="text-sm text-white/60 leading-relaxed mb-5">
+              Permit creation is restricted to Supervisors. Please contact your
+              Supervisor to raise a permit.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              className="border-white/20 text-white/70 hover:text-white"
+              onClick={() => setView("list")}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Permits
+            </Button>
+          </div>
+        </motion.div>
+      );
+    }
     return (
       <PermitForm
         onBack={() => setView("list")}
@@ -482,16 +527,18 @@ export default function PermitsPage() {
             </p>
           </div>
         </div>
-        <Button
-          type="button"
-          onClick={() => setView("create")}
-          className="gap-2 font-semibold"
-          style={{ background: "#18C37E", color: "#081426" }}
-          data-ocid="permits.create_button"
-        >
-          <Plus className="w-4 h-4" />
-          Create New Permit
-        </Button>
+        {canRaisePermit && (
+          <Button
+            type="button"
+            onClick={() => setView("create")}
+            className="gap-2 font-semibold"
+            style={{ background: "#18C37E", color: "#081426" }}
+            data-ocid="permits.create_button"
+          >
+            <Plus className="w-4 h-4" />
+            Create New Permit
+          </Button>
+        )}
       </div>
 
       {/* Stats */}
@@ -605,15 +652,17 @@ export default function PermitsPage() {
           <p className="text-white/40 text-sm">
             No permits match your current filters
           </p>
-          <Button
-            type="button"
-            size="sm"
-            className="mt-4"
-            style={{ background: "#18C37E", color: "#081426" }}
-            onClick={() => setView("create")}
-          >
-            Create First Permit
-          </Button>
+          {canRaisePermit && (
+            <Button
+              type="button"
+              size="sm"
+              className="mt-4"
+              style={{ background: "#18C37E", color: "#081426" }}
+              onClick={() => setView("create")}
+            >
+              Create First Permit
+            </Button>
+          )}
         </motion.div>
       ) : (
         <motion.div

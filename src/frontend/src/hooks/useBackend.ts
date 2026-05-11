@@ -819,6 +819,45 @@ export function useUpdateIncident() {
   });
 }
 
+// ─── OTP Hooks ───────────────────────────────────────────────────────────────
+
+export function useSendMobileOtp() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async ({
+      email,
+      mobile,
+    }: { email: string; mobile: string }) => {
+      if (!actor) throw new Error("Not connected");
+      const result = await (
+        actor as unknown as {
+          sendMobileOtp: (
+            email: string,
+            mobile: string,
+          ) => Promise<{ __kind__: string; err?: string }>;
+        }
+      ).sendMobileOtp(email, mobile);
+      if (result.__kind__ === "err")
+        throw new Error(result.err ?? "Failed to send OTP");
+    },
+  });
+}
+
+export function useVerifyMobileOtp() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async ({ email, otp }: { email: string; otp: string }) => {
+      if (!actor) throw new Error("Not connected");
+      const verified = await (
+        actor as unknown as {
+          verifyMobileOtp: (email: string, otp: string) => Promise<boolean>;
+        }
+      ).verifyMobileOtp(email, otp);
+      return verified;
+    },
+  });
+}
+
 // ─── ESG Hooks ───────────────────────────────────────────────────────────────
 
 export function useESGRecords() {

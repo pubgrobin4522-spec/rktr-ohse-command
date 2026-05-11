@@ -25,7 +25,7 @@ import {
   User,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -33,11 +33,17 @@ const DEPARTMENTS = RKTR_DEPARTMENTS;
 
 type View = "login" | "register";
 
+/** Validates employee number: exactly 6 digits starting with '23' */
+function isValidEmployeeNumber(val: string): boolean {
+  return /^23\d{4}$/.test(val.trim());
+}
+
 const INPUT_CLASS =
   "pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-[#18C37E]/50 focus:ring-[#18C37E]/20 h-11";
 
 export default function LoginPage() {
   const { isAuthenticated, login, register } = useAuth();
+
   const navigate = useNavigate();
   const [view, setView] = useState<View>("login");
 
@@ -51,9 +57,9 @@ export default function LoginPage() {
 
   // Register state
   const [regName, setRegName] = useState("");
-  const [regEmail, setRegEmail] = useState("");
   const [regDepartment, setRegDepartment] = useState("");
   const [regEmployeeNumber, setRegEmployeeNumber] = useState("");
+  const [regEmpError, setRegEmpError] = useState("");
   const [regMobileNumber, setRegMobileNumber] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regConfirm, setRegConfirm] = useState("");
@@ -101,16 +107,16 @@ export default function LoginPage() {
       setRegError("Full name is required.");
       return;
     }
-    if (!regEmail.trim()) {
-      setRegError("Email address is required.");
-      return;
-    }
     if (!regDepartment.trim()) {
       setRegError("Department is required.");
       return;
     }
     if (!regEmployeeNumber.trim()) {
       setRegError("Employee number is required.");
+      return;
+    }
+    if (!isValidEmployeeNumber(regEmployeeNumber)) {
+      setRegError("Employee number must start with 23 and be exactly 6 digits");
       return;
     }
     if (!regMobileNumber.trim()) {
@@ -133,10 +139,12 @@ export default function LoginPage() {
       setRegError("Passwords do not match.");
       return;
     }
+    // Generate placeholder email from employee number
+    const placeholderEmail = `${regEmployeeNumber.trim()}@rktrwheels.com`;
     setRegLoading(true);
     const result = await register(
       regName,
-      regEmail,
+      placeholderEmail,
       regPassword,
       regDepartment,
       regEmployeeNumber,
@@ -147,8 +155,8 @@ export default function LoginPage() {
       setRegError(result.error ?? "Registration failed.");
     } else {
       setRegSuccess(true);
-      toast.success("Registration successful!", {
-        description: "Your account is pending activation by an administrator.",
+      toast.success("Registration submitted!", {
+        description: "Your account is pending activation by the administrator.",
         duration: 6000,
       });
     }
@@ -490,13 +498,12 @@ export default function LoginPage() {
                         />
                       </div>
                       <div>
-                        <p className="text-white font-semibold text-lg mb-1">
-                          Registration Submitted
+                        <p className="text-white font-semibold text-lg mb-2">
+                          Registration Submitted!
                         </p>
-                        <p className="text-sm text-white/45 leading-relaxed">
-                          Your account request has been received. An admin will
-                          review and activate your account — you'll be able to
-                          sign in once approved.
+                        <p className="text-sm text-white/55 leading-relaxed">
+                          Your account is pending activation by the
+                          administrator. You will be notified once approved.
                         </p>
                       </div>
                       <Button
@@ -563,32 +570,6 @@ export default function LoginPage() {
                         </div>
                       </div>
 
-                      {/* Email Address */}
-                      <div className="space-y-1.5">
-                        <label
-                          htmlFor="reg-email"
-                          className="text-xs font-medium text-white/50 uppercase tracking-wide"
-                        >
-                          Email Address
-                        </label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
-                          <Input
-                            id="reg-email"
-                            type="email"
-                            value={regEmail}
-                            onChange={(e) => {
-                              setRegEmail(e.target.value);
-                              setRegError("");
-                            }}
-                            placeholder="Enter your email address"
-                            autoComplete="email"
-                            data-ocid="register.email_input"
-                            className={INPUT_CLASS}
-                          />
-                        </div>
-                      </div>
-
                       {/* Department */}
                       <div className="space-y-1.5">
                         <label
@@ -640,15 +621,64 @@ export default function LoginPage() {
                             id="reg-empno"
                             type="text"
                             value={regEmployeeNumber}
+                            maxLength={6}
                             onChange={(e) => {
-                              setRegEmployeeNumber(e.target.value);
+                              const val = e.target.value.replace(/\D/g, "");
+                              setRegEmployeeNumber(val);
                               setRegError("");
+                              if (
+                                val.length > 0 &&
+                                !isValidEmployeeNumber(val) &&
+                                val.length === 6
+                              ) {
+                                setRegEmpError(
+                                  "Employee number must start with 23 and be exactly 6 digits",
+                                );
+                              } else {
+                                setRegEmpError("");
+                              }
+                            }}
+                            onBlur={() => {
+                              if (
+                                regEmployeeNumber.length > 0 &&
+                                !isValidEmployeeNumber(regEmployeeNumber)
+                              ) {
+                                setRegEmpError(
+                                  "Employee number must start with 23 and be exactly 6 digits",
+                                );
+                              } else {
+                                setRegEmpError("");
+                              }
                             }}
                             placeholder="Enter your employee number"
                             data-ocid="register.employee_number_input"
-                            className={INPUT_CLASS}
+                            className={`${INPUT_CLASS}${
+                              regEmpError
+                                ? " border-red-500/50 focus:border-red-500/70"
+                                : regEmployeeNumber &&
+                                    isValidEmployeeNumber(regEmployeeNumber)
+                                  ? " border-[#18C37E]/50"
+                                  : ""
+                            }`}
                           />
+                          {regEmployeeNumber &&
+                            isValidEmployeeNumber(regEmployeeNumber) && (
+                              <CheckCircle2
+                                className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4"
+                                style={{ color: "#18C37E" }}
+                              />
+                            )}
                         </div>
+                        {regEmpError && (
+                          <p
+                            className="text-xs flex items-center gap-1 mt-1"
+                            style={{ color: "#fca5a5" }}
+                            data-ocid="register.employee_number.field_error"
+                          >
+                            <AlertCircle className="w-3 h-3 flex-shrink-0" />
+                            {regEmpError}
+                          </p>
+                        )}
                       </div>
 
                       {/* Mobile Number */}

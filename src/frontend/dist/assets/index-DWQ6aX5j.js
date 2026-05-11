@@ -27825,7 +27825,7 @@ const Toaster = ({ ...props }) => {
     }
   );
 };
-const Result = Variant({ "ok": Null, "err": Text$1 });
+const Result_1 = Variant({ "ok": Null, "err": Text$1 });
 const AttachmentMeta = Record({
   "id": Text$1,
   "contentType": Text$1,
@@ -27855,7 +27855,7 @@ const CapaRecord = Record({
   "department": Text$1,
   "rootCause": Text$1
 });
-const Result_2 = Variant({ "ok": Text$1, "err": Text$1 });
+const Result_3 = Variant({ "ok": Text$1, "err": Text$1 });
 const DepartmentRecord = Record({
   "id": RecordId,
   "head": Text$1,
@@ -28135,6 +28135,7 @@ const TrainingRecord = Record({
   "course": Text$1
 });
 const UserRole$1 = Variant({
+  "departmentHOD": Null,
   "supervisor": Null,
   "systemAdmin": Null,
   "ehsManager": Null,
@@ -28210,7 +28211,7 @@ const DashboardStats = Record({
   "totalIncidents": Nat,
   "moduleOpenCounts": ModuleOpenCounts
 });
-const Result_4 = Variant({
+const Result_5 = Variant({
   "ok": Vec(AttachmentMeta),
   "err": Text$1
 });
@@ -28219,34 +28220,39 @@ const AuthSession = Record({
   "expiresAt": Timestamp,
   "userId": UserId
 });
-const Result_3 = Variant({ "ok": AuthSession, "err": Text$1 });
-const Result_1 = Variant({ "ok": ESGRecord, "err": Text$1 });
+const Result_4 = Variant({ "ok": AuthSession, "err": Text$1 });
+const Result_2 = Variant({ "ok": ESGRecord, "err": Text$1 });
+const Result = Variant({ "ok": Bool, "err": Text$1 });
 Service({
-  "activateUser": Func([Text$1], [Result], []),
-  "addIncidentAttachment": Func([Text$1, AttachmentMeta], [Result], []),
+  "activateUser": Func([Text$1], [Result_1], []),
+  "addIncidentAttachment": Func(
+    [Text$1, AttachmentMeta],
+    [Result_1],
+    []
+  ),
   "calculateESGScore": Func([], [Float64], ["query"]),
-  "createCapa": Func([CapaRecord], [Result_2], []),
-  "createDepartment": Func([DepartmentRecord], [Result_2], []),
-  "createESGRecord": Func([ESGRecord], [Result_2], []),
-  "createEnvironmentRecord": Func([EnvironmentRecord], [Result_2], []),
-  "createIncident": Func([IncidentRecord], [Result_2], []),
-  "createInspection": Func([InspectionRecord], [Result_2], []),
-  "createObservation": Func([ObservationRecord], [Result_2], []),
-  "createPermit": Func([PermitRecord], [Result_2], []),
-  "createRisk": Func([RiskRecord], [Result_2], []),
-  "createTrainingRecord": Func([TrainingRecord], [Result_2], []),
-  "createUser": Func([UserRecord], [Result_2], []),
-  "deleteCapa": Func([Text$1], [Result], []),
-  "deleteDepartment": Func([Text$1], [Result], []),
-  "deleteESGRecord": Func([Text$1], [Result], []),
-  "deleteEnvironmentRecord": Func([Text$1], [Result], []),
-  "deleteIncident": Func([Text$1], [Result], []),
-  "deleteInspection": Func([Text$1], [Result], []),
-  "deleteObservation": Func([Text$1], [Result], []),
-  "deletePermit": Func([Text$1], [Result], []),
-  "deleteRisk": Func([Text$1], [Result], []),
-  "deleteTrainingRecord": Func([Text$1], [Result], []),
-  "deleteUser": Func([Text$1], [Result], []),
+  "createCapa": Func([CapaRecord], [Result_3], []),
+  "createDepartment": Func([DepartmentRecord], [Result_3], []),
+  "createESGRecord": Func([ESGRecord], [Result_3], []),
+  "createEnvironmentRecord": Func([EnvironmentRecord], [Result_3], []),
+  "createIncident": Func([IncidentRecord], [Result_3], []),
+  "createInspection": Func([InspectionRecord], [Result_3], []),
+  "createObservation": Func([ObservationRecord], [Result_3], []),
+  "createPermit": Func([PermitRecord], [Result_3], []),
+  "createRisk": Func([RiskRecord], [Result_3], []),
+  "createTrainingRecord": Func([TrainingRecord], [Result_3], []),
+  "createUser": Func([UserRecord], [Result_3], []),
+  "deleteCapa": Func([Text$1], [Result_1], []),
+  "deleteDepartment": Func([Text$1], [Result_1], []),
+  "deleteESGRecord": Func([Text$1], [Result_1], []),
+  "deleteEnvironmentRecord": Func([Text$1], [Result_1], []),
+  "deleteIncident": Func([Text$1], [Result_1], []),
+  "deleteInspection": Func([Text$1], [Result_1], []),
+  "deleteObservation": Func([Text$1], [Result_1], []),
+  "deletePermit": Func([Text$1], [Result_1], []),
+  "deleteRisk": Func([Text$1], [Result_1], []),
+  "deleteTrainingRecord": Func([Text$1], [Result_1], []),
+  "deleteUser": Func([Text$1], [Result_1], []),
   "getActivityFeed": Func([], [Vec(ActivityFeedItem)], ["query"]),
   "getCapas": Func([], [Vec(CapaRecord)], ["query"]),
   "getDashboardStats": Func([], [DashboardStats], ["query"]),
@@ -28263,7 +28269,7 @@ Service({
     ["query"]
   ),
   "getIncident": Func([Text$1], [Opt(IncidentRecord)], ["query"]),
-  "getIncidentAttachments": Func([Text$1], [Result_4], ["query"]),
+  "getIncidentAttachments": Func([Text$1], [Result_5], ["query"]),
   "getIncidents": Func([], [Vec(IncidentRecord)], ["query"]),
   "getInspections": Func([], [Vec(InspectionRecord)], ["query"]),
   "getNotifLastRead": Func([], [Opt(Int)], ["query"]),
@@ -28273,44 +28279,46 @@ Service({
   "getRisks": Func([], [Vec(RiskRecord)], ["query"]),
   "getTrainingRecords": Func([], [Vec(TrainingRecord)], ["query"]),
   "getUsers": Func([], [Vec(UserRecord)], ["query"]),
-  "login": Func([Text$1, Text$1], [Result_3], []),
+  "login": Func([Text$1, Text$1], [Result_4], []),
   "markNotificationsRead": Func([], [], []),
-  "removeIncidentAttachment": Func([Text$1, Text$1], [Result], []),
+  "removeIncidentAttachment": Func([Text$1, Text$1], [Result_1], []),
   "runDeadlineChecks": Func([], [], []),
   "seedMockData": Func([], [Text$1], []),
+  "sendMobileOtp": Func([Text$1, Text$1], [Result_3], []),
   "sendTestNotification": Func([], [Text$1], []),
-  "updateCapa": Func([Text$1, CapaRecord], [Result], []),
-  "updateCapaStatus": Func([Text$1, CapaStatus$1], [Result], []),
-  "updateESGRecord": Func([ESGRecord], [Result_2], []),
+  "updateCapa": Func([Text$1, CapaRecord], [Result_1], []),
+  "updateCapaStatus": Func([Text$1, CapaStatus$1], [Result_1], []),
+  "updateESGRecord": Func([ESGRecord], [Result_3], []),
   "updateESGStatus": Func(
     [Text$1, ESGStatus$1, Text$1, Timestamp],
+    [Result_2],
+    []
+  ),
+  "updateIncident": Func([Text$1, IncidentRecord], [Result_1], []),
+  "updateIncidentStatus": Func([Text$1, IncidentStatus$1], [Result_1], []),
+  "updateInspectionStatus": Func(
+    [Text$1, InspectionStatus$1],
     [Result_1],
     []
   ),
-  "updateIncident": Func([Text$1, IncidentRecord], [Result], []),
-  "updateIncidentStatus": Func([Text$1, IncidentStatus$1], [Result], []),
-  "updateInspectionStatus": Func(
-    [Text$1, InspectionStatus$1],
-    [Result],
-    []
-  ),
-  "updateObservation": Func([Text$1, ObservationRecord], [Result], []),
+  "updateObservation": Func([Text$1, ObservationRecord], [Result_1], []),
   "updateObservationStatus": Func(
     [Text$1, ObservationStatus$1],
-    [Result],
+    [Result_1],
     []
   ),
   "updatePermitStatus": Func(
     [Text$1, PermitStatus$1, Text$1, Text$1],
-    [Result],
+    [Result_1],
     []
   ),
-  "updateRiskStatus": Func([Text$1, RiskStatus$1], [Result], []),
-  "updateTrainingStatus": Func([Text$1, TrainingStatus$1], [Result], []),
-  "updateUser": Func([Text$1, UserRecord], [Result], [])
+  "updateRiskStatus": Func([Text$1, RiskStatus$1], [Result_1], []),
+  "updateTrainingStatus": Func([Text$1, TrainingStatus$1], [Result_1], []),
+  "updateUser": Func([Text$1, UserRecord], [Result_1], []),
+  "verifyMobileOtp": Func([Text$1, Text$1], [Result], [])
 });
 const idlFactory = ({ IDL: IDL2 }) => {
-  const Result2 = IDL2.Variant({ "ok": IDL2.Null, "err": IDL2.Text });
+  const Result_12 = IDL2.Variant({ "ok": IDL2.Null, "err": IDL2.Text });
   const AttachmentMeta2 = IDL2.Record({
     "id": IDL2.Text,
     "contentType": IDL2.Text,
@@ -28340,7 +28348,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "department": IDL2.Text,
     "rootCause": IDL2.Text
   });
-  const Result_22 = IDL2.Variant({ "ok": IDL2.Text, "err": IDL2.Text });
+  const Result_32 = IDL2.Variant({ "ok": IDL2.Text, "err": IDL2.Text });
   const DepartmentRecord2 = IDL2.Record({
     "id": RecordId2,
     "head": IDL2.Text,
@@ -28620,6 +28628,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "course": IDL2.Text
   });
   const UserRole2 = IDL2.Variant({
+    "departmentHOD": IDL2.Null,
     "supervisor": IDL2.Null,
     "systemAdmin": IDL2.Null,
     "ehsManager": IDL2.Null,
@@ -28695,7 +28704,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "totalIncidents": IDL2.Nat,
     "moduleOpenCounts": ModuleOpenCounts2
   });
-  const Result_42 = IDL2.Variant({
+  const Result_52 = IDL2.Variant({
     "ok": IDL2.Vec(AttachmentMeta2),
     "err": IDL2.Text
   });
@@ -28704,38 +28713,39 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "expiresAt": Timestamp2,
     "userId": UserId2
   });
-  const Result_32 = IDL2.Variant({ "ok": AuthSession2, "err": IDL2.Text });
-  const Result_12 = IDL2.Variant({ "ok": ESGRecord2, "err": IDL2.Text });
+  const Result_42 = IDL2.Variant({ "ok": AuthSession2, "err": IDL2.Text });
+  const Result_22 = IDL2.Variant({ "ok": ESGRecord2, "err": IDL2.Text });
+  const Result2 = IDL2.Variant({ "ok": IDL2.Bool, "err": IDL2.Text });
   return IDL2.Service({
-    "activateUser": IDL2.Func([IDL2.Text], [Result2], []),
+    "activateUser": IDL2.Func([IDL2.Text], [Result_12], []),
     "addIncidentAttachment": IDL2.Func(
       [IDL2.Text, AttachmentMeta2],
-      [Result2],
+      [Result_12],
       []
     ),
     "calculateESGScore": IDL2.Func([], [IDL2.Float64], ["query"]),
-    "createCapa": IDL2.Func([CapaRecord2], [Result_22], []),
-    "createDepartment": IDL2.Func([DepartmentRecord2], [Result_22], []),
-    "createESGRecord": IDL2.Func([ESGRecord2], [Result_22], []),
-    "createEnvironmentRecord": IDL2.Func([EnvironmentRecord2], [Result_22], []),
-    "createIncident": IDL2.Func([IncidentRecord2], [Result_22], []),
-    "createInspection": IDL2.Func([InspectionRecord2], [Result_22], []),
-    "createObservation": IDL2.Func([ObservationRecord2], [Result_22], []),
-    "createPermit": IDL2.Func([PermitRecord2], [Result_22], []),
-    "createRisk": IDL2.Func([RiskRecord2], [Result_22], []),
-    "createTrainingRecord": IDL2.Func([TrainingRecord2], [Result_22], []),
-    "createUser": IDL2.Func([UserRecord2], [Result_22], []),
-    "deleteCapa": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteDepartment": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteESGRecord": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteEnvironmentRecord": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteIncident": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteInspection": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteObservation": IDL2.Func([IDL2.Text], [Result2], []),
-    "deletePermit": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteRisk": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteTrainingRecord": IDL2.Func([IDL2.Text], [Result2], []),
-    "deleteUser": IDL2.Func([IDL2.Text], [Result2], []),
+    "createCapa": IDL2.Func([CapaRecord2], [Result_32], []),
+    "createDepartment": IDL2.Func([DepartmentRecord2], [Result_32], []),
+    "createESGRecord": IDL2.Func([ESGRecord2], [Result_32], []),
+    "createEnvironmentRecord": IDL2.Func([EnvironmentRecord2], [Result_32], []),
+    "createIncident": IDL2.Func([IncidentRecord2], [Result_32], []),
+    "createInspection": IDL2.Func([InspectionRecord2], [Result_32], []),
+    "createObservation": IDL2.Func([ObservationRecord2], [Result_32], []),
+    "createPermit": IDL2.Func([PermitRecord2], [Result_32], []),
+    "createRisk": IDL2.Func([RiskRecord2], [Result_32], []),
+    "createTrainingRecord": IDL2.Func([TrainingRecord2], [Result_32], []),
+    "createUser": IDL2.Func([UserRecord2], [Result_32], []),
+    "deleteCapa": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteDepartment": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteESGRecord": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteEnvironmentRecord": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteIncident": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteInspection": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteObservation": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deletePermit": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteRisk": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteTrainingRecord": IDL2.Func([IDL2.Text], [Result_12], []),
+    "deleteUser": IDL2.Func([IDL2.Text], [Result_12], []),
     "getActivityFeed": IDL2.Func([], [IDL2.Vec(ActivityFeedItem2)], ["query"]),
     "getCapas": IDL2.Func([], [IDL2.Vec(CapaRecord2)], ["query"]),
     "getDashboardStats": IDL2.Func([], [DashboardStats2], ["query"]),
@@ -28752,7 +28762,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "getIncident": IDL2.Func([IDL2.Text], [IDL2.Opt(IncidentRecord2)], ["query"]),
-    "getIncidentAttachments": IDL2.Func([IDL2.Text], [Result_42], ["query"]),
+    "getIncidentAttachments": IDL2.Func([IDL2.Text], [Result_52], ["query"]),
     "getIncidents": IDL2.Func([], [IDL2.Vec(IncidentRecord2)], ["query"]),
     "getInspections": IDL2.Func([], [IDL2.Vec(InspectionRecord2)], ["query"]),
     "getNotifLastRead": IDL2.Func([], [IDL2.Opt(IDL2.Int)], ["query"]),
@@ -28762,41 +28772,55 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "getRisks": IDL2.Func([], [IDL2.Vec(RiskRecord2)], ["query"]),
     "getTrainingRecords": IDL2.Func([], [IDL2.Vec(TrainingRecord2)], ["query"]),
     "getUsers": IDL2.Func([], [IDL2.Vec(UserRecord2)], ["query"]),
-    "login": IDL2.Func([IDL2.Text, IDL2.Text], [Result_32], []),
+    "login": IDL2.Func([IDL2.Text, IDL2.Text], [Result_42], []),
     "markNotificationsRead": IDL2.Func([], [], []),
-    "removeIncidentAttachment": IDL2.Func([IDL2.Text, IDL2.Text], [Result2], []),
+    "removeIncidentAttachment": IDL2.Func([IDL2.Text, IDL2.Text], [Result_12], []),
     "runDeadlineChecks": IDL2.Func([], [], []),
     "seedMockData": IDL2.Func([], [IDL2.Text], []),
+    "sendMobileOtp": IDL2.Func([IDL2.Text, IDL2.Text], [Result_32], []),
     "sendTestNotification": IDL2.Func([], [IDL2.Text], []),
-    "updateCapa": IDL2.Func([IDL2.Text, CapaRecord2], [Result2], []),
-    "updateCapaStatus": IDL2.Func([IDL2.Text, CapaStatus2], [Result2], []),
-    "updateESGRecord": IDL2.Func([ESGRecord2], [Result_22], []),
+    "updateCapa": IDL2.Func([IDL2.Text, CapaRecord2], [Result_12], []),
+    "updateCapaStatus": IDL2.Func([IDL2.Text, CapaStatus2], [Result_12], []),
+    "updateESGRecord": IDL2.Func([ESGRecord2], [Result_32], []),
     "updateESGStatus": IDL2.Func(
       [IDL2.Text, ESGStatus2, IDL2.Text, Timestamp2],
+      [Result_22],
+      []
+    ),
+    "updateIncident": IDL2.Func([IDL2.Text, IncidentRecord2], [Result_12], []),
+    "updateIncidentStatus": IDL2.Func(
+      [IDL2.Text, IncidentStatus2],
       [Result_12],
       []
     ),
-    "updateIncident": IDL2.Func([IDL2.Text, IncidentRecord2], [Result2], []),
-    "updateIncidentStatus": IDL2.Func([IDL2.Text, IncidentStatus2], [Result2], []),
     "updateInspectionStatus": IDL2.Func(
       [IDL2.Text, InspectionStatus2],
-      [Result2],
+      [Result_12],
       []
     ),
-    "updateObservation": IDL2.Func([IDL2.Text, ObservationRecord2], [Result2], []),
+    "updateObservation": IDL2.Func(
+      [IDL2.Text, ObservationRecord2],
+      [Result_12],
+      []
+    ),
     "updateObservationStatus": IDL2.Func(
       [IDL2.Text, ObservationStatus2],
-      [Result2],
+      [Result_12],
       []
     ),
     "updatePermitStatus": IDL2.Func(
       [IDL2.Text, PermitStatus2, IDL2.Text, IDL2.Text],
-      [Result2],
+      [Result_12],
       []
     ),
-    "updateRiskStatus": IDL2.Func([IDL2.Text, RiskStatus2], [Result2], []),
-    "updateTrainingStatus": IDL2.Func([IDL2.Text, TrainingStatus2], [Result2], []),
-    "updateUser": IDL2.Func([IDL2.Text, UserRecord2], [Result2], [])
+    "updateRiskStatus": IDL2.Func([IDL2.Text, RiskStatus2], [Result_12], []),
+    "updateTrainingStatus": IDL2.Func(
+      [IDL2.Text, TrainingStatus2],
+      [Result_12],
+      []
+    ),
+    "updateUser": IDL2.Func([IDL2.Text, UserRecord2], [Result_12], []),
+    "verifyMobileOtp": IDL2.Func([IDL2.Text, IDL2.Text], [Result2], [])
   });
 };
 function candid_some(value) {
@@ -28899,6 +28923,7 @@ var TrainingStatus = /* @__PURE__ */ ((TrainingStatus2) => {
   return TrainingStatus2;
 })(TrainingStatus || {});
 var UserRole = /* @__PURE__ */ ((UserRole2) => {
+  UserRole2["departmentHOD"] = "departmentHOD";
   UserRole2["supervisor"] = "supervisor";
   UserRole2["systemAdmin"] = "systemAdmin";
   UserRole2["ehsManager"] = "ehsManager";
@@ -28919,28 +28944,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.activateUser(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.activateUser(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async addIncidentAttachment(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.addIncidentAttachment(arg0, arg1);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.addIncidentAttachment(arg0, arg1);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async calculateESGScore() {
@@ -28961,308 +28986,308 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.createCapa(to_candid_CapaRecord_n3(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createCapa(to_candid_CapaRecord_n3(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createDepartment(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createDepartment(arg0);
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createDepartment(arg0);
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createESGRecord(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createESGRecord(to_candid_ESGRecord_n9(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createESGRecord(to_candid_ESGRecord_n9(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createEnvironmentRecord(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createEnvironmentRecord(to_candid_EnvironmentRecord_n13(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createEnvironmentRecord(to_candid_EnvironmentRecord_n13(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createIncident(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createIncident(to_candid_IncidentRecord_n15(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createIncident(to_candid_IncidentRecord_n15(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createInspection(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createInspection(to_candid_InspectionRecord_n19(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createInspection(to_candid_InspectionRecord_n19(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createObservation(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createObservation(to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createObservation(to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createPermit(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createPermit(to_candid_PermitRecord_n29(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createPermit(to_candid_PermitRecord_n29(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createRisk(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createRisk(to_candid_RiskRecord_n35(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createRisk(to_candid_RiskRecord_n35(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createTrainingRecord(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createTrainingRecord(to_candid_TrainingRecord_n41(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createTrainingRecord(to_candid_TrainingRecord_n41(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async createUser(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createUser(to_candid_UserRecord_n45(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createUser(to_candid_UserRecord_n45(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteCapa(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteCapa(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteCapa(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteDepartment(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteDepartment(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteDepartment(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteESGRecord(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteESGRecord(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteESGRecord(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteEnvironmentRecord(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteEnvironmentRecord(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteEnvironmentRecord(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteIncident(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteIncident(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteIncident(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteInspection(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteInspection(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteInspection(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteObservation(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteObservation(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteObservation(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deletePermit(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deletePermit(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deletePermit(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteRisk(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteRisk(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteRisk(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteTrainingRecord(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteTrainingRecord(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteTrainingRecord(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async deleteUser(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.deleteUser(arg0);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.deleteUser(arg0);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async getActivityFeed() {
@@ -29381,14 +29406,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getIncidentAttachments(arg0);
-        return from_candid_Result_4_n73(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_5_n73(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getIncidentAttachments(arg0);
-      return from_candid_Result_4_n73(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_5_n73(this._uploadFile, this._downloadFile, result);
     }
   }
   async getIncidents() {
@@ -29521,14 +29546,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.login(arg0, arg1);
-        return from_candid_Result_3_n120(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_4_n120(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.login(arg0, arg1);
-      return from_candid_Result_3_n120(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_4_n120(this._uploadFile, this._downloadFile, result);
     }
   }
   async markNotificationsRead() {
@@ -29549,14 +29574,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.removeIncidentAttachment(arg0, arg1);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeIncidentAttachment(arg0, arg1);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async runDeadlineChecks() {
@@ -29587,6 +29612,20 @@ class Backend {
       return result;
     }
   }
+  async sendMobileOtp(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.sendMobileOtp(arg0, arg1);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
+      } catch (e3) {
+        this.processError(e3);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.sendMobileOtp(arg0, arg1);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async sendTestNotification() {
     if (this.processError) {
       try {
@@ -29605,182 +29644,196 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.updateCapa(arg0, to_candid_CapaRecord_n3(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateCapa(arg0, to_candid_CapaRecord_n3(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateCapaStatus(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateCapaStatus(arg0, to_candid_CapaStatus_n5(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateCapaStatus(arg0, to_candid_CapaStatus_n5(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateESGRecord(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.updateESGRecord(to_candid_ESGRecord_n9(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateESGRecord(to_candid_ESGRecord_n9(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_2_n7(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateESGStatus(arg0, arg1, arg2, arg3) {
     if (this.processError) {
       try {
         const result = await this.actor.updateESGStatus(arg0, to_candid_ESGStatus_n11(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-        return from_candid_Result_1_n122(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_2_n122(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateESGStatus(arg0, to_candid_ESGStatus_n11(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-      return from_candid_Result_1_n122(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_2_n122(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateIncident(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateIncident(arg0, to_candid_IncidentRecord_n15(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateIncident(arg0, to_candid_IncidentRecord_n15(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateIncidentStatus(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateIncidentStatus(arg0, to_candid_IncidentStatus_n17(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateIncidentStatus(arg0, to_candid_IncidentStatus_n17(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateInspectionStatus(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateInspectionStatus(arg0, to_candid_InspectionStatus_n21(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateInspectionStatus(arg0, to_candid_InspectionStatus_n21(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateObservation(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateObservation(arg0, to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateObservation(arg0, to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateObservationStatus(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateObservationStatus(arg0, to_candid_ObservationStatus_n25(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateObservationStatus(arg0, to_candid_ObservationStatus_n25(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updatePermitStatus(arg0, arg1, arg2, arg3) {
     if (this.processError) {
       try {
         const result = await this.actor.updatePermitStatus(arg0, to_candid_PermitStatus_n31(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updatePermitStatus(arg0, to_candid_PermitStatus_n31(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateRiskStatus(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateRiskStatus(arg0, to_candid_RiskStatus_n37(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateRiskStatus(arg0, to_candid_RiskStatus_n37(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateTrainingStatus(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateTrainingStatus(arg0, to_candid_TrainingStatus_n43(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateTrainingStatus(arg0, to_candid_TrainingStatus_n43(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateUser(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.updateUser(arg0, to_candid_UserRecord_n45(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateUser(arg0, to_candid_UserRecord_n45(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async verifyMobileOtp(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.verifyMobileOtp(arg0, arg1);
+        return from_candid_Result_n124(this._uploadFile, this._downloadFile, result);
+      } catch (e3) {
+        this.processError(e3);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.verifyMobileOtp(arg0, arg1);
+      return from_candid_Result_n124(this._uploadFile, this._downloadFile, result);
     }
   }
 }
@@ -29829,20 +29882,23 @@ function from_candid_PermitStatus_n92(_uploadFile, _downloadFile, value) {
 function from_candid_PermitType_n96(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n97(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n122(_uploadFile, _downloadFile, value) {
+function from_candid_Result_1_n1(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_2_n122(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n123(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_2_n7(_uploadFile, _downloadFile, value) {
+function from_candid_Result_3_n7(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n8(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_3_n120(_uploadFile, _downloadFile, value) {
+function from_candid_Result_4_n120(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n121(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_4_n73(_uploadFile, _downloadFile, value) {
+function from_candid_Result_5_n73(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n74(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n1(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n2(_uploadFile, _downloadFile, value);
+function from_candid_Result_n124(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n125(_uploadFile, _downloadFile, value);
 }
 function from_candid_RiskLevel_n107(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n108(_uploadFile, _downloadFile, value);
@@ -30092,7 +30148,7 @@ function from_candid_variant_n113(_uploadFile, _downloadFile, value) {
   return "notStarted" in value ? "notStarted" : "pending" in value ? "pending" : "completed" in value ? "completed" : "overdue" in value ? "overdue" : value;
 }
 function from_candid_variant_n119(_uploadFile, _downloadFile, value) {
-  return "supervisor" in value ? "supervisor" : "systemAdmin" in value ? "systemAdmin" : "ehsManager" in value ? "ehsManager" : "areaInCharge" in value ? "areaInCharge" : "employee" in value ? "employee" : "safetyOfficer" in value ? "safetyOfficer" : "contractorAdmin" in value ? "contractorAdmin" : value;
+  return "departmentHOD" in value ? "departmentHOD" : "supervisor" in value ? "supervisor" : "systemAdmin" in value ? "systemAdmin" : "ehsManager" in value ? "ehsManager" : "areaInCharge" in value ? "areaInCharge" : "employee" in value ? "employee" : "safetyOfficer" in value ? "safetyOfficer" : "contractorAdmin" in value ? "contractorAdmin" : value;
 }
 function from_candid_variant_n121(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -30107,6 +30163,15 @@ function from_candid_variant_n123(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_ESGRecord_n56(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: value.err
+  } : value;
+}
+function from_candid_variant_n125(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
     err: value.err
@@ -30564,7 +30629,9 @@ function to_candid_variant_n44(_uploadFile, _downloadFile, value) {
   } : value;
 }
 function to_candid_variant_n48(_uploadFile, _downloadFile, value) {
-  return value == "supervisor" ? {
+  return value == "departmentHOD" ? {
+    departmentHOD: null
+  } : value == "supervisor" ? {
     supervisor: null
   } : value == "systemAdmin" ? {
     systemAdmin: null
@@ -30675,22 +30742,14 @@ function AuthProvider({ children }) {
       const session = result.ok;
       const allUsers = await actor.getUsers();
       const backendUser = allUsers.find((u2) => u2.id === session.userId);
-      const pendingKey = `rktr_reg_${email.toLowerCase()}`;
-      const pendingExtra = (() => {
-        try {
-          return JSON.parse(localStorage.getItem(pendingKey) ?? "{}");
-        } catch {
-          return {};
-        }
-      })();
       const authUser = backendUser ? {
         id: backendUser.id,
         name: backendUser.name,
         email: backendUser.email,
         role: backendUser.role,
         department: backendUser.department,
-        employeeNumber: pendingExtra.employeeNumber,
-        mobileNumber: pendingExtra.mobileNumber
+        employeeNumber: backendUser.employeeNumber,
+        mobileNumber: backendUser.mobileNumber
       } : {
         id: session.userId,
         name: email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c2) => c2.toUpperCase()),
@@ -30730,16 +30789,18 @@ function AuthProvider({ children }) {
         active: false
       });
       if (result.__kind__ === "err") {
-        return { success: false, error: result.err };
+        const raw = result.err.toLowerCase();
+        if (raw.includes("already") || raw.includes("exists") || raw.includes("taken") || raw.includes("duplicate")) {
+          return {
+            success: false,
+            error: "Email already registered. Please sign in or use a different email."
+          };
+        }
+        return {
+          success: false,
+          error: "Registration failed. Please try again."
+        };
       }
-      const pendingKey = `rktr_reg_${email.trim().toLowerCase()}`;
-      localStorage.setItem(
-        pendingKey,
-        JSON.stringify({
-          employeeNumber: employeeNumber.trim(),
-          mobileNumber: mobileNumber.trim()
-        })
-      );
       return { success: true };
     } catch {
       return {
@@ -34197,7 +34258,7 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1t = [
+const __iconNode$1u = [
   [
     "path",
     {
@@ -34206,7 +34267,18 @@ const __iconNode$1t = [
     }
   ]
 ];
-const Activity = createLucideIcon("activity", __iconNode$1t);
+const Activity = createLucideIcon("activity", __iconNode$1u);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1t = [
+  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
+  ["path", { d: "M19 12H5", key: "x3x0zl" }]
+];
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1t);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34214,17 +34286,6 @@ const Activity = createLucideIcon("activity", __iconNode$1t);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1s = [
-  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
-  ["path", { d: "M19 12H5", key: "x3x0zl" }]
-];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1s);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1r = [
   [
     "path",
     {
@@ -34234,14 +34295,14 @@ const __iconNode$1r = [
   ],
   ["circle", { cx: "12", cy: "8", r: "6", key: "1vp47v" }]
 ];
-const Award = createLucideIcon("award", __iconNode$1r);
+const Award = createLucideIcon("award", __iconNode$1s);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1q = [
+const __iconNode$1r = [
   ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
   [
     "path",
@@ -34251,14 +34312,14 @@ const __iconNode$1q = [
     }
   ]
 ];
-const Bell = createLucideIcon("bell", __iconNode$1q);
+const Bell = createLucideIcon("bell", __iconNode$1r);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1p = [
+const __iconNode$1q = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -34268,14 +34329,14 @@ const __iconNode$1p = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$1p);
+const BookOpen = createLucideIcon("book-open", __iconNode$1q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1o = [
+const __iconNode$1p = [
   ["path", { d: "M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z", key: "1b4qmf" }],
   ["path", { d: "M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2", key: "i71pzd" }],
   ["path", { d: "M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2", key: "10jefs" }],
@@ -34284,7 +34345,20 @@ const __iconNode$1o = [
   ["path", { d: "M10 14h4", key: "kelpxr" }],
   ["path", { d: "M10 18h4", key: "1ulq68" }]
 ];
-const Building2 = createLucideIcon("building-2", __iconNode$1o);
+const Building2 = createLucideIcon("building-2", __iconNode$1p);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1o = [
+  ["path", { d: "M8 2v4", key: "1cmpym" }],
+  ["path", { d: "M16 2v4", key: "4m81vk" }],
+  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+  ["path", { d: "M3 10h18", key: "8toen8" }]
+];
+const Calendar = createLucideIcon("calendar", __iconNode$1o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34292,12 +34366,12 @@ const Building2 = createLucideIcon("building-2", __iconNode$1o);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1n = [
-  ["path", { d: "M8 2v4", key: "1cmpym" }],
-  ["path", { d: "M16 2v4", key: "4m81vk" }],
-  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
-  ["path", { d: "M3 10h18", key: "8toen8" }]
+  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }],
+  ["path", { d: "M18 17V9", key: "2bz60n" }],
+  ["path", { d: "M13 17V5", key: "1frdt8" }],
+  ["path", { d: "M8 17v-3", key: "17ska0" }]
 ];
-const Calendar = createLucideIcon("calendar", __iconNode$1n);
+const ChartColumn = createLucideIcon("chart-column", __iconNode$1n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34305,64 +34379,63 @@ const Calendar = createLucideIcon("calendar", __iconNode$1n);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1m = [
-  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }],
-  ["path", { d: "M18 17V9", key: "2bz60n" }],
-  ["path", { d: "M13 17V5", key: "1frdt8" }],
-  ["path", { d: "M8 17v-3", key: "17ska0" }]
-];
-const ChartColumn = createLucideIcon("chart-column", __iconNode$1m);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1l = [
   ["line", { x1: "18", x2: "18", y1: "20", y2: "10", key: "1xfpm4" }],
   ["line", { x1: "12", x2: "12", y1: "20", y2: "4", key: "be30l9" }],
   ["line", { x1: "6", x2: "6", y1: "20", y2: "14", key: "1r4le6" }]
 ];
-const ChartNoAxesColumn = createLucideIcon("chart-no-axes-column", __iconNode$1l);
+const ChartNoAxesColumn = createLucideIcon("chart-no-axes-column", __iconNode$1m);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1k = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$1k);
+const __iconNode$1l = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$1l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1j = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$1j);
+const __iconNode$1k = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$1k);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1i = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
-const ChevronLeft = createLucideIcon("chevron-left", __iconNode$1i);
+const __iconNode$1j = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
+const ChevronLeft = createLucideIcon("chevron-left", __iconNode$1j);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1h = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$1h);
+const __iconNode$1i = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$1i);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1g = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-const ChevronUp = createLucideIcon("chevron-up", __iconNode$1g);
+const __iconNode$1h = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+const ChevronUp = createLucideIcon("chevron-up", __iconNode$1h);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1g = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
+  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+];
+const CircleAlert = createLucideIcon("circle-alert", __iconNode$1g);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34370,11 +34443,10 @@ const ChevronUp = createLucideIcon("chevron-up", __iconNode$1g);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1f = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
-  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+  ["path", { d: "M21.801 10A10 10 0 1 1 17 3.335", key: "yps3ct" }],
+  ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
 ];
-const CircleAlert = createLucideIcon("circle-alert", __iconNode$1f);
+const CircleCheckBig = createLucideIcon("circle-check-big", __iconNode$1f);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34382,10 +34454,10 @@ const CircleAlert = createLucideIcon("circle-alert", __iconNode$1f);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1e = [
-  ["path", { d: "M21.801 10A10 10 0 1 1 17 3.335", key: "yps3ct" }],
-  ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleCheckBig = createLucideIcon("circle-check-big", __iconNode$1e);
+const CircleCheck = createLucideIcon("circle-check", __iconNode$1e);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34394,9 +34466,9 @@ const CircleCheckBig = createLucideIcon("circle-check-big", __iconNode$1e);
  */
 const __iconNode$1d = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["polygon", { points: "10 8 16 12 10 16 10 8", key: "1cimsy" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$1d);
+const CirclePlay = createLucideIcon("circle-play", __iconNode$1d);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34405,9 +34477,10 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$1d);
  */
 const __iconNode$1c = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polygon", { points: "10 8 16 12 10 16 10 8", key: "1cimsy" }]
+  ["path", { d: "M8 12h8", key: "1wcyev" }],
+  ["path", { d: "M12 8v8", key: "napkw2" }]
 ];
-const CirclePlay = createLucideIcon("circle-play", __iconNode$1c);
+const CirclePlus = createLucideIcon("circle-plus", __iconNode$1c);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34416,10 +34489,9 @@ const CirclePlay = createLucideIcon("circle-play", __iconNode$1c);
  */
 const __iconNode$1b = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M8 12h8", key: "1wcyev" }],
-  ["path", { d: "M12 8v8", key: "napkw2" }]
+  ["rect", { x: "9", y: "9", width: "6", height: "6", rx: "1", key: "1ssd4o" }]
 ];
-const CirclePlus = createLucideIcon("circle-plus", __iconNode$1b);
+const CircleStop = createLucideIcon("circle-stop", __iconNode$1b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34428,29 +34500,36 @@ const CirclePlus = createLucideIcon("circle-plus", __iconNode$1b);
  */
 const __iconNode$1a = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["rect", { x: "9", y: "9", width: "6", height: "6", rx: "1", key: "1ssd4o" }]
-];
-const CircleStop = createLucideIcon("circle-stop", __iconNode$1a);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$19 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m15 9-6 6", key: "1uzhvr" }],
   ["path", { d: "m9 9 6 6", key: "z0biqf" }]
 ];
-const CircleX = createLucideIcon("circle-x", __iconNode$19);
+const CircleX = createLucideIcon("circle-x", __iconNode$1a);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$18 = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
-const Circle = createLucideIcon("circle", __iconNode$18);
+const __iconNode$19 = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
+const Circle = createLucideIcon("circle", __iconNode$19);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$18 = [
+  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
+  [
+    "path",
+    {
+      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
+      key: "116196"
+    }
+  ],
+  ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
+];
+const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$18);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34466,9 +34545,12 @@ const __iconNode$17 = [
       key: "116196"
     }
   ],
-  ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
+  ["path", { d: "M12 11h4", key: "1jrz19" }],
+  ["path", { d: "M12 16h4", key: "n85exb" }],
+  ["path", { d: "M8 11h.01", key: "1dfujw" }],
+  ["path", { d: "M8 16h.01", key: "18s6g9" }]
 ];
-const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$17);
+const ClipboardList = createLucideIcon("clipboard-list", __iconNode$17);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34476,20 +34558,10 @@ const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$17);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$16 = [
-  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
-  [
-    "path",
-    {
-      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
-      key: "116196"
-    }
-  ],
-  ["path", { d: "M12 11h4", key: "1jrz19" }],
-  ["path", { d: "M12 16h4", key: "n85exb" }],
-  ["path", { d: "M8 11h.01", key: "1dfujw" }],
-  ["path", { d: "M8 16h.01", key: "18s6g9" }]
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
 ];
-const ClipboardList = createLucideIcon("clipboard-list", __iconNode$16);
+const Clock = createLucideIcon("clock", __iconNode$16);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34497,17 +34569,6 @@ const ClipboardList = createLucideIcon("clipboard-list", __iconNode$16);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$15 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
-];
-const Clock = createLucideIcon("clock", __iconNode$15);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$14 = [
   [
     "path",
     {
@@ -34520,14 +34581,14 @@ const __iconNode$14 = [
   ["path", { d: "M14 19.8v-8.1", key: "159ecu" }],
   ["path", { d: "M18 17.5V9.4", key: "11uown" }]
 ];
-const Container = createLucideIcon("container", __iconNode$14);
+const Container = createLucideIcon("container", __iconNode$15);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$13 = [
+const __iconNode$14 = [
   [
     "path",
     {
@@ -34537,7 +34598,19 @@ const __iconNode$13 = [
   ],
   ["path", { d: "M5 21h14", key: "11awu3" }]
 ];
-const Crown = createLucideIcon("crown", __iconNode$13);
+const Crown = createLucideIcon("crown", __iconNode$14);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$13 = [
+  ["path", { d: "M12 15V3", key: "m9g1x1" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
+  ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
+];
+const Download = createLucideIcon("download", __iconNode$13);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34545,18 +34618,6 @@ const Crown = createLucideIcon("crown", __iconNode$13);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$12 = [
-  ["path", { d: "M12 15V3", key: "m9g1x1" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
-  ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
-];
-const Download = createLucideIcon("download", __iconNode$12);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$11 = [
   [
     "path",
     {
@@ -34572,7 +34633,19 @@ const __iconNode$11 = [
     }
   ]
 ];
-const Droplets = createLucideIcon("droplets", __iconNode$11);
+const Droplets = createLucideIcon("droplets", __iconNode$12);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$11 = [
+  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+];
+const ExternalLink = createLucideIcon("external-link", __iconNode$11);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34580,18 +34653,6 @@ const Droplets = createLucideIcon("droplets", __iconNode$11);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$10 = [
-  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
-  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
-  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
-];
-const ExternalLink = createLucideIcon("external-link", __iconNode$10);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$$ = [
   [
     "path",
     {
@@ -34609,14 +34670,14 @@ const __iconNode$$ = [
   ],
   ["path", { d: "m2 2 20 20", key: "1ooewy" }]
 ];
-const EyeOff = createLucideIcon("eye-off", __iconNode$$);
+const EyeOff = createLucideIcon("eye-off", __iconNode$10);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$_ = [
+const __iconNode$$ = [
   [
     "path",
     {
@@ -34626,7 +34687,19 @@ const __iconNode$_ = [
   ],
   ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
 ];
-const Eye = createLucideIcon("eye", __iconNode$_);
+const Eye = createLucideIcon("eye", __iconNode$$);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$_ = [
+  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
+  ["path", { d: "m9 15 2 2 4-4", key: "1grp1n" }]
+];
+const FileCheck = createLucideIcon("file-check", __iconNode$_);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34636,9 +34709,12 @@ const Eye = createLucideIcon("eye", __iconNode$_);
 const __iconNode$Z = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
   ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "m9 15 2 2 4-4", key: "1grp1n" }]
+  ["path", { d: "M8 13h2", key: "yr2amv" }],
+  ["path", { d: "M14 13h2", key: "un5t4a" }],
+  ["path", { d: "M8 17h2", key: "2yhykz" }],
+  ["path", { d: "M14 17h2", key: "10kma7" }]
 ];
-const FileCheck = createLucideIcon("file-check", __iconNode$Z);
+const FileSpreadsheet = createLucideIcon("file-spreadsheet", __iconNode$Z);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34648,12 +34724,11 @@ const FileCheck = createLucideIcon("file-check", __iconNode$Z);
 const __iconNode$Y = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
   ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "M8 13h2", key: "yr2amv" }],
-  ["path", { d: "M14 13h2", key: "un5t4a" }],
-  ["path", { d: "M8 17h2", key: "2yhykz" }],
-  ["path", { d: "M14 17h2", key: "10kma7" }]
+  ["path", { d: "M10 9H8", key: "b1mrlr" }],
+  ["path", { d: "M16 13H8", key: "t4e002" }],
+  ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileSpreadsheet = createLucideIcon("file-spreadsheet", __iconNode$Y);
+const FileText = createLucideIcon("file-text", __iconNode$Y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34662,12 +34737,10 @@ const FileSpreadsheet = createLucideIcon("file-spreadsheet", __iconNode$Y);
  */
 const __iconNode$X = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "M10 9H8", key: "b1mrlr" }],
-  ["path", { d: "M16 13H8", key: "t4e002" }],
-  ["path", { d: "M16 17H8", key: "z1uh3a" }]
+  ["path", { d: "M12 9v4", key: "juzpu7" }],
+  ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$X);
+const FileWarning = createLucideIcon("file-warning", __iconNode$X);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34676,10 +34749,9 @@ const FileText = createLucideIcon("file-text", __iconNode$X);
  */
 const __iconNode$W = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M12 9v4", key: "juzpu7" }],
-  ["path", { d: "M12 17h.01", key: "p32p05" }]
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }]
 ];
-const FileWarning = createLucideIcon("file-warning", __iconNode$W);
+const File$1 = createLucideIcon("file", __iconNode$W);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34687,17 +34759,6 @@ const FileWarning = createLucideIcon("file-warning", __iconNode$W);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$V = [
-  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }]
-];
-const File$1 = createLucideIcon("file", __iconNode$V);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$U = [
   [
     "path",
     {
@@ -34708,7 +34769,23 @@ const __iconNode$U = [
   ["path", { d: "m5 22 14-4", key: "1brv4h" }],
   ["path", { d: "m5 18 14 4", key: "lgyyje" }]
 ];
-const FlameKindling = createLucideIcon("flame-kindling", __iconNode$U);
+const FlameKindling = createLucideIcon("flame-kindling", __iconNode$V);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$U = [
+  [
+    "path",
+    {
+      d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z",
+      key: "96xj49"
+    }
+  ]
+];
+const Flame = createLucideIcon("flame", __iconNode$U);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34719,12 +34796,12 @@ const __iconNode$T = [
   [
     "path",
     {
-      d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z",
-      key: "96xj49"
+      d: "M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z",
+      key: "sc7q7i"
     }
   ]
 ];
-const Flame = createLucideIcon("flame", __iconNode$T);
+const Funnel = createLucideIcon("funnel", __iconNode$T);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34735,22 +34812,6 @@ const __iconNode$S = [
   [
     "path",
     {
-      d: "M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z",
-      key: "sc7q7i"
-    }
-  ]
-];
-const Funnel = createLucideIcon("funnel", __iconNode$S);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$R = [
-  [
-    "path",
-    {
       d: "M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z",
       key: "j76jl0"
     }
@@ -34758,7 +34819,20 @@ const __iconNode$R = [
   ["path", { d: "M22 10v6", key: "1lu8f3" }],
   ["path", { d: "M6 12.5V16a6 3 0 0 0 12 0v-3.5", key: "1r8lef" }]
 ];
-const GraduationCap = createLucideIcon("graduation-cap", __iconNode$R);
+const GraduationCap = createLucideIcon("graduation-cap", __iconNode$S);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$R = [
+  ["path", { d: "M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5", key: "1p9q5i" }],
+  ["path", { d: "M14 6a6 6 0 0 1 6 6v3", key: "1hnv84" }],
+  ["path", { d: "M4 15v-3a6 6 0 0 1 6-6", key: "9ciidu" }],
+  ["rect", { x: "2", y: "15", width: "20", height: "4", rx: "1", key: "g3x8cw" }]
+];
+const HardHat = createLucideIcon("hard-hat", __iconNode$R);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34766,12 +34840,12 @@ const GraduationCap = createLucideIcon("graduation-cap", __iconNode$R);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$Q = [
-  ["path", { d: "M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5", key: "1p9q5i" }],
-  ["path", { d: "M14 6a6 6 0 0 1 6 6v3", key: "1hnv84" }],
-  ["path", { d: "M4 15v-3a6 6 0 0 1 6-6", key: "9ciidu" }],
-  ["rect", { x: "2", y: "15", width: "20", height: "4", rx: "1", key: "g3x8cw" }]
+  ["line", { x1: "4", x2: "20", y1: "9", y2: "9", key: "4lhtct" }],
+  ["line", { x1: "4", x2: "20", y1: "15", y2: "15", key: "vyu0kd" }],
+  ["line", { x1: "10", x2: "8", y1: "3", y2: "21", key: "1ggp8o" }],
+  ["line", { x1: "16", x2: "14", y1: "3", y2: "21", key: "weycgp" }]
 ];
-const HardHat = createLucideIcon("hard-hat", __iconNode$Q);
+const Hash$2 = createLucideIcon("hash", __iconNode$Q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34779,19 +34853,6 @@ const HardHat = createLucideIcon("hard-hat", __iconNode$Q);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$P = [
-  ["line", { x1: "4", x2: "20", y1: "9", y2: "9", key: "4lhtct" }],
-  ["line", { x1: "4", x2: "20", y1: "15", y2: "15", key: "vyu0kd" }],
-  ["line", { x1: "10", x2: "8", y1: "3", y2: "21", key: "1ggp8o" }],
-  ["line", { x1: "16", x2: "14", y1: "3", y2: "21", key: "weycgp" }]
-];
-const Hash$2 = createLucideIcon("hash", __iconNode$P);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$O = [
   [
     "path",
     {
@@ -34800,7 +34861,19 @@ const __iconNode$O = [
     }
   ]
 ];
-const Heart = createLucideIcon("heart", __iconNode$O);
+const Heart = createLucideIcon("heart", __iconNode$P);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$O = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
+];
+const Image = createLucideIcon("image", __iconNode$O);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34808,11 +34881,11 @@ const Heart = createLucideIcon("heart", __iconNode$O);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$N = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "M12 16v-4", key: "1dtifu" }],
+  ["path", { d: "M12 8h.01", key: "e9boi3" }]
 ];
-const Image = createLucideIcon("image", __iconNode$N);
+const Info = createLucideIcon("info", __iconNode$N);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34820,18 +34893,6 @@ const Image = createLucideIcon("image", __iconNode$N);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$M = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M12 16v-4", key: "1dtifu" }],
-  ["path", { d: "M12 8h.01", key: "e9boi3" }]
-];
-const Info = createLucideIcon("info", __iconNode$M);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$L = [
   [
     "path",
     {
@@ -34854,7 +34915,20 @@ const __iconNode$L = [
     }
   ]
 ];
-const Layers = createLucideIcon("layers", __iconNode$L);
+const Layers = createLucideIcon("layers", __iconNode$M);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$L = [
+  ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
+  ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
+  ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
+  ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
+];
+const LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode$L);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34862,19 +34936,6 @@ const Layers = createLucideIcon("layers", __iconNode$L);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$K = [
-  ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
-  ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
-  ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
-  ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
-];
-const LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode$K);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$J = [
   [
     "path",
     {
@@ -34884,29 +34945,40 @@ const __iconNode$J = [
   ],
   ["path", { d: "M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12", key: "mt58a7" }]
 ];
-const Leaf = createLucideIcon("leaf", __iconNode$J);
+const Leaf = createLucideIcon("leaf", __iconNode$K);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$I = [
+const __iconNode$J = [
   ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
   ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }],
   ["path", { d: "M13 6h8", key: "15sg57" }],
   ["path", { d: "M13 12h8", key: "h98zly" }],
   ["path", { d: "M13 18h8", key: "oe0vm4" }]
 ];
-const ListChecks = createLucideIcon("list-checks", __iconNode$I);
+const ListChecks = createLucideIcon("list-checks", __iconNode$J);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$H = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$H);
+const __iconNode$I = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$I);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$H = [
+  ["rect", { width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2", key: "1w4ew1" }],
+  ["path", { d: "M7 11V7a5 5 0 0 1 10 0v4", key: "fwvmzm" }]
+];
+const Lock = createLucideIcon("lock", __iconNode$H);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34914,10 +34986,11 @@ const LoaderCircle = createLucideIcon("loader-circle", __iconNode$H);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$G = [
-  ["rect", { width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2", key: "1w4ew1" }],
-  ["path", { d: "M7 11V7a5 5 0 0 1 10 0v4", key: "fwvmzm" }]
+  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
+  ["path", { d: "M21 12H9", key: "dn1m92" }],
+  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
 ];
-const Lock = createLucideIcon("lock", __iconNode$G);
+const LogOut = createLucideIcon("log-out", __iconNode$G);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34925,11 +34998,10 @@ const Lock = createLucideIcon("lock", __iconNode$G);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$F = [
-  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
-  ["path", { d: "M21 12H9", key: "dn1m92" }],
-  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+  ["path", { d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", key: "132q7q" }],
+  ["rect", { x: "2", y: "4", width: "20", height: "16", rx: "2", key: "izxlao" }]
 ];
-const LogOut = createLucideIcon("log-out", __iconNode$F);
+const Mail = createLucideIcon("mail", __iconNode$F);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34937,17 +35009,6 @@ const LogOut = createLucideIcon("log-out", __iconNode$F);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$E = [
-  ["path", { d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", key: "132q7q" }],
-  ["rect", { x: "2", y: "4", width: "20", height: "16", rx: "2", key: "izxlao" }]
-];
-const Mail = createLucideIcon("mail", __iconNode$E);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$D = [
   [
     "path",
     {
@@ -34957,27 +35018,37 @@ const __iconNode$D = [
   ],
   ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
 ];
-const MapPin = createLucideIcon("map-pin", __iconNode$D);
+const MapPin = createLucideIcon("map-pin", __iconNode$E);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$C = [
+const __iconNode$D = [
   ["path", { d: "M4 12h16", key: "1lakjw" }],
   ["path", { d: "M4 18h16", key: "19g7jn" }],
   ["path", { d: "M4 6h16", key: "1o0s65" }]
 ];
-const Menu$1 = createLucideIcon("menu", __iconNode$C);
+const Menu$1 = createLucideIcon("menu", __iconNode$D);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$B = [["path", { d: "M5 12h14", key: "1ays0h" }]];
-const Minus = createLucideIcon("minus", __iconNode$B);
+const __iconNode$C = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+const Minus = createLucideIcon("minus", __iconNode$C);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$B = [
+  ["path", { d: "M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z", key: "a7tn18" }]
+];
+const Moon = createLucideIcon("moon", __iconNode$B);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34985,9 +35056,10 @@ const Minus = createLucideIcon("minus", __iconNode$B);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$A = [
-  ["path", { d: "M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z", key: "a7tn18" }]
+  ["path", { d: "M8 6L12 2L16 6", key: "1yvkyx" }],
+  ["path", { d: "M12 2V22", key: "r89rzk" }]
 ];
-const Moon = createLucideIcon("moon", __iconNode$A);
+const MoveUp = createLucideIcon("move-up", __iconNode$A);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34995,17 +35067,6 @@ const Moon = createLucideIcon("moon", __iconNode$A);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$z = [
-  ["path", { d: "M8 6L12 2L16 6", key: "1yvkyx" }],
-  ["path", { d: "M12 2V22", key: "r89rzk" }]
-];
-const MoveUp = createLucideIcon("move-up", __iconNode$z);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$y = [
   ["path", { d: "M12 16h.01", key: "1drbdi" }],
   ["path", { d: "M12 8v4", key: "1got3b" }],
   [
@@ -35016,7 +35077,23 @@ const __iconNode$y = [
     }
   ]
 ];
-const OctagonAlert = createLucideIcon("octagon-alert", __iconNode$y);
+const OctagonAlert = createLucideIcon("octagon-alert", __iconNode$z);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$y = [
+  [
+    "path",
+    {
+      d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
+      key: "1a8usu"
+    }
+  ]
+];
+const Pen = createLucideIcon("pen", __iconNode$y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35030,9 +35107,10 @@ const __iconNode$x = [
       d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
       key: "1a8usu"
     }
-  ]
+  ],
+  ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
 ];
-const Pen = createLucideIcon("pen", __iconNode$x);
+const Pencil = createLucideIcon("pencil", __iconNode$x);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35043,37 +35121,31 @@ const __iconNode$w = [
   [
     "path",
     {
-      d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
-      key: "1a8usu"
-    }
-  ],
-  ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
-];
-const Pencil = createLucideIcon("pencil", __iconNode$w);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$v = [
-  [
-    "path",
-    {
       d: "M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384",
       key: "9njp5v"
     }
   ]
 ];
-const Phone = createLucideIcon("phone", __iconNode$v);
+const Phone = createLucideIcon("phone", __iconNode$w);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$u = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
-const Play = createLucideIcon("play", __iconNode$u);
+const __iconNode$v = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
+const Play = createLucideIcon("play", __iconNode$v);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$u = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "M12 5v14", key: "s699le" }]
+];
+const Plus = createLucideIcon("plus", __iconNode$u);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35081,17 +35153,6 @@ const Play = createLucideIcon("play", __iconNode$u);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$t = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "M12 5v14", key: "s699le" }]
-];
-const Plus = createLucideIcon("plus", __iconNode$t);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$s = [
   [
     "path",
     {
@@ -35102,14 +35163,14 @@ const __iconNode$s = [
   ["path", { d: "M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6", key: "1itne7" }],
   ["rect", { x: "6", y: "14", width: "12", height: "8", rx: "1", key: "1ue0tg" }]
 ];
-const Printer = createLucideIcon("printer", __iconNode$s);
+const Printer = createLucideIcon("printer", __iconNode$t);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$r = [
+const __iconNode$s = [
   ["rect", { width: "5", height: "5", x: "3", y: "3", rx: "1", key: "1tu5fj" }],
   ["rect", { width: "5", height: "5", x: "16", y: "3", rx: "1", key: "1v8r4q" }],
   ["rect", { width: "5", height: "5", x: "3", y: "16", rx: "1", key: "1x03jg" }],
@@ -35123,7 +35184,20 @@ const __iconNode$r = [
   ["path", { d: "M21 12v.01", key: "1lwtk9" }],
   ["path", { d: "M12 21v-1", key: "1880an" }]
 ];
-const QrCode = createLucideIcon("qr-code", __iconNode$r);
+const QrCode = createLucideIcon("qr-code", __iconNode$s);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$r = [
+  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
+  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
+  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
+  ["path", { d: "M8 16H3v5", key: "1cv678" }]
+];
+const RefreshCw = createLucideIcon("refresh-cw", __iconNode$r);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35131,19 +35205,6 @@ const QrCode = createLucideIcon("qr-code", __iconNode$r);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$q = [
-  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
-  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
-  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
-  ["path", { d: "M8 16H3v5", key: "1cv678" }]
-];
-const RefreshCw = createLucideIcon("refresh-cw", __iconNode$q);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$p = [
   [
     "path",
     {
@@ -35154,7 +35215,18 @@ const __iconNode$p = [
   ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
   ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
 ];
-const Save = createLucideIcon("save", __iconNode$p);
+const Save = createLucideIcon("save", __iconNode$q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$p = [
+  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
+  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+];
+const Search = createLucideIcon("search", __iconNode$p);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35162,10 +35234,16 @@ const Save = createLucideIcon("save", __iconNode$p);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$o = [
-  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
-  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+  [
+    "path",
+    {
+      d: "M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",
+      key: "1ffxy3"
+    }
+  ],
+  ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
 ];
-const Search = createLucideIcon("search", __iconNode$o);
+const Send = createLucideIcon("send", __iconNode$o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35176,13 +35254,13 @@ const __iconNode$n = [
   [
     "path",
     {
-      d: "M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",
-      key: "1ffxy3"
+      d: "M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z",
+      key: "1qme2f"
     }
   ],
-  ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
+  ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
 ];
-const Send = createLucideIcon("send", __iconNode$n);
+const Settings = createLucideIcon("settings", __iconNode$n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35193,13 +35271,14 @@ const __iconNode$m = [
   [
     "path",
     {
-      d: "M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z",
-      key: "1qme2f"
+      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
+      key: "oel41y"
     }
   ],
-  ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
+  ["path", { d: "M12 8v4", key: "1got3b" }],
+  ["path", { d: "M12 16h.01", key: "1drbdi" }]
 ];
-const Settings = createLucideIcon("settings", __iconNode$m);
+const ShieldAlert = createLucideIcon("shield-alert", __iconNode$m);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35214,10 +35293,9 @@ const __iconNode$l = [
       key: "oel41y"
     }
   ],
-  ["path", { d: "M12 8v4", key: "1got3b" }],
-  ["path", { d: "M12 16h.01", key: "1drbdi" }]
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const ShieldAlert = createLucideIcon("shield-alert", __iconNode$l);
+const ShieldCheck = createLucideIcon("shield-check", __iconNode$l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35231,10 +35309,9 @@ const __iconNode$k = [
       d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
       key: "oel41y"
     }
-  ],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ]
 ];
-const ShieldCheck = createLucideIcon("shield-check", __iconNode$k);
+const Shield = createLucideIcon("shield", __iconNode$k);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35242,22 +35319,6 @@ const ShieldCheck = createLucideIcon("shield-check", __iconNode$k);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$j = [
-  [
-    "path",
-    {
-      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
-      key: "oel41y"
-    }
-  ]
-];
-const Shield = createLucideIcon("shield", __iconNode$j);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$i = [
   ["path", { d: "M2 22v-5l5-5 5 5-5 5z", key: "1fh25c" }],
   ["path", { d: "M9.5 14.5 16 8", key: "1smz5x" }],
   [
@@ -35265,7 +35326,18 @@ const __iconNode$i = [
     { d: "m17 2 5 5-.5.5a3.53 3.53 0 0 1-5 0s0 0 0 0a3.53 3.53 0 0 1 0-5L17 2", key: "1q8uv5" }
   ]
 ];
-const Shovel = createLucideIcon("shovel", __iconNode$i);
+const Shovel = createLucideIcon("shovel", __iconNode$j);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$i = [
+  ["path", { d: "M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5", key: "1uzm8b" }],
+  ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
+];
+const SquareCheckBig = createLucideIcon("square-check-big", __iconNode$i);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35273,17 +35345,6 @@ const Shovel = createLucideIcon("shovel", __iconNode$i);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$h = [
-  ["path", { d: "M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5", key: "1uzm8b" }],
-  ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
-];
-const SquareCheckBig = createLucideIcon("square-check-big", __iconNode$h);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$g = [
   ["path", { d: "M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7", key: "1m0v6g" }],
   [
     "path",
@@ -35293,7 +35354,17 @@ const __iconNode$g = [
     }
   ]
 ];
-const SquarePen = createLucideIcon("square-pen", __iconNode$g);
+const SquarePen = createLucideIcon("square-pen", __iconNode$h);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$g = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
+];
+const Square = createLucideIcon("square", __iconNode$g);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35301,16 +35372,6 @@ const SquarePen = createLucideIcon("square-pen", __iconNode$g);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$f = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
-];
-const Square = createLucideIcon("square", __iconNode$f);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$e = [
   ["circle", { cx: "12", cy: "12", r: "4", key: "4exip2" }],
   ["path", { d: "M12 2v2", key: "tus03m" }],
   ["path", { d: "M12 20v2", key: "1lh1kg" }],
@@ -35321,7 +35382,19 @@ const __iconNode$e = [
   ["path", { d: "m6.34 17.66-1.41 1.41", key: "1m8zz5" }],
   ["path", { d: "m19.07 4.93-1.41 1.41", key: "1shlcs" }]
 ];
-const Sun = createLucideIcon("sun", __iconNode$e);
+const Sun = createLucideIcon("sun", __iconNode$f);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$e = [
+  ["line", { x1: "10", x2: "14", y1: "2", y2: "2", key: "14vaq8" }],
+  ["line", { x1: "12", x2: "15", y1: "14", y2: "11", key: "17fdiu" }],
+  ["circle", { cx: "12", cy: "14", r: "8", key: "1e1u0o" }]
+];
+const Timer = createLucideIcon("timer", __iconNode$e);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35329,11 +35402,13 @@ const Sun = createLucideIcon("sun", __iconNode$e);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$d = [
-  ["line", { x1: "10", x2: "14", y1: "2", y2: "2", key: "14vaq8" }],
-  ["line", { x1: "12", x2: "15", y1: "14", y2: "11", key: "17fdiu" }],
-  ["circle", { cx: "12", cy: "14", r: "8", key: "1e1u0o" }]
+  ["path", { d: "M3 6h18", key: "d0wm0j" }],
+  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
+  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
+  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
+  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
 ];
-const Timer = createLucideIcon("timer", __iconNode$d);
+const Trash2 = createLucideIcon("trash-2", __iconNode$d);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35341,13 +35416,10 @@ const Timer = createLucideIcon("timer", __iconNode$d);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$c = [
-  ["path", { d: "M3 6h18", key: "d0wm0j" }],
-  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
-  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
-  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
-  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
+  ["path", { d: "M16 17h6v-6", key: "t6n2it" }],
+  ["path", { d: "m22 17-8.5-8.5-5 5L2 7", key: "x473p" }]
 ];
-const Trash2 = createLucideIcon("trash-2", __iconNode$c);
+const TrendingDown = createLucideIcon("trending-down", __iconNode$c);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35355,10 +35427,10 @@ const Trash2 = createLucideIcon("trash-2", __iconNode$c);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$b = [
-  ["path", { d: "M16 17h6v-6", key: "t6n2it" }],
-  ["path", { d: "m22 17-8.5-8.5-5 5L2 7", key: "x473p" }]
+  ["path", { d: "M16 7h6v6", key: "box55l" }],
+  ["path", { d: "m22 7-8.5 8.5-5-5L2 17", key: "1t1m79" }]
 ];
-const TrendingDown = createLucideIcon("trending-down", __iconNode$b);
+const TrendingUp = createLucideIcon("trending-up", __iconNode$b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35366,17 +35438,6 @@ const TrendingDown = createLucideIcon("trending-down", __iconNode$b);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$a = [
-  ["path", { d: "M16 7h6v6", key: "box55l" }],
-  ["path", { d: "m22 7-8.5 8.5-5-5L2 17", key: "1t1m79" }]
-];
-const TrendingUp = createLucideIcon("trending-up", __iconNode$a);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$9 = [
   [
     "path",
     {
@@ -35387,14 +35448,14 @@ const __iconNode$9 = [
   ["path", { d: "M12 9v4", key: "juzpu7" }],
   ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$9);
+const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$a);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$8 = [
+const __iconNode$9 = [
   ["path", { d: "M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2", key: "wrbu53" }],
   ["path", { d: "M15 18H9", key: "1lyqi6" }],
   [
@@ -35407,7 +35468,19 @@ const __iconNode$8 = [
   ["circle", { cx: "17", cy: "18", r: "2", key: "332jqn" }],
   ["circle", { cx: "7", cy: "18", r: "2", key: "19iecd" }]
 ];
-const Truck = createLucideIcon("truck", __iconNode$8);
+const Truck = createLucideIcon("truck", __iconNode$9);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$8 = [
+  ["path", { d: "M12 3v12", key: "1x0j5s" }],
+  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
+];
+const Upload = createLucideIcon("upload", __iconNode$8);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35415,11 +35488,11 @@ const Truck = createLucideIcon("truck", __iconNode$8);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$7 = [
-  ["path", { d: "M12 3v12", key: "1x0j5s" }],
-  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
+  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
 ];
-const Upload = createLucideIcon("upload", __iconNode$7);
+const UserCheck = createLucideIcon("user-check", __iconNode$7);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -35427,11 +35500,12 @@ const Upload = createLucideIcon("upload", __iconNode$7);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$6 = [
-  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
   ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
+  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
 ];
-const UserCheck = createLucideIcon("user-check", __iconNode$6);
+const UserPlus = createLucideIcon("user-plus", __iconNode$6);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -47128,6 +47202,7 @@ const ROLE_LABELS = {
   employee: "Employee",
   supervisor: "Supervisor",
   areaInCharge: "Area In-Charge",
+  departmentHOD: "Department HOD",
   safetyOfficer: "Safety Officer",
   ehsManager: "EHS Manager",
   contractorAdmin: "Contractor Admin",
@@ -47152,11 +47227,12 @@ function Header({ onMenuClick }) {
       return localLastRead;
     return srv;
   })();
-  function notifType(category) {
+  function notifType(category, type_) {
+    if (type_ === "registration") return "registration";
     const c2 = category.toLowerCase();
     if (c2.includes("incident") || c2.includes("overdue") || c2.includes("expired") || c2.includes("high") || c2.includes("critical"))
       return "danger";
-    if (c2.includes("near") || c2.includes("pending") || c2.includes("submitted") || c2.includes("observation"))
+    if (c2.includes("near") || c2.includes("pending") || c2.includes("submitted") || c2.includes("observation") || c2.includes("registration"))
       return "warning";
     return "success";
   }
@@ -47173,7 +47249,10 @@ function Header({ onMenuClick }) {
     id: String(item.id),
     text: item.message,
     time: relativeTime2(item.timestamp),
-    type: notifType(item.category),
+    type: notifType(
+      item.category,
+      item.type_
+    ),
     timestamp: item.timestamp
   }));
   const unreadCount = notifications.filter((n2) => {
@@ -47380,8 +47459,21 @@ function Header({ onMenuClick }) {
                     "div",
                     {
                       className: "px-4 py-3 border-b border-white/5 hover:bg-white/5 transition-smooth cursor-pointer",
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-2", children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-2.5", children: [
+                        n2.type === "registration" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "div",
+                          {
+                            className: "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
+                            style: { background: "rgba(251,191,36,0.15)" },
+                            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                              UserPlus,
+                              {
+                                className: "w-3 h-3",
+                                style: { color: "#fbbf24" }
+                              }
+                            )
+                          }
+                        ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
                           "div",
                           {
                             className: cn(
@@ -48643,6 +48735,16 @@ const ROLES$1 = [
     color: "bg-yellow-500/20 text-yellow-300"
   },
   {
+    key: "areaInCharge",
+    label: "Area In-Charge",
+    color: "bg-cyan-500/20 text-cyan-300"
+  },
+  {
+    key: "departmentHOD",
+    label: "Department HOD",
+    color: "bg-indigo-500/20 text-indigo-300"
+  },
+  {
     key: "safetyOfficer",
     label: "Safety Officer",
     color: "bg-[#18C37E]/20 text-[#18C37E]"
@@ -48667,6 +48769,8 @@ const PERM_MATRIX = {
   "View Dashboard": {
     employee: true,
     supervisor: true,
+    areaInCharge: true,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: true,
     ehsManager: true,
@@ -48675,6 +48779,8 @@ const PERM_MATRIX = {
   "Create Incident Report": {
     employee: true,
     supervisor: true,
+    areaInCharge: true,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: true,
     ehsManager: true,
@@ -48682,15 +48788,19 @@ const PERM_MATRIX = {
   },
   "Approve Permits": {
     employee: false,
-    supervisor: true,
+    supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: true,
     contractorAdmin: false,
-    ehsManager: true,
+    ehsManager: false,
     systemAdmin: true
   },
   "Manage Users": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: false,
     ehsManager: true,
@@ -48699,6 +48809,8 @@ const PERM_MATRIX = {
   "Access Analytics": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: false,
     ehsManager: true,
@@ -48707,6 +48819,8 @@ const PERM_MATRIX = {
   "Admin Panel": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: false,
     ehsManager: true,
@@ -48715,6 +48829,8 @@ const PERM_MATRIX = {
   "Delete Records": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: false,
     ehsManager: false,
@@ -48723,6 +48839,8 @@ const PERM_MATRIX = {
   "Assign CAPA": {
     employee: false,
     supervisor: true,
+    areaInCharge: true,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: false,
     ehsManager: true,
@@ -48731,6 +48849,8 @@ const PERM_MATRIX = {
   "Close Investigations": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: false,
     ehsManager: true,
@@ -48739,6 +48859,8 @@ const PERM_MATRIX = {
   "Configure System": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: false,
     ehsManager: false,
@@ -48747,6 +48869,8 @@ const PERM_MATRIX = {
   "View Audit Logs": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: false,
     ehsManager: true,
@@ -48755,6 +48879,8 @@ const PERM_MATRIX = {
   "Contractor Management": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: true,
     ehsManager: true,
@@ -48763,8 +48889,10 @@ const PERM_MATRIX = {
 };
 const ROLE_DESCRIPTIONS = {
   employee: "General floor employees. Can report incidents and submit observations. Read-only access to dashboards.",
-  supervisor: "Floor supervisors. Can approve permits, assign CAPA tasks, and review incident reports.",
-  safetyOfficer: "Dedicated safety personnel. Full access to safety modules, analytics and audit logs.",
+  supervisor: "Floor supervisors. Raise and close permits, assign CAPA tasks, and review incident reports.",
+  areaInCharge: "Area In-Charge personnel. Reviews submitted permits to confirm precautions are in place before HOD validation.",
+  departmentHOD: "Validates permits for their department and manages departmental compliance. Confirms all controls before Safety Officer approval.",
+  safetyOfficer: "Dedicated safety personnel. Final approver for permits. Full access to safety modules, analytics and audit logs.",
   contractorAdmin: "External contractor supervisors. Manages contractor safety compliance and reporting.",
   ehsManager: "EHS department managers. Full operational access including user management and admin panel.",
   systemAdmin: "IT / System administrators. Unrestricted access to all modules and system configuration."
@@ -49317,6 +49445,8 @@ const ROLE_BADGE = {
   ehsManager: "bg-blue-500/20 text-blue-300 border-blue-500/30",
   safetyOfficer: "bg-[#18C37E]/20 text-[#18C37E] border-[#18C37E]/30",
   supervisor: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+  areaInCharge: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+  departmentHOD: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
   employee: "bg-zinc-500/20 text-zinc-300 border-zinc-500/30",
   contractorAdmin: "bg-orange-500/20 text-orange-300 border-orange-500/30"
 };
@@ -49325,6 +49455,8 @@ const ROLES = [
   "ehsManager",
   "safetyOfficer",
   "supervisor",
+  "areaInCharge",
+  "departmentHOD",
   "employee",
   "contractorAdmin"
 ];
@@ -102456,7 +102588,7 @@ function AnalyticsPage() {
     const toastId = ue.loading("Generating PDF report…");
     try {
       const { jsPDF } = await __vitePreload(async () => {
-        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BuLoxFq7.js").then((n2) => n2.j);
+        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-3atH3TcM.js").then((n2) => n2.j);
         return { jsPDF: jsPDF2 };
       }, true ? [] : void 0);
       const doc = new jsPDF({
@@ -109355,7 +109487,7 @@ function ESGPage() {
     const tid = ue.loading("Generating PDF report…");
     try {
       const { jsPDF } = await __vitePreload(async () => {
-        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BuLoxFq7.js").then((n3) => n3.j);
+        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-3atH3TcM.js").then((n3) => n3.j);
         return { jsPDF: jsPDF2 };
       }, true ? [] : void 0);
       const doc = new jsPDF({
@@ -115984,6 +116116,9 @@ function InspectionsPage() {
   );
 }
 const DEPARTMENTS = RKTR_DEPARTMENTS;
+function isValidEmployeeNumber(val) {
+  return /^23\d{4}$/.test(val.trim());
+}
 const INPUT_CLASS = "pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-[#18C37E]/50 focus:ring-[#18C37E]/20 h-11";
 function LoginPage() {
   const { isAuthenticated, login, register } = useAuth();
@@ -115996,9 +116131,9 @@ function LoginPage() {
   const [loginLoading, setLoginLoading] = reactExports.useState(false);
   const [loginError, setLoginError] = reactExports.useState("");
   const [regName, setRegName] = reactExports.useState("");
-  const [regEmail, setRegEmail] = reactExports.useState("");
   const [regDepartment, setRegDepartment] = reactExports.useState("");
   const [regEmployeeNumber, setRegEmployeeNumber] = reactExports.useState("");
+  const [regEmpError, setRegEmpError] = reactExports.useState("");
   const [regMobileNumber, setRegMobileNumber] = reactExports.useState("");
   const [regPassword, setRegPassword] = reactExports.useState("");
   const [regConfirm, setRegConfirm] = reactExports.useState("");
@@ -116043,16 +116178,16 @@ function LoginPage() {
       setRegError("Full name is required.");
       return;
     }
-    if (!regEmail.trim()) {
-      setRegError("Email address is required.");
-      return;
-    }
     if (!regDepartment.trim()) {
       setRegError("Department is required.");
       return;
     }
     if (!regEmployeeNumber.trim()) {
       setRegError("Employee number is required.");
+      return;
+    }
+    if (!isValidEmployeeNumber(regEmployeeNumber)) {
+      setRegError("Employee number must start with 23 and be exactly 6 digits");
       return;
     }
     if (!regMobileNumber.trim()) {
@@ -116075,10 +116210,11 @@ function LoginPage() {
       setRegError("Passwords do not match.");
       return;
     }
+    const placeholderEmail = `${regEmployeeNumber.trim()}@rktrwheels.com`;
     setRegLoading(true);
     const result = await register(
       regName,
-      regEmail,
+      placeholderEmail,
       regPassword,
       regDepartment,
       regEmployeeNumber,
@@ -116089,8 +116225,8 @@ function LoginPage() {
       setRegError(result.error ?? "Registration failed.");
     } else {
       setRegSuccess(true);
-      ue.success("Registration successful!", {
-        description: "Your account is pending activation by an administrator.",
+      ue.success("Registration submitted!", {
+        description: "Your account is pending activation by the administrator.",
         duration: 6e3
       });
     }
@@ -116437,8 +116573,8 @@ function LoginPage() {
                                 }
                               ),
                               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-white font-semibold text-lg mb-1", children: "Registration Submitted" }),
-                                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-white/45 leading-relaxed", children: "Your account request has been received. An admin will review and activate your account — you'll be able to sign in once approved." })
+                                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-white font-semibold text-lg mb-2", children: "Registration Submitted!" }),
+                                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-white/55 leading-relaxed", children: "Your account is pending activation by the administrator. You will be notified once approved." })
                               ] }),
                               /* @__PURE__ */ jsxRuntimeExports.jsx(
                                 Button,
@@ -116515,35 +116651,6 @@ function LoginPage() {
                                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                                   "label",
                                   {
-                                    htmlFor: "reg-email",
-                                    className: "text-xs font-medium text-white/50 uppercase tracking-wide",
-                                    children: "Email Address"
-                                  }
-                                ),
-                                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
-                                  /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" }),
-                                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                                    Input,
-                                    {
-                                      id: "reg-email",
-                                      type: "email",
-                                      value: regEmail,
-                                      onChange: (e3) => {
-                                        setRegEmail(e3.target.value);
-                                        setRegError("");
-                                      },
-                                      placeholder: "Enter your email address",
-                                      autoComplete: "email",
-                                      "data-ocid": "register.email_input",
-                                      className: INPUT_CLASS
-                                    }
-                                  )
-                                ] })
-                              ] }),
-                              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5", children: [
-                                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                                  "label",
-                                  {
                                     htmlFor: "reg-dept",
                                     className: "text-xs font-medium text-white/50 uppercase tracking-wide",
                                     children: "Department"
@@ -116600,16 +116707,53 @@ function LoginPage() {
                                       id: "reg-empno",
                                       type: "text",
                                       value: regEmployeeNumber,
+                                      maxLength: 6,
                                       onChange: (e3) => {
-                                        setRegEmployeeNumber(e3.target.value);
+                                        const val = e3.target.value.replace(/\D/g, "");
+                                        setRegEmployeeNumber(val);
                                         setRegError("");
+                                        if (val.length > 0 && !isValidEmployeeNumber(val) && val.length === 6) {
+                                          setRegEmpError(
+                                            "Employee number must start with 23 and be exactly 6 digits"
+                                          );
+                                        } else {
+                                          setRegEmpError("");
+                                        }
+                                      },
+                                      onBlur: () => {
+                                        if (regEmployeeNumber.length > 0 && !isValidEmployeeNumber(regEmployeeNumber)) {
+                                          setRegEmpError(
+                                            "Employee number must start with 23 and be exactly 6 digits"
+                                          );
+                                        } else {
+                                          setRegEmpError("");
+                                        }
                                       },
                                       placeholder: "Enter your employee number",
                                       "data-ocid": "register.employee_number_input",
-                                      className: INPUT_CLASS
+                                      className: `${INPUT_CLASS}${regEmpError ? " border-red-500/50 focus:border-red-500/70" : regEmployeeNumber && isValidEmployeeNumber(regEmployeeNumber) ? " border-[#18C37E]/50" : ""}`
+                                    }
+                                  ),
+                                  regEmployeeNumber && isValidEmployeeNumber(regEmployeeNumber) && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                    CircleCheck,
+                                    {
+                                      className: "absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4",
+                                      style: { color: "#18C37E" }
                                     }
                                   )
-                                ] })
+                                ] }),
+                                regEmpError && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                                  "p",
+                                  {
+                                    className: "text-xs flex items-center gap-1 mt-1",
+                                    style: { color: "#fca5a5" },
+                                    "data-ocid": "register.employee_number.field_error",
+                                    children: [
+                                      /* @__PURE__ */ jsxRuntimeExports.jsx(CircleAlert, { className: "w-3 h-3 flex-shrink-0" }),
+                                      regEmpError
+                                    ]
+                                  }
+                                )
                               ] }),
                               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5", children: [
                                 /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -120316,42 +120460,59 @@ const PERMIT_TYPE_CONFIG$1 = {
   }
 };
 const WORKFLOW_STEPS$2 = [
-  { key: "draft", label: "Draft" },
-  { key: "submitted", label: "Submitted" },
-  { key: "underReview", label: "Under Review" },
-  { key: "validated", label: "Validated" },
-  { key: "approved", label: "Approved" },
-  { key: "active", label: "Active" },
-  { key: "closed", label: "Closed" }
+  { key: "draft", label: "Draft", sub: "Raised by Supervisor" },
+  { key: "submitted", label: "Submitted", sub: "Awaiting area review" },
+  {
+    key: "underReview",
+    label: "Under Review",
+    sub: "Area In-Charge confirms precautions"
+  },
+  { key: "validated", label: "Validated", sub: "Department HOD confirmed" },
+  { key: "approved", label: "Approved", sub: "Safety Officer approved" },
+  { key: "active", label: "Active", sub: "Permit in progress" },
+  { key: "closed", label: "Closed", sub: "Work completed" }
 ];
 function WorkflowStepper$1({ currentStatus }) {
   const stepKeys = WORKFLOW_STEPS$2.map((s2) => s2.key);
   const currentIdx = stepKeys.indexOf(currentStatus);
   const isRejected = currentStatus === "rejected" || currentStatus === "expired";
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1 overflow-x-auto pb-1", children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-1 overflow-x-auto pb-1", children: [
     WORKFLOW_STEPS$2.map((step, i) => {
       const isDone = !isRejected && i <= currentIdx;
       const isCurrent = step.key === currentStatus;
-      return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1 shrink-0", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "div",
-          {
-            className: "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-smooth",
-            style: {
-              background: isDone ? "rgba(24,195,126,0.2)" : "rgba(255,255,255,0.05)",
-              border: `1px solid ${isDone ? "rgba(24,195,126,0.4)" : "rgba(255,255,255,0.1)"}`,
-              color: isCurrent ? "#18C37E" : isDone ? "rgba(24,195,126,0.8)" : "rgba(255,255,255,0.35)"
-            },
-            children: [
-              isDone && /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheckBig, { className: "w-3 h-3" }),
-              step.label
-            ]
-          }
-        ),
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-1 shrink-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center gap-0.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              className: "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-smooth",
+              style: {
+                background: isDone ? "rgba(24,195,126,0.2)" : "rgba(255,255,255,0.05)",
+                border: `1px solid ${isDone ? "rgba(24,195,126,0.4)" : "rgba(255,255,255,0.1)"}`,
+                color: isCurrent ? "#18C37E" : isDone ? "rgba(24,195,126,0.8)" : "rgba(255,255,255,0.35)"
+              },
+              children: [
+                isDone && /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheckBig, { className: "w-3 h-3" }),
+                step.label
+              ]
+            }
+          ),
+          step.sub && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              className: "text-[10px] text-center leading-tight px-1",
+              style: {
+                color: isCurrent ? "rgba(24,195,126,0.7)" : "rgba(255,255,255,0.2)",
+                maxWidth: "90px"
+              },
+              children: step.sub
+            }
+          )
+        ] }),
         i < WORKFLOW_STEPS$2.length - 1 && /* @__PURE__ */ jsxRuntimeExports.jsx(
           "div",
           {
-            className: "w-5 h-px",
+            className: "w-5 h-px mt-3 shrink-0",
             style: {
               background: isDone && !isRejected ? "rgba(24,195,126,0.4)" : "rgba(255,255,255,0.1)"
             }
@@ -120370,6 +120531,7 @@ function WorkflowStepper$1({ currentStatus }) {
   ] });
 }
 function PermitQrCard({ permit }) {
+  var _a3;
   const conf = PERMIT_TYPE_CONFIG$1[permit.permitType];
   const [qrDataUrl, setQrDataUrl] = reactExports.useState(null);
   const [qrError, setQrError] = reactExports.useState(false);
@@ -120389,19 +120551,24 @@ function PermitQrCard({ permit }) {
       errorCorrectionLevel: "M"
     }).then((url) => setQrDataUrl(url)).catch(() => setQrError(true));
   }, [qrPayload]);
+  const topHazards = (permit.hazardControls ?? []).slice(0, 3);
+  const extraHazards = (((_a3 = permit.hazardControls) == null ? void 0 : _a3.length) ?? 0) - 3;
   const handleDownloadPdf = async () => {
     if (!qrDataUrl) return;
     const { jsPDF } = await __vitePreload(async () => {
-      const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BuLoxFq7.js").then((n2) => n2.j);
+      const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-3atH3TcM.js").then((n2) => n2.j);
       return { jsPDF: jsPDF2 };
     }, true ? [] : void 0);
+    const hazardRows = permit.hazardControls ?? [];
+    const extraHeight = hazardRows.length > 0 ? 10 + hazardRows.length * 8 + 6 : 0;
+    const pageH = 120 + extraHeight;
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
-      format: [85, 120]
+      format: [85, pageH]
     });
     doc.setFillColor(8, 20, 38);
-    doc.rect(0, 0, 85, 120, "F");
+    doc.rect(0, 0, 85, pageH, "F");
     doc.setFillColor(24, 195, 126);
     doc.rect(0, 0, 85, 18, "F");
     doc.setTextColor(8, 20, 38);
@@ -120435,12 +120602,43 @@ function PermitQrCard({ permit }) {
       doc.text(value, 30, y2);
       y2 += 6;
     }
+    if (hazardRows.length > 0) {
+      y2 += 2;
+      doc.setFillColor(234, 179, 8);
+      doc.rect(8, y2, 69, 5, "F");
+      doc.setTextColor(8, 20, 38);
+      doc.setFontSize(6.5);
+      doc.setFont("helvetica", "bold");
+      doc.text(`KEY HAZARDS & CONTROLS (${hazardRows.length})`, 42.5, y2 + 3.5, {
+        align: "center"
+      });
+      y2 += 7;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(6);
+      for (const hc of hazardRows) {
+        const riskLabel = hc.residualRisk ?? "Low";
+        const riskColor = riskLabel === "High" ? [239, 68, 68] : riskLabel === "Medium" ? [234, 179, 8] : [24, 195, 126];
+        doc.setTextColor(riskColor[0], riskColor[1], riskColor[2]);
+        doc.text("•", 9, y2);
+        doc.setTextColor(210, 230, 250);
+        doc.text(hc.hazard.substring(0, 36), 13, y2);
+        doc.setTextColor(riskColor[0], riskColor[1], riskColor[2]);
+        doc.text(`[${riskLabel}]`, 77, y2, { align: "right" });
+        if (hc.control) {
+          y2 += 4;
+          doc.setTextColor(140, 160, 180);
+          doc.text(`  Controls: ${hc.control.substring(0, 42)}`, 13, y2);
+        }
+        y2 += 5;
+      }
+    }
+    const footerY = pageH - 5;
     doc.setDrawColor(24, 195, 126);
     doc.setLineWidth(0.3);
-    doc.line(8, 115, 77, 115);
+    doc.line(8, footerY - 3, 77, footerY - 3);
     doc.setTextColor(24, 195, 126);
     doc.setFontSize(6);
-    doc.text("Scan QR to view full permit details", 42.5, 118, {
+    doc.text("Scan QR to view full permit details", 42.5, footerY, {
       align: "center"
     });
     doc.save(`permit-${permit.permitNumber}.pdf`);
@@ -120591,6 +120789,70 @@ function PermitQrCard({ permit }) {
                   ]
                 }
               ),
+              topHazards.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  style: {
+                    borderTop: "1px solid rgba(234,179,8,0.3)",
+                    background: "rgba(234,179,8,0.06)",
+                    padding: "8px 12px"
+                  },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "p",
+                      {
+                        className: "text-[10px] font-bold uppercase tracking-wide mb-1",
+                        style: { color: "rgba(234,179,8,0.8)" },
+                        children: "Key Hazards"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-0.5", children: topHazards.map((hc) => {
+                      const riskColor = hc.residualRisk === "High" ? "#ef4444" : hc.residualRisk === "Medium" ? "#eab308" : "#18C37E";
+                      return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                        "li",
+                        {
+                          className: "flex items-center justify-between gap-1",
+                          children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                              "span",
+                              {
+                                className: "text-[10px] truncate",
+                                style: { color: "rgba(255,255,255,0.7)" },
+                                children: [
+                                  "• ",
+                                  hc.hazard
+                                ]
+                              }
+                            ),
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(
+                              "span",
+                              {
+                                className: "text-[9px] font-semibold flex-shrink-0",
+                                style: { color: riskColor },
+                                children: hc.residualRisk ?? "Low"
+                              }
+                            )
+                          ]
+                        },
+                        hc.hazard
+                      );
+                    }) }),
+                    extraHazards > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "p",
+                      {
+                        className: "text-[10px] mt-0.5",
+                        style: { color: "rgba(255,255,255,0.35)" },
+                        children: [
+                          "+",
+                          extraHazards,
+                          " more hazard",
+                          extraHazards !== 1 ? "s" : ""
+                        ]
+                      }
+                    )
+                  ]
+                }
+              ),
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "div",
                 {
@@ -120681,7 +120943,9 @@ function CountdownTimer$1({ endTime }) {
   );
 }
 function getRoleActions(status, role, userEmail) {
-  const REJECT_ROLES = ["safetyOfficer", "ehsManager", "areaInCharge"];
+  const isSumesh = userEmail === "sumesh.j@rktrwheels.com";
+  const canApprove = role === "safetyOfficer" || isSumesh;
+  const canClose = role === "supervisor" || isSumesh;
   const rejectAction = {
     label: "Reject",
     nextStatus: PermitStatus.rejected,
@@ -120689,15 +120953,12 @@ function getRoleActions(status, role, userEmail) {
     color: "#ef4444",
     variant: "destructive"
   };
-  const isSumesh = userEmail === "sumesh.j@rktrwheels.com";
-  const canApprove = role === "safetyOfficer" || isSumesh;
-  const canClose = role === "supervisor" || role === "employee" || isSumesh;
   switch (status) {
     case "draft":
-      if (role === "supervisor" || role === "employee" || isSumesh) {
+      if (role === "supervisor" || isSumesh) {
         return [
           {
-            label: "Submit for Approval",
+            label: "Submit for Review",
             nextStatus: PermitStatus.submitted,
             icon: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheckBig, { className: "w-4 h-4" }),
             color: "#18C37E",
@@ -120716,16 +120977,15 @@ function getRoleActions(status, role, userEmail) {
             color: "#eab308",
             variant: "default"
           },
-          ...REJECT_ROLES.includes(role) || isSumesh ? [rejectAction] : []
+          rejectAction
         ];
       }
-      if (REJECT_ROLES.includes(role)) return [rejectAction];
       return [];
     case "underReview":
-      if (role === "areaInCharge" || isSumesh) {
+      if (role === "departmentHOD" || isSumesh) {
         return [
           {
-            label: "Mark as Validated",
+            label: "Validate — Precautions Confirmed",
             nextStatus: PermitStatus.validated,
             icon: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheckBig, { className: "w-4 h-4" }),
             color: "#06b6d4",
@@ -120734,13 +120994,12 @@ function getRoleActions(status, role, userEmail) {
           rejectAction
         ];
       }
-      if (REJECT_ROLES.includes(role)) return [rejectAction];
       return [];
     case "validated":
       if (canApprove) {
         return [
           {
-            label: "Approve",
+            label: "Approve Permit",
             nextStatus: PermitStatus.approved,
             icon: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheckBig, { className: "w-4 h-4" }),
             color: "#18C37E",
@@ -120749,7 +121008,6 @@ function getRoleActions(status, role, userEmail) {
           rejectAction
         ];
       }
-      if (role === "areaInCharge") return [rejectAction];
       return [];
     case "approved":
       if (canApprove) {
@@ -120764,7 +121022,6 @@ function getRoleActions(status, role, userEmail) {
           rejectAction
         ];
       }
-      if (role === "areaInCharge") return [rejectAction];
       return [];
     case "active":
       if (canClose) {
@@ -120786,17 +121043,17 @@ function getRoleActions(status, role, userEmail) {
 function getWaitingMessage(status) {
   switch (status) {
     case "draft":
-      return "Waiting for supervisor or employee to submit for approval";
+      return "Waiting for Supervisor to submit for review";
     case "submitted":
-      return "Waiting for Area In-Charge to take for review";
+      return "Waiting for Area In-Charge to review precautions";
     case "underReview":
-      return "Waiting for Area In-Charge to validate";
+      return "Waiting for Department HOD to validate";
     case "validated":
-      return "Waiting for Safety Officer (or Sumesh J) to approve";
+      return "Waiting for Safety Officer or System Admin to approve";
     case "approved":
-      return "Waiting for activation";
+      return "Waiting for Safety Officer to activate the permit";
     case "active":
-      return "Waiting for supervisor or employee to close the permit";
+      return "Waiting for Supervisor to close the permit";
     default:
       return "No further action required";
   }
@@ -120956,17 +121213,171 @@ function PermitDetailView({
                 ]
               }
             ),
-            (permit.hazards.length > 0 || permit.ppeRequired.length > 0) && /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "div",
-              {
-                className: "rounded-xl p-5",
-                style: {
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)"
-                },
-                children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
-                  permit.hazards.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-white/40 mb-2 uppercase tracking-wider", children: "Identified Hazards" }),
+            permit.status !== "draft" && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+              permit.hazardControls && permit.hazardControls.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  className: "rounded-xl overflow-hidden",
+                  style: {
+                    border: "2px solid rgba(234,179,8,0.4)",
+                    background: "rgba(234,179,8,0.04)"
+                  },
+                  "data-ocid": "permits.hazard_controls_section",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "div",
+                      {
+                        className: "flex items-center gap-2 px-5 py-3",
+                        style: {
+                          background: "rgba(234,179,8,0.12)",
+                          borderBottom: "1px solid rgba(234,179,8,0.25)"
+                        },
+                        children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            TriangleAlert,
+                            {
+                              className: "w-4 h-4 shrink-0",
+                              style: { color: "#eab308" }
+                            }
+                          ),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            "h4",
+                            {
+                              className: "text-sm font-bold",
+                              style: { color: "#eab308" },
+                              children: "Identified Hazards & Control Measures"
+                            }
+                          ),
+                          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                            "span",
+                            {
+                              className: "ml-auto text-xs font-medium px-2 py-0.5 rounded-full",
+                              style: {
+                                background: "rgba(234,179,8,0.2)",
+                                color: "#eab308",
+                                border: "1px solid rgba(234,179,8,0.3)"
+                              },
+                              children: [
+                                permit.hazardControls.length,
+                                " hazard",
+                                permit.hazardControls.length !== 1 ? "s" : "",
+                                " identified"
+                              ]
+                            }
+                          )
+                        ]
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "div",
+                      {
+                        className: "divide-y",
+                        style: { borderColor: "rgba(234,179,8,0.12)" },
+                        children: permit.hazardControls.map((hc, idx) => {
+                          const riskColor = hc.residualRisk === "High" ? {
+                            bg: "rgba(239,68,68,0.2)",
+                            text: "#ef4444",
+                            border: "rgba(239,68,68,0.35)"
+                          } : hc.residualRisk === "Medium" ? {
+                            bg: "rgba(234,179,8,0.2)",
+                            text: "#eab308",
+                            border: "rgba(234,179,8,0.35)"
+                          } : {
+                            bg: "rgba(24,195,126,0.2)",
+                            text: "#18C37E",
+                            border: "rgba(24,195,126,0.35)"
+                          };
+                          return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            "div",
+                            {
+                              className: "px-5 py-3",
+                              "data-ocid": `permits.hazard_control_item.${idx + 1}`,
+                              children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+                                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-2 min-w-0 flex-1", children: [
+                                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                    TriangleAlert,
+                                    {
+                                      className: "w-3.5 h-3.5 mt-0.5 shrink-0",
+                                      style: { color: "#f97316" }
+                                    }
+                                  ),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-semibold text-white leading-snug", children: hc.hazard }),
+                                    hc.control && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                                      "p",
+                                      {
+                                        className: "text-xs mt-1 leading-relaxed",
+                                        style: { color: "rgba(255,255,255,0.55)" },
+                                        children: [
+                                          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                                            "span",
+                                            {
+                                              style: {
+                                                color: "rgba(255,255,255,0.35)"
+                                              },
+                                              children: [
+                                                "Controls:",
+                                                " "
+                                              ]
+                                            }
+                                          ),
+                                          hc.control
+                                        ]
+                                      }
+                                    )
+                                  ] })
+                                ] }),
+                                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                                  "span",
+                                  {
+                                    className: "text-xs font-semibold px-2 py-1 rounded-full shrink-0",
+                                    style: {
+                                      background: riskColor.bg,
+                                      color: riskColor.text,
+                                      border: `1px solid ${riskColor.border}`
+                                    },
+                                    children: [
+                                      hc.residualRisk ?? "Low",
+                                      " Risk"
+                                    ]
+                                  }
+                                )
+                              ] })
+                            },
+                            `hc-${idx}`
+                          );
+                        })
+                      }
+                    )
+                  ]
+                }
+              ),
+              (!permit.hazardControls || permit.hazardControls.length === 0) && permit.hazards.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  className: "rounded-xl p-5",
+                  style: {
+                    border: "2px solid rgba(234,179,8,0.3)",
+                    background: "rgba(234,179,8,0.04)"
+                  },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mb-3", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        TriangleAlert,
+                        {
+                          className: "w-4 h-4",
+                          style: { color: "#eab308" }
+                        }
+                      ),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "p",
+                        {
+                          className: "text-sm font-bold",
+                          style: { color: "#eab308" },
+                          children: "Identified Hazards"
+                        }
+                      )
+                    ] }),
                     /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-1", children: permit.hazards.map((h2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
                       "li",
                       {
@@ -120978,8 +121389,18 @@ function PermitDetailView({
                       },
                       `hazard-${h2.substring(0, 15)}`
                     )) })
-                  ] }),
-                  permit.ppeRequired.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  ]
+                }
+              ),
+              permit.ppeRequired.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  className: "rounded-xl p-4",
+                  style: {
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)"
+                  },
+                  children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-white/40 mb-2 uppercase tracking-wider", children: "Required PPE" }),
                     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-1.5", children: permit.ppeRequired.map((p2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
                       "span",
@@ -120994,10 +121415,10 @@ function PermitDetailView({
                       },
                       p2
                     )) })
-                  ] })
-                ] })
-              }
-            ),
+                  ]
+                }
+              )
+            ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "div",
               {
@@ -121704,7 +122125,7 @@ function PermitForm({
     });
   };
   const userRole = (user == null ? void 0 : user.role) ?? "";
-  const canDraft = userRole === "employee" || userRole === "supervisor" || userRole === "systemAdmin";
+  const canRaiseDraft = userRole === "supervisor" || userRole === "systemAdmin";
   const needsGasTesting = form.permitType === PermitType.hotWork || form.permitType === PermitType.confinedSpace;
   const buildRecord = (status) => ({
     id: "",
@@ -122574,7 +122995,7 @@ function PermitForm({
                 }
               ),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2", children: [
-                canDraft && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                canRaiseDraft && /* @__PURE__ */ jsxRuntimeExports.jsxs(
                   Button,
                   {
                     type: "button",
@@ -122589,7 +123010,7 @@ function PermitForm({
                     ]
                   }
                 ),
-                (userRole === "employee" || userRole === "supervisor" || userRole === "systemAdmin") && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                canRaiseDraft && /* @__PURE__ */ jsxRuntimeExports.jsxs(
                   Button,
                   {
                     type: "button",
@@ -122600,7 +123021,7 @@ function PermitForm({
                     "data-ocid": "permits.submit_button",
                     children: [
                       /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "w-4 h-4" }),
-                      isPending ? "Submitting…" : "Submit for Approval"
+                      isPending ? "Submitting…" : "Submit for Review"
                     ]
                   }
                 )
@@ -122973,7 +123394,53 @@ function PermitsPage() {
     },
     [createPermit]
   );
+  const canRaisePermit = (user == null ? void 0 : user.role) === "supervisor" || (user == null ? void 0 : user.role) === "systemAdmin";
   if (view === "create") {
+    if (!canRaisePermit) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        motion.div,
+        {
+          initial: { opacity: 0, y: 10 },
+          animate: { opacity: 1, y: 0 },
+          className: "p-6 flex items-center justify-center min-h-[60vh]",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              className: "rounded-2xl p-8 max-w-md w-full text-center",
+              style: {
+                background: "rgba(59,130,246,0.06)",
+                border: "1px solid rgba(59,130,246,0.2)"
+              },
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "div",
+                  {
+                    className: "w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4",
+                    style: { background: "rgba(59,130,246,0.15)" },
+                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileCheck, { className: "w-7 h-7", style: { color: "#3b82f6" } })
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display font-bold text-lg text-white mb-2", children: "Permit Creation Restricted" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-white/60 leading-relaxed mb-5", children: "Permit creation is restricted to Supervisors. Please contact your Supervisor to raise a permit." }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  Button,
+                  {
+                    type: "button",
+                    variant: "outline",
+                    className: "border-white/20 text-white/70 hover:text-white",
+                    onClick: () => setView("list"),
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "w-4 h-4 mr-2" }),
+                      "Back to Permits"
+                    ]
+                  }
+                )
+              ]
+            }
+          )
+        }
+      );
+    }
     return /* @__PURE__ */ jsxRuntimeExports.jsx(
       PermitForm,
       {
@@ -123024,7 +123491,7 @@ function PermitsPage() {
               /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-white/40", children: "Manage hot work, electrical, confined space and other permits" })
             ] })
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          canRaisePermit && /* @__PURE__ */ jsxRuntimeExports.jsxs(
             Button,
             {
               type: "button",
@@ -123132,7 +123599,7 @@ function PermitsPage() {
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(TriangleAlert, { className: "w-10 h-10 mx-auto mb-3 text-white/20" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-white/40 text-sm", children: "No permits match your current filters" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
+              canRaisePermit && /* @__PURE__ */ jsxRuntimeExports.jsx(
                 Button,
                 {
                   type: "button",

@@ -28,11 +28,13 @@ mixin (
   environmentRecords : Map.Map<Text, EnvTypes.EnvironmentRecord>,
   departments : Map.Map<Text, DeptTypes.DepartmentRecord>,
   notifLastRead : Map.Map<Principal, Time.Time>,
+  registrationEvents : List.List<DashTypes.ActivityFeedItem>,
 ) {
   public query func getDashboardStats() : async DashTypes.DashboardStats {
     DashLib.getDashboardStats({
       incidents; permits; risks; trainingRecords; observations; activityFeed;
       users; capas; inspections; environmentRecords; departments;
+      registrationEvents;
     });
   };
 
@@ -40,6 +42,7 @@ mixin (
     DashLib.getActivityFeed({
       incidents; permits; risks; trainingRecords; observations; activityFeed;
       users; capas; inspections; environmentRecords; departments;
+      registrationEvents;
     });
   };
 
@@ -57,6 +60,7 @@ mixin (
     DashLib.seedMockData({
       incidents; permits; risks; trainingRecords; observations; activityFeed;
       users; capas; inspections; environmentRecords; departments;
+      registrationEvents;
     });
   };
 };

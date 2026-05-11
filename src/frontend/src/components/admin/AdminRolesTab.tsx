@@ -24,6 +24,16 @@ const ROLES = [
     color: "bg-yellow-500/20 text-yellow-300",
   },
   {
+    key: "areaInCharge",
+    label: "Area In-Charge",
+    color: "bg-cyan-500/20 text-cyan-300",
+  },
+  {
+    key: "departmentHOD",
+    label: "Department HOD",
+    color: "bg-indigo-500/20 text-indigo-300",
+  },
+  {
     key: "safetyOfficer",
     label: "Safety Officer",
     color: "bg-[#18C37E]/20 text-[#18C37E]",
@@ -49,6 +59,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "View Dashboard": {
     employee: true,
     supervisor: true,
+    areaInCharge: true,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: true,
     ehsManager: true,
@@ -57,6 +69,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "Create Incident Report": {
     employee: true,
     supervisor: true,
+    areaInCharge: true,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: true,
     ehsManager: true,
@@ -64,15 +78,19 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   },
   "Approve Permits": {
     employee: false,
-    supervisor: true,
+    supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: true,
     contractorAdmin: false,
-    ehsManager: true,
+    ehsManager: false,
     systemAdmin: true,
   },
   "Manage Users": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: false,
     ehsManager: true,
@@ -81,6 +99,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "Access Analytics": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: false,
     ehsManager: true,
@@ -89,6 +109,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "Admin Panel": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: false,
     ehsManager: true,
@@ -97,6 +119,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "Delete Records": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: false,
     ehsManager: false,
@@ -105,6 +129,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "Assign CAPA": {
     employee: false,
     supervisor: true,
+    areaInCharge: true,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: false,
     ehsManager: true,
@@ -113,6 +139,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "Close Investigations": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: false,
     ehsManager: true,
@@ -121,6 +149,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "Configure System": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: false,
     ehsManager: false,
@@ -129,6 +159,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "View Audit Logs": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: true,
     safetyOfficer: true,
     contractorAdmin: false,
     ehsManager: true,
@@ -137,6 +169,8 @@ const PERM_MATRIX: Record<string, Record<string, boolean>> = {
   "Contractor Management": {
     employee: false,
     supervisor: false,
+    areaInCharge: false,
+    departmentHOD: false,
     safetyOfficer: false,
     contractorAdmin: true,
     ehsManager: true,
@@ -148,9 +182,13 @@ const ROLE_DESCRIPTIONS: Record<string, string> = {
   employee:
     "General floor employees. Can report incidents and submit observations. Read-only access to dashboards.",
   supervisor:
-    "Floor supervisors. Can approve permits, assign CAPA tasks, and review incident reports.",
+    "Floor supervisors. Raise and close permits, assign CAPA tasks, and review incident reports.",
+  areaInCharge:
+    "Area In-Charge personnel. Reviews submitted permits to confirm precautions are in place before HOD validation.",
+  departmentHOD:
+    "Validates permits for their department and manages departmental compliance. Confirms all controls before Safety Officer approval.",
   safetyOfficer:
-    "Dedicated safety personnel. Full access to safety modules, analytics and audit logs.",
+    "Dedicated safety personnel. Final approver for permits. Full access to safety modules, analytics and audit logs.",
   contractorAdmin:
     "External contractor supervisors. Manages contractor safety compliance and reporting.",
   ehsManager:
