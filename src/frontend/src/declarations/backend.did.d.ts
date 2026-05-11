@@ -293,8 +293,10 @@ export type PermitStatus = { 'closed' : null } |
   { 'draft' : null };
 export type PermitType = { 'confinedSpace' : null } |
   { 'heightWork' : null } |
+  { 'liftingPermit' : null } |
   { 'lineBreaking' : null } |
   { 'hotWork' : null } |
+  { 'generalWorkPermit' : null } |
   { 'electrical' : null } |
   { 'excavation' : null };
 export interface PersonInvolved {

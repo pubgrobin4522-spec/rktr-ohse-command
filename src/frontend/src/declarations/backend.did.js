@@ -227,8 +227,10 @@ export const EmergencyContact = IDL.Record({
 export const PermitType = IDL.Variant({
   'confinedSpace' : IDL.Null,
   'heightWork' : IDL.Null,
+  'liftingPermit' : IDL.Null,
   'lineBreaking' : IDL.Null,
   'hotWork' : IDL.Null,
+  'generalWorkPermit' : IDL.Null,
   'electrical' : IDL.Null,
   'excavation' : IDL.Null,
 });
@@ -714,8 +716,10 @@ export const idlFactory = ({ IDL }) => {
   const PermitType = IDL.Variant({
     'confinedSpace' : IDL.Null,
     'heightWork' : IDL.Null,
+    'liftingPermit' : IDL.Null,
     'lineBreaking' : IDL.Null,
     'hotWork' : IDL.Null,
+    'generalWorkPermit' : IDL.Null,
     'electrical' : IDL.Null,
     'excavation' : IDL.Null,
   });

@@ -1103,6 +1103,9 @@ video {
 .max-h-60 {
   max-height: 15rem;
 }
+.max-h-96 {
+  max-height: 24rem;
+}
 .max-h-\[220px\] {
   max-height: 220px;
 }
@@ -2160,6 +2163,9 @@ video {
 }
 .pb-0 {
   padding-bottom: 0px;
+}
+.pb-0\.5 {
+  padding-bottom: 0.125rem;
 }
 .pb-1 {
   padding-bottom: 0.25rem;
@@ -3219,6 +3225,10 @@ video {
 
 .focus\:border-\[\#18C37E\]\/50:focus {
   border-color: rgb(24 195 126 / 0.5);
+}
+
+.focus\:border-\[\#18C37E\]\/60:focus {
+  border-color: rgb(24 195 126 / 0.6);
 }
 
 .focus\:border-green-500\/40:focus {

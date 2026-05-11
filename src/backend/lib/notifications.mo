@@ -515,6 +515,8 @@ module {
       case (#heightWork) { "Height Work" };
       case (#confinedSpace) { "Confined Space" };
       case (#lineBreaking) { "Line Breaking" };
+      case (#liftingPermit) { "Lifting Permit" };
+      case (#generalWorkPermit) { "General Work Permit" };
     };
   };
 };

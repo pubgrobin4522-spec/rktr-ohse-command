@@ -478,8 +478,10 @@ export enum PermitStatus {
 export enum PermitType {
     confinedSpace = "confinedSpace",
     heightWork = "heightWork",
+    liftingPermit = "liftingPermit",
     lineBreaking = "lineBreaking",
     hotWork = "hotWork",
+    generalWorkPermit = "generalWorkPermit",
     electrical = "electrical",
     excavation = "excavation"
 }
@@ -2269,15 +2271,19 @@ function from_candid_variant_n97(_uploadFile: (file: ExternalBlob) => Promise<Ui
 } | {
     heightWork: null;
 } | {
+    liftingPermit: null;
+} | {
     lineBreaking: null;
 } | {
     hotWork: null;
+} | {
+    generalWorkPermit: null;
 } | {
     electrical: null;
 } | {
     excavation: null;
 }): PermitType {
-    return "confinedSpace" in value ? PermitType.confinedSpace : "heightWork" in value ? PermitType.heightWork : "lineBreaking" in value ? PermitType.lineBreaking : "hotWork" in value ? PermitType.hotWork : "electrical" in value ? PermitType.electrical : "excavation" in value ? PermitType.excavation : value;
+    return "confinedSpace" in value ? PermitType.confinedSpace : "heightWork" in value ? PermitType.heightWork : "liftingPermit" in value ? PermitType.liftingPermit : "lineBreaking" in value ? PermitType.lineBreaking : "hotWork" in value ? PermitType.hotWork : "generalWorkPermit" in value ? PermitType.generalWorkPermit : "electrical" in value ? PermitType.electrical : "excavation" in value ? PermitType.excavation : value;
 }
 function from_candid_vec_n101(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_PermitRecord>): Array<PermitRecord> {
     return value.map((x)=>from_candid_PermitRecord_n90(_uploadFile, _downloadFile, x));
@@ -2978,9 +2984,13 @@ function to_candid_variant_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint
 } | {
     heightWork: null;
 } | {
+    liftingPermit: null;
+} | {
     lineBreaking: null;
 } | {
     hotWork: null;
+} | {
+    generalWorkPermit: null;
 } | {
     electrical: null;
 } | {
@@ -2990,10 +3000,14 @@ function to_candid_variant_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint
         confinedSpace: null
     } : value == PermitType.heightWork ? {
         heightWork: null
+    } : value == PermitType.liftingPermit ? {
+        liftingPermit: null
     } : value == PermitType.lineBreaking ? {
         lineBreaking: null
     } : value == PermitType.hotWork ? {
         hotWork: null
+    } : value == PermitType.generalWorkPermit ? {
+        generalWorkPermit: null
     } : value == PermitType.electrical ? {
         electrical: null
     } : value == PermitType.excavation ? {

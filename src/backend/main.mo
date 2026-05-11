@@ -43,9 +43,16 @@ actor {
     rootCause : ?Text; correctiveAction : ?Text;
     createdAt : Int; updatedAt : Int;
   };
+  // ── Legacy permit type — frozen at the 6-value shape from the .most snapshot ──
+  // DO NOT add new values here — this keeps stable compatibility for `permits` and `permitsV2`.
+  type LegacyPermitType = {
+    #hotWork; #electrical; #excavation;
+    #heightWork; #confinedSpace; #lineBreaking;
+  };
+
   type LegacyPermitRecord = {
     id : Text; permitNumber : Text;
-    permitType : PermitTypes.PermitType; jobDescription : Text;
+    permitType : LegacyPermitType; jobDescription : Text;
     location : Text; requestedBy : Text; reviewedBy : ?Text;
     approvedBy : ?Text; status : PermitTypes.PermitStatus;
     startTime : Int; endTime : Int;
@@ -77,6 +84,24 @@ actor {
     createdAt : Int;
   };
 
+  // LegacyPermitRecordV2: the old full PermitRecord shape using the frozen 6-value LegacyPermitType.
+  // Keeps `permitsV2` stable-compatible with the .most snapshot.
+  type LegacyPermitRecordV2 = {
+    id : Text; permitNumber : Text;
+    permitType : LegacyPermitType; jobDescription : Text;
+    location : Text; requestedBy : Text; reviewedBy : ?Text;
+    approvedBy : ?Text; status : PermitTypes.PermitStatus;
+    startTime : Int; endTime : Int;
+    hazards : [Text]; ppeRequired : [Text]; createdAt : Int;
+    hazardControls : ?[PermitTypes.HazardControl];
+    gasTestResults : ?PermitTypes.GasTestResults;
+    isolationTypes : ?[Text]; isolationVerifiedBy : ?Text;
+    lotoApplied : ?Bool; toolboxTalk : ?PermitTypes.ToolboxTalk;
+    signatures : ?PermitTypes.PermitSignatures;
+    emergencyContacts : ?[PermitTypes.EmergencyContact];
+    supervisorOnDuty : ?Text;
+  };
+
   // OLD stable maps (previous deployed types — kept for upgrade reading)
   let incidents : Map.Map<Text, LegacyIncidentRecord> = Map.empty();
   let permits : Map.Map<Text, LegacyPermitRecord> = Map.empty();
@@ -84,8 +109,12 @@ actor {
   // incidentsV2: preserved as old type to stay compatible with .most snapshot.
   // Do NOT change the type here — it must match IncidentRecord__367788537 in backend.most.
   let incidentsV2 : Map.Map<Text, IncidentRecordV2> = Map.empty();
-  let permitsV2 = Map.empty<Text, PermitTypes.PermitRecord>();
+  // permitsV2: FROZEN — uses LegacyPermitRecordV2 (6-value PermitType). Do NOT change.
+  let permitsV2 : Map.Map<Text, LegacyPermitRecordV2> = Map.empty();
   let permitCounter = { var nextId : Nat = 0 };
+
+  // permitsV3: NEW map — uses full PermitTypes.PermitRecord with 8-value PermitType (incl. liftingPermit, generalWorkPermit)
+  let permitsV3 = Map.empty<Text, PermitTypes.PermitRecord>();
 
   // NEW stable map — incidentsV3 holds IncidentRecord with the `attachments` field
   let incidentsV3 = Map.empty<Text, IncidentTypes.IncidentRecord>();
@@ -123,6 +152,18 @@ actor {
   let departments = Map.empty<Text, DeptTypes.DepartmentRecord>();
   let activityFeed = List.empty<DashTypes.ActivityFeedItem>();
   let notifLastRead = Map.empty<Principal, Time.Time>();
+
+  // Helper to convert frozen 6-value LegacyPermitType to the current 8-value PermitType
+  func legacyPermitTypeToNew(pt : LegacyPermitType) : PermitTypes.PermitType {
+    switch (pt) {
+      case (#hotWork) { #hotWork };
+      case (#electrical) { #electrical };
+      case (#excavation) { #excavation };
+      case (#heightWork) { #heightWork };
+      case (#confinedSpace) { #confinedSpace };
+      case (#lineBreaking) { #lineBreaking };
+    };
+  };
 
   // ── Stable migration: promote legacy and v2 incidents/permits/users/observations to current types ──
   system func postupgrade() {
@@ -191,12 +232,13 @@ actor {
         });
       };
     };
-    // Migrate legacy permits to v2 Map with new optional fields
+    // Migrate legacy permits (v1, 6-value LegacyPermitType) to permitsV3
     for ((k, v) in permits.entries()) {
-      if (permitsV2.get(k) == null) {
-        permitsV2.add(k, {
+      if (permitsV3.get(k) == null) {
+        permitsV3.add(k, {
           id = v.id; permitNumber = v.permitNumber;
-          permitType = v.permitType; jobDescription = v.jobDescription;
+          permitType = legacyPermitTypeToNew(v.permitType);
+          jobDescription = v.jobDescription;
           location = v.location; requestedBy = v.requestedBy;
           reviewedBy = v.reviewedBy; approvedBy = v.approvedBy;
           status = v.status; startTime = v.startTime; endTime = v.endTime;
@@ -207,6 +249,26 @@ actor {
           lotoApplied = null; toolboxTalk = null;
           signatures = null; emergencyContacts = null;
           supervisorOnDuty = null;
+        });
+      };
+    };
+    // Migrate permitsV2 (6-value LegacyPermitRecordV2) to permitsV3
+    for ((k, v) in permitsV2.entries()) {
+      if (permitsV3.get(k) == null) {
+        permitsV3.add(k, {
+          id = v.id; permitNumber = v.permitNumber;
+          permitType = legacyPermitTypeToNew(v.permitType);
+          jobDescription = v.jobDescription;
+          location = v.location; requestedBy = v.requestedBy;
+          reviewedBy = v.reviewedBy; approvedBy = v.approvedBy;
+          status = v.status; startTime = v.startTime; endTime = v.endTime;
+          hazards = v.hazards; ppeRequired = v.ppeRequired;
+          createdAt = v.createdAt;
+          hazardControls = v.hazardControls; gasTestResults = v.gasTestResults;
+          isolationTypes = v.isolationTypes; isolationVerifiedBy = v.isolationVerifiedBy;
+          lotoApplied = v.lotoApplied; toolboxTalk = v.toolboxTalk;
+          signatures = v.signatures; emergencyContacts = v.emergencyContacts;
+          supervisorOnDuty = v.supervisorOnDuty;
         });
       };
     };
@@ -227,7 +289,7 @@ actor {
   // --- Mixin includes ---
   include UsersMixin(usersV2);
   include IncidentsMixin(incidentsV3, usersV2);
-  include PermitsMixin(permitsV2, permitCounter, usersV2);
+  include PermitsMixin(permitsV3, permitCounter, usersV2);
   include RisksMixin(risks);
   include InspectionsMixin(inspections, usersV2, activityFeed);
   include TrainingMixin(trainingRecords);
@@ -236,8 +298,8 @@ actor {
   include ObservationsMixin(observationsV2);
   include DepartmentsMixin(departments);
   include ESGMixin(esgRecords, usersV2);
-  include DashboardMixin(incidentsV3, permitsV2, risks, trainingRecords, observationsV2, activityFeed, usersV2, capas, inspections, environmentRecords, departments, notifLastRead);
-  include NotificationsMixin(usersV2, incidentsV3, permitsV2, capas, trainingRecords, inspections);
+  include DashboardMixin(incidentsV3, permitsV3, risks, trainingRecords, observationsV2, activityFeed, usersV2, capas, inspections, environmentRecords, departments, notifLastRead);
+  include NotificationsMixin(usersV2, incidentsV3, permitsV3, capas, trainingRecords, inspections);
 
   // 24-hour deadline check timer — registered once at actor init
   ignore Timer.recurringTimer<system>(

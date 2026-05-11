@@ -22,12 +22,12 @@ module {
     callerRole : Text,
   ) : Bool {
     switch (currentStatus, newStatus) {
-      case (#draft, #submitted) { callerRole == "supervisor" };
+      case (#draft, #submitted) { callerRole == "supervisor" or callerRole == "employee" };
       case (#submitted, #underReview) { callerRole == "areaInCharge" };
       case (#underReview, #validated) { callerRole == "areaInCharge" };
-      case (#validated, #approved) { callerRole == "safetyOfficer" or callerRole == "ehsManager" };
-      case (#approved, #active) { callerRole == "safetyOfficer" or callerRole == "ehsManager" };
-      case (#active, #closed) { callerRole == "safetyOfficer" or callerRole == "ehsManager" };
+      case (#validated, #approved) { callerRole == "safetyOfficer" or callerRole == "ehsManager" or callerRole == "systemAdmin" };
+      case (#approved, #active) { callerRole == "safetyOfficer" or callerRole == "ehsManager" or callerRole == "systemAdmin" };
+      case (#active, #closed) { callerRole == "supervisor" or callerRole == "employee" };
       case (#submitted, #rejected) { true };
       case (#underReview, #rejected) { true };
       case (#validated, #rejected) { true };

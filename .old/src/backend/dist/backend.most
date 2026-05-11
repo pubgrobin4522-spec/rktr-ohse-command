@@ -235,6 +235,32 @@ type LegacyObservationRecord__979079632 =
     reportedBy : Text;
     status : ObservationStatus__377988550
   };
+type LegacyPermitRecordV2__727595764 =
+  {
+    approvedBy : ?Text;
+    createdAt : Int;
+    emergencyContacts : ?[EmergencyContact__409124233];
+    endTime : Int;
+    gasTestResults : ?GasTestResults__124880118;
+    hazardControls : ?[HazardControl__251177640];
+    hazards : [Text];
+    id : Text;
+    isolationTypes : ?[Text];
+    isolationVerifiedBy : ?Text;
+    jobDescription : Text;
+    location : Text;
+    lotoApplied : ?Bool;
+    permitNumber : Text;
+    permitType : LegacyPermitType__346770313;
+    ppeRequired : [Text];
+    requestedBy : Text;
+    reviewedBy : ?Text;
+    signatures : ?PermitSignatures__754542373;
+    startTime : Int;
+    status : PermitStatus__719432684;
+    supervisorOnDuty : ?Text;
+    toolboxTalk : ?ToolboxTalk__340845692
+  };
 type LegacyPermitRecord__865214717 =
   {
     approvedBy : ?Text;
@@ -245,12 +271,21 @@ type LegacyPermitRecord__865214717 =
     jobDescription : Text;
     location : Text;
     permitNumber : Text;
-    permitType : PermitType__1068981851;
+    permitType : LegacyPermitType__346770313;
     ppeRequired : [Text];
     requestedBy : Text;
     reviewedBy : ?Text;
     startTime : Int;
     status : PermitStatus__719432684
+  };
+type LegacyPermitType__346770313 =
+  {
+    #confinedSpace;
+    #electrical;
+    #excavation;
+    #heightWork;
+    #hotWork;
+    #lineBreaking
   };
 type LegacyUserRecord__93257400 =
   {
@@ -328,8 +363,10 @@ type PermitType__1068981851 =
     #confinedSpace;
     #electrical;
     #excavation;
+    #generalWorkPermit;
     #heightWork;
     #hotWork;
+    #liftingPermit;
     #lineBreaking
   };
 type PersonInvolved__892537450 =
@@ -472,6 +509,11 @@ actor {
       var size : Nat__490723111
     };
   stable permitsV2 :
+    {
+      var root : Node__46230540<Text, LegacyPermitRecordV2__727595764>;
+      var size : Nat__490723111
+    };
+  stable permitsV3 :
     {
       var root : Node__46230540<Text, PermitRecord__504737684>;
       var size : Nat__490723111

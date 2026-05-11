@@ -8,6 +8,8 @@ module {
     #heightWork;
     #confinedSpace;
     #lineBreaking;
+    #liftingPermit;
+    #generalWorkPermit;
   };
 
   public type PermitStatus = {

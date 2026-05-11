@@ -17,6 +17,7 @@ import {
   Shovel,
   StopCircle,
   Timer,
+  Truck,
   User,
   Wrench,
   XCircle,
@@ -59,6 +60,16 @@ const PERMIT_TYPE_CONFIG: Record<
     label: "Line Breaking",
     icon: <Wrench className="w-5 h-5" />,
     color: "#06b6d4",
+  },
+  liftingPermit: {
+    label: "Lifting Permit",
+    icon: <Truck className="w-5 h-5" />,
+    color: "#a855f7",
+  },
+  generalWorkPermit: {
+    label: "General Work Permit",
+    icon: <Wrench className="w-5 h-5" />,
+    color: "#64748b",
   },
 };
 
@@ -442,6 +453,7 @@ function CountdownTimer({ endTime }: { endTime: bigint }) {
 function getRoleActions(
   status: string,
   role: string,
+  userEmail?: string,
 ): {
   label: string;
   nextStatus: PermitStatus;
@@ -450,7 +462,7 @@ function getRoleActions(
   variant: "default" | "destructive" | "outline";
 }[] {
   const REJECT_ROLES = ["safetyOfficer", "ehsManager", "areaInCharge"];
-  const REJECT_STATES = ["submitted", "underReview", "validated", "approved"];
+  const _REJECT_STATES = ["submitted", "underReview", "validated", "approved"];
   const rejectAction = {
     label: "Reject",
     nextStatus: PermitStatus.rejected,
@@ -459,9 +471,13 @@ function getRoleActions(
     variant: "destructive" as const,
   };
 
+  const isSumesh = userEmail === "sumesh.j@rktrwheels.com";
+  const canApprove = role === "safetyOfficer" || isSumesh;
+  const canClose = role === "supervisor" || role === "employee" || isSumesh;
+
   switch (status) {
     case "draft":
-      if (role === "supervisor") {
+      if (role === "supervisor" || role === "employee" || isSumesh) {
         return [
           {
             label: "Submit for Approval",
@@ -475,7 +491,7 @@ function getRoleActions(
       return [];
 
     case "submitted":
-      if (role === "areaInCharge") {
+      if (role === "areaInCharge" || isSumesh) {
         return [
           {
             label: "Take for Review",
@@ -484,16 +500,14 @@ function getRoleActions(
             color: "#eab308",
             variant: "default",
           },
-          ...(REJECT_ROLES.includes(role) && REJECT_STATES.includes(status)
-            ? [rejectAction]
-            : []),
+          ...(REJECT_ROLES.includes(role) || isSumesh ? [rejectAction] : []),
         ];
       }
       if (REJECT_ROLES.includes(role)) return [rejectAction];
       return [];
 
     case "underReview":
-      if (role === "areaInCharge") {
+      if (role === "areaInCharge" || isSumesh) {
         return [
           {
             label: "Mark as Validated",
@@ -509,7 +523,7 @@ function getRoleActions(
       return [];
 
     case "validated":
-      if (role === "safetyOfficer" || role === "ehsManager") {
+      if (canApprove) {
         return [
           {
             label: "Approve",
@@ -525,7 +539,7 @@ function getRoleActions(
       return [];
 
     case "approved":
-      if (role === "safetyOfficer" || role === "ehsManager") {
+      if (canApprove) {
         return [
           {
             label: "Activate Permit",
@@ -541,7 +555,7 @@ function getRoleActions(
       return [];
 
     case "active":
-      if (role === "safetyOfficer" || role === "ehsManager") {
+      if (canClose) {
         return [
           {
             label: "Close Permit",
@@ -563,17 +577,17 @@ function getRoleActions(
 function getWaitingMessage(status: string): string {
   switch (status) {
     case "draft":
-      return "Waiting for Supervisor to submit for approval";
+      return "Waiting for supervisor or employee to submit for approval";
     case "submitted":
       return "Waiting for Area In-Charge to take for review";
     case "underReview":
       return "Waiting for Area In-Charge to validate";
     case "validated":
-      return "Waiting for Safety Officer / EHS Manager to approve";
+      return "Waiting for Safety Officer (or Sumesh J) to approve";
     case "approved":
-      return "Waiting for Safety Officer / EHS Manager to activate";
+      return "Waiting for activation";
     case "active":
-      return "Waiting for Safety Officer / EHS Manager to close";
+      return "Waiting for supervisor or employee to close the permit";
     default:
       return "No further action required";
   }
@@ -592,7 +606,8 @@ export default function PermitDetailView({
 }) {
   const { user } = useAuth();
   const userRole = user?.role ?? "";
-  const actions = getRoleActions(permit.status, userRole);
+  const userEmail = user?.email ?? "";
+  const actions = getRoleActions(permit.status, userRole, userEmail);
   const canAct = actions.length > 0;
   const isTerminal = ["closed", "rejected", "expired"].includes(permit.status);
   const showWaiting = !canAct && !isTerminal;

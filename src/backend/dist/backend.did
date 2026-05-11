@@ -121,8 +121,10 @@ type PermitType =
    confinedSpace;
    electrical;
    excavation;
+   generalWorkPermit;
    heightWork;
    hotWork;
+   liftingPermit;
    lineBreaking;
  };
 type PermitStatus = 

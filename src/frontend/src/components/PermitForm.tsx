@@ -3,6 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  HAZARD_LIBRARY,
+  PERMIT_TYPE_HAZARD_IDS,
+} from "@/constants/hazardLibrary";
+import type { HazardLibraryEntry } from "@/constants/hazardLibrary";
 import { RKTR_LOCATIONS } from "@/constants/locations";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -13,14 +18,17 @@ import {
   MoveUp,
   Plus,
   Save,
+  Search,
   Send,
   Shovel,
   Trash2,
+  Truck,
   Wrench,
+  X,
   Zap,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PERMIT_TYPES: {
   key: PermitType;
@@ -70,6 +78,20 @@ const PERMIT_TYPES: {
     icon: <Wrench className="w-6 h-6" />,
     color: "#06b6d4",
     desc: "Pipeline, process line operations",
+  },
+  {
+    key: "liftingPermit" as PermitType,
+    label: "Lifting Permit",
+    icon: <Truck className="w-6 h-6" />,
+    color: "#a855f7",
+    desc: "Crane/hoist lifts over 8 tonnes",
+  },
+  {
+    key: "generalWorkPermit" as PermitType,
+    label: "General Work Permit",
+    icon: <Wrench className="w-6 h-6" />,
+    color: "#64748b",
+    desc: "General maintenance and work activities",
   },
 ];
 
@@ -131,56 +153,6 @@ function GlassSection({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
-    </div>
-  );
-}
-
-function DynamicList({
-  items,
-  onChange,
-  placeholder,
-}: {
-  items: string[];
-  onChange: (items: string[]) => void;
-  placeholder: string;
-}) {
-  const add = () => onChange([...items, ""]);
-  const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
-  const update = (i: number, val: string) =>
-    onChange(items.map((item, idx) => (idx === i ? val : item)));
-
-  return (
-    <div className="space-y-2">
-      {items.map((item, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: dynamic user-entered list, no stable id
-        <div key={`item-${i}`} className="flex gap-2">
-          <Input
-            value={item}
-            onChange={(e) => update(i, e.target.value)}
-            placeholder={`${placeholder} ${i + 1}`}
-            className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
-          />
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            className="text-red-400/60 hover:text-red-400 px-2"
-            onClick={() => remove(i)}
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        </div>
-      ))}
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        className="text-white/40 hover:text-white/70 gap-1"
-        onClick={add}
-      >
-        <Plus className="w-3 h-3" />
-        Add {placeholder}
-      </Button>
     </div>
   );
 }
@@ -254,6 +226,17 @@ const INITIAL_STATE: FormState = {
   },
 };
 
+interface HazardControlRow {
+  id: string;
+  libraryId?: number;
+  hazardType: string;
+  examples: string;
+  controlMeasures: string;
+  residualRisk: string;
+  selected: boolean;
+  isCustom: boolean;
+}
+
 export default function PermitForm({
   onBack,
   onSubmit,
@@ -264,10 +247,115 @@ export default function PermitForm({
   isPending: boolean;
 }) {
   const { user } = useAuth();
-  const [form, setForm] = useState<FormState>(INITIAL_STATE);
+  const [form, setForm] = useState<FormState>({
+    ...INITIAL_STATE,
+    requestedBy: user?.name ?? "EHS Manager",
+  });
+  const [hazardRows, setHazardRows] = useState<HazardControlRow[]>([]);
+  const [hazardSearch, setHazardSearch] = useState("");
+  const [showAllHazards, setShowAllHazards] = useState(false);
+  const [customCount, setCustomCount] = useState(0);
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
+
+  const syncHazardRowsToForm = (rows: HazardControlRow[]) => {
+    const selected = rows.filter((r) => r.selected);
+    setForm((prev) => ({
+      ...prev,
+      hazards: selected.map((r) => r.hazardType),
+      controls: selected.map((r) => r.controlMeasures),
+    }));
+  };
+
+  useEffect(() => {
+    const permitType = form.permitType as string;
+    const preSelectedIds: number[] = PERMIT_TYPE_HAZARD_IDS[permitType] ?? [];
+    const rows: HazardControlRow[] = HAZARD_LIBRARY.map(
+      (entry: HazardLibraryEntry) => ({
+        id: String(entry.id),
+        libraryId: entry.id,
+        hazardType: entry.hazardType,
+        examples: entry.examples,
+        controlMeasures: entry.defaultControls,
+        residualRisk: "Low",
+        selected: preSelectedIds.includes(entry.id),
+        isCustom: false,
+      }),
+    );
+    setHazardRows(rows);
+    const selected = rows.filter((r) => r.selected);
+    setForm((prev) => ({
+      ...prev,
+      hazards: selected.map((r) => r.hazardType),
+      controls: selected.map((r) => r.controlMeasures),
+    }));
+  }, [form.permitType]);
+
+  const toggleHazardRow = (rowId: string, checked: boolean) => {
+    setHazardRows((prev) => {
+      const next = prev.map((r) =>
+        r.id === rowId ? { ...r, selected: checked } : r,
+      );
+      syncHazardRowsToForm(next);
+      return next;
+    });
+  };
+
+  const updateHazardControl = (rowId: string, controlMeasures: string) => {
+    setHazardRows((prev) => {
+      const next = prev.map((r) =>
+        r.id === rowId ? { ...r, controlMeasures } : r,
+      );
+      syncHazardRowsToForm(next);
+      return next;
+    });
+  };
+
+  const updateHazardResidualRisk = (rowId: string, residualRisk: string) => {
+    setHazardRows((prev) =>
+      prev.map((r) => (r.id === rowId ? { ...r, residualRisk } : r)),
+    );
+  };
+
+  const addCustomHazard = () => {
+    const n = customCount + 1;
+    setCustomCount(n);
+    setHazardRows((prev) => [
+      ...prev,
+      {
+        id: `custom-${n}`,
+        hazardType: "",
+        examples: "",
+        controlMeasures: "",
+        residualRisk: "Low",
+        selected: true,
+        isCustom: true,
+      },
+    ]);
+  };
+
+  const removeCustomHazard = (rowId: string) => {
+    setHazardRows((prev) => {
+      const next = prev.filter((r) => r.id !== rowId);
+      syncHazardRowsToForm(next);
+      return next;
+    });
+  };
+
+  const updateCustomHazardType = (rowId: string, hazardType: string) => {
+    setHazardRows((prev) => {
+      const next = prev.map((r) => (r.id === rowId ? { ...r, hazardType } : r));
+      syncHazardRowsToForm(next);
+      return next;
+    });
+  };
+
+  const userRole = user?.role ?? "";
+  const canDraft =
+    userRole === "employee" ||
+    userRole === "supervisor" ||
+    userRole === "systemAdmin";
 
   const needsGasTesting =
     form.permitType === PermitType.hotWork ||
@@ -545,111 +633,298 @@ export default function PermitForm({
 
       {/* Section 3 — Hazard Controls */}
       <GlassSection>
-        <SectionHeader
-          title="Hazard Controls"
-          icon={<Wrench className="w-4 h-4" />}
-          step={3}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <p className="text-xs text-white/40 mb-2 uppercase tracking-wide">
-              Identified Hazards
-            </p>
-            <DynamicList
-              items={form.hazards}
-              onChange={(v) => setField("hazards", v)}
-              placeholder="Hazard"
+        {/* Header row with count badge */}
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold font-mono"
+            style={{
+              background: "rgba(24,195,126,0.15)",
+              color: "#18C37E",
+              border: "1px solid rgba(24,195,126,0.25)",
+            }}
+          >
+            3
+          </div>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <span style={{ color: "#18C37E" }}>
+              <Wrench className="w-4 h-4" />
+            </span>
+            <h3 className="font-display font-semibold text-white">
+              Hazard Controls
+            </h3>
+          </div>
+          <span
+            className="text-xs px-2 py-0.5 rounded-full font-medium"
+            style={{ background: "rgba(24,195,126,0.2)", color: "#18C37E" }}
+          >
+            {hazardRows.filter((r) => r.selected).length} hazards identified
+          </span>
+        </div>
+
+        {/* Search + toggle row */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+            <input
+              type="text"
+              value={hazardSearch}
+              onChange={(e) => setHazardSearch(e.target.value)}
+              placeholder="Search hazards…"
+              className="w-full h-8 pl-8 pr-3 rounded-md text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[#18C37E]/50"
+              data-ocid="permits.hazard_search_input"
             />
           </div>
-          <div>
-            <p className="text-xs text-white/40 mb-2 uppercase tracking-wide">
-              Control Measures
-            </p>
-            <DynamicList
-              items={form.controls}
-              onChange={(v) => setField("controls", v)}
-              placeholder="Control"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <p className="text-xs text-white/40 mb-2 uppercase tracking-wide">
-              Emergency Contacts
-            </p>
-            <div className="space-y-2">
-              {form.emergencyContacts.map((ec, i) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: dynamic list, no stable id
-                <div key={`ec-${i}`} className="flex gap-2">
-                  <Input
-                    value={ec.name}
-                    onChange={(e) =>
-                      setField(
-                        "emergencyContacts",
-                        form.emergencyContacts.map((c, idx) =>
-                          idx === i ? { ...c, name: e.target.value } : c,
-                        ),
-                      )
-                    }
-                    placeholder="Contact name"
-                    className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
-                  />
-                  <Input
-                    value={ec.role}
-                    onChange={(e) =>
-                      setField(
-                        "emergencyContacts",
-                        form.emergencyContacts.map((c, idx) =>
-                          idx === i ? { ...c, role: e.target.value } : c,
-                        ),
-                      )
-                    }
-                    placeholder="Role (e.g. EHS Manager)"
-                    className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
-                  />
-                  <Input
-                    value={ec.phone}
-                    onChange={(e) =>
-                      setField(
-                        "emergencyContacts",
-                        form.emergencyContacts.map((c, idx) =>
-                          idx === i ? { ...c, phone: e.target.value } : c,
-                        ),
-                      )
-                    }
-                    placeholder="Phone number"
-                    className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    className="text-red-400/60 hover:text-red-400 px-2"
-                    onClick={() =>
-                      setField(
-                        "emergencyContacts",
-                        form.emergencyContacts.filter((_, idx) => idx !== i),
-                      )
-                    }
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="text-white/40 hover:text-white/70 gap-1"
-                onClick={() =>
-                  setField("emergencyContacts", [
-                    ...form.emergencyContacts,
-                    { name: "", role: "", phone: "" },
-                  ])
-                }
+          <button
+            type="button"
+            onClick={() => setShowAllHazards((v) => !v)}
+            className="h-8 px-3 rounded-md text-xs font-medium transition-colors"
+            style={{
+              background: showAllHazards
+                ? "rgba(24,195,126,0.2)"
+                : "rgba(255,255,255,0.06)",
+              color: showAllHazards ? "#18C37E" : "rgba(255,255,255,0.5)",
+              border: `1px solid ${showAllHazards ? "rgba(24,195,126,0.4)" : "rgba(255,255,255,0.1)"}`,
+            }}
+            data-ocid="permits.hazard_toggle_button"
+          >
+            {showAllHazards
+              ? "Show selected only"
+              : `Show all ${HAZARD_LIBRARY.length} hazards`}
+          </button>
+        </div>
+
+        {/* Hazard rows list */}
+        <div
+          className="max-h-96 overflow-y-auto space-y-1.5 pr-1"
+          data-ocid="permits.hazard_list"
+        >
+          {(() => {
+            const search = hazardSearch.trim().toLowerCase();
+            const visible = hazardRows.filter((row) => {
+              if (search) {
+                return (
+                  row.hazardType.toLowerCase().includes(search) ||
+                  row.examples.toLowerCase().includes(search) ||
+                  row.controlMeasures.toLowerCase().includes(search)
+                );
+              }
+              return showAllHazards || row.selected || row.isCustom;
+            });
+
+            if (visible.length === 0 && form.permitType) {
+              return (
+                <p className="text-xs text-white/30 italic py-3 text-center">
+                  No hazards match your search.
+                </p>
+              );
+            }
+            if (!form.permitType) {
+              return (
+                <p className="text-xs text-white/30 italic py-3 text-center">
+                  Select a permit type above to load pre-selected hazards.
+                </p>
+              );
+            }
+
+            return visible.map((row) => (
+              <div
+                key={row.id}
+                className="rounded-lg p-3 transition-colors"
+                style={{
+                  background: row.selected
+                    ? "rgba(24,195,126,0.08)"
+                    : "rgba(255,255,255,0.03)",
+                  borderLeft: `4px solid ${
+                    row.selected ? "#18C37E" : "transparent"
+                  }`,
+                  border: `1px solid ${
+                    row.selected
+                      ? "rgba(24,195,126,0.2)"
+                      : "rgba(255,255,255,0.06)"
+                  }`,
+                  borderLeftWidth: "4px",
+                }}
+                data-ocid={`permits.hazard_row.${row.id}`}
               >
-                <Plus className="w-3 h-3" />
-                Add Contact
-              </Button>
-            </div>
+                <div className="flex items-start gap-3">
+                  {/* Checkbox */}
+                  <input
+                    type="checkbox"
+                    checked={row.selected}
+                    onChange={(e) => toggleHazardRow(row.id, e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded accent-[#18C37E] flex-shrink-0"
+                    data-ocid={`permits.hazard_checkbox.${row.id}`}
+                  />
+                  <div className="flex-1 min-w-0">
+                    {row.isCustom ? (
+                      <input
+                        type="text"
+                        value={row.hazardType}
+                        onChange={(e) =>
+                          updateCustomHazardType(row.id, e.target.value)
+                        }
+                        placeholder="Hazard type…"
+                        className="w-full bg-transparent border-b border-white/20 text-sm font-semibold text-white placeholder:text-white/30 focus:outline-none focus:border-[#18C37E]/60 pb-0.5 mb-1"
+                      />
+                    ) : (
+                      <p className="text-sm font-semibold text-white leading-snug">
+                        {row.hazardType}
+                      </p>
+                    )}
+                    {!row.isCustom && row.examples && (
+                      <p className="text-xs text-white/40 italic mt-0.5 mb-2">
+                        {row.examples}
+                      </p>
+                    )}
+                    {/* Control Measures editable input */}
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <label
+                        htmlFor={`ctrl-${row.id}`}
+                        className="text-xs text-white/40 whitespace-nowrap flex-shrink-0"
+                      >
+                        Controls:
+                      </label>
+                      <input
+                        id={`ctrl-${row.id}`}
+                        type="text"
+                        value={row.controlMeasures}
+                        onChange={(e) =>
+                          updateHazardControl(row.id, e.target.value)
+                        }
+                        placeholder="Enter control measures…"
+                        className="flex-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#18C37E]/50"
+                        data-ocid={`permits.hazard_control_input.${row.id}`}
+                      />
+                      {/* Residual Risk */}
+                      <select
+                        value={row.residualRisk}
+                        onChange={(e) =>
+                          updateHazardResidualRisk(row.id, e.target.value)
+                        }
+                        className="h-7 px-2 rounded text-xs bg-white/10 border border-white/20 text-white focus:outline-none focus:border-[#18C37E]/50"
+                        data-ocid={`permits.hazard_risk_select.${row.id}`}
+                      >
+                        <option value="Low" className="bg-[#081426]">
+                          Low
+                        </option>
+                        <option value="Medium" className="bg-[#081426]">
+                          Medium
+                        </option>
+                        <option value="High" className="bg-[#081426]">
+                          High
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  {/* Delete button for custom rows */}
+                  {row.isCustom && (
+                    <button
+                      type="button"
+                      onClick={() => removeCustomHazard(row.id)}
+                      className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-red-500/20 text-red-400/60 hover:text-red-400 transition-colors"
+                      data-ocid={`permits.hazard_delete_button.${row.id}`}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ));
+          })()}
+        </div>
+
+        {/* Add Custom Hazard */}
+        {form.permitType && (
+          <button
+            type="button"
+            onClick={addCustomHazard}
+            className="mt-2 flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors"
+            data-ocid="permits.add_custom_hazard_button"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Add Custom Hazard
+          </button>
+        )}
+
+        {/* Emergency Contacts — kept in Section 3 as before */}
+        <div className="mt-5">
+          <p className="text-xs text-white/40 mb-2 uppercase tracking-wide">
+            Emergency Contacts
+          </p>
+          <div className="space-y-2">
+            {form.emergencyContacts.map((ec, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: dynamic list, no stable id
+              <div key={`ec-${i}`} className="flex gap-2">
+                <Input
+                  value={ec.name}
+                  onChange={(e) =>
+                    setField(
+                      "emergencyContacts",
+                      form.emergencyContacts.map((c, idx) =>
+                        idx === i ? { ...c, name: e.target.value } : c,
+                      ),
+                    )
+                  }
+                  placeholder="Contact name"
+                  className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                />
+                <Input
+                  value={ec.role}
+                  onChange={(e) =>
+                    setField(
+                      "emergencyContacts",
+                      form.emergencyContacts.map((c, idx) =>
+                        idx === i ? { ...c, role: e.target.value } : c,
+                      ),
+                    )
+                  }
+                  placeholder="Role (e.g. EHS Manager)"
+                  className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                />
+                <Input
+                  value={ec.phone}
+                  onChange={(e) =>
+                    setField(
+                      "emergencyContacts",
+                      form.emergencyContacts.map((c, idx) =>
+                        idx === i ? { ...c, phone: e.target.value } : c,
+                      ),
+                    )
+                  }
+                  placeholder="Phone number"
+                  className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="text-red-400/60 hover:text-red-400 px-2"
+                  onClick={() =>
+                    setField(
+                      "emergencyContacts",
+                      form.emergencyContacts.filter((_, idx) => idx !== i),
+                    )
+                  }
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-white/40 hover:text-white/70 gap-1"
+              onClick={() =>
+                setField("emergencyContacts", [
+                  ...form.emergencyContacts,
+                  { name: "", role: "", phone: "" },
+                ])
+              }
+            >
+              <Plus className="w-3 h-3" />
+              Add Contact
+            </Button>
           </div>
         </div>
       </GlassSection>
@@ -1002,33 +1277,39 @@ export default function PermitForm({
           Cancel
         </Button>
         <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            className="gap-2 border-white/20 text-white/70 hover:text-white"
-            onClick={() => onSubmit(buildRecord(PermitStatus.draft))}
-            disabled={!form.permitType || !form.jobDescription || isPending}
-            data-ocid="permits.save_draft_button"
-          >
-            <Save className="w-4 h-4" />
-            Save as Draft
-          </Button>
-          <Button
-            type="button"
-            className="gap-2 font-semibold"
-            style={{ background: "#18C37E", color: "#081426" }}
-            onClick={() => onSubmit(buildRecord(PermitStatus.submitted))}
-            disabled={
-              !form.permitType ||
-              !form.jobDescription ||
-              !form.location ||
-              isPending
-            }
-            data-ocid="permits.submit_button"
-          >
-            <Send className="w-4 h-4" />
-            {isPending ? "Submitting…" : "Submit for Approval"}
-          </Button>
+          {canDraft && (
+            <Button
+              type="button"
+              variant="outline"
+              className="gap-2 border-white/20 text-white/70 hover:text-white"
+              onClick={() => onSubmit(buildRecord(PermitStatus.draft))}
+              disabled={!form.permitType || !form.jobDescription || isPending}
+              data-ocid="permits.save_draft_button"
+            >
+              <Save className="w-4 h-4" />
+              Save as Draft
+            </Button>
+          )}
+          {(userRole === "employee" ||
+            userRole === "supervisor" ||
+            userRole === "systemAdmin") && (
+            <Button
+              type="button"
+              className="gap-2 font-semibold"
+              style={{ background: "#18C37E", color: "#081426" }}
+              onClick={() => onSubmit(buildRecord(PermitStatus.submitted))}
+              disabled={
+                !form.permitType ||
+                !form.jobDescription ||
+                !form.location ||
+                isPending
+              }
+              data-ocid="permits.submit_button"
+            >
+              <Send className="w-4 h-4" />
+              {isPending ? "Submitting…" : "Submit for Approval"}
+            </Button>
+          )}
         </div>
       </div>
     </motion.div>

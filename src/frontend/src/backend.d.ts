@@ -396,8 +396,10 @@ export enum PermitStatus {
 export enum PermitType {
     confinedSpace = "confinedSpace",
     heightWork = "heightWork",
+    liftingPermit = "liftingPermit",
     lineBreaking = "lineBreaking",
     hotWork = "hotWork",
+    generalWorkPermit = "generalWorkPermit",
     electrical = "electrical",
     excavation = "excavation"
 }

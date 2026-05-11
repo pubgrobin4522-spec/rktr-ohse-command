@@ -28,6 +28,7 @@ import {
   Shovel,
   Timer,
   Trash2,
+  Truck,
   User,
   Wrench,
   X,
@@ -78,6 +79,18 @@ const PERMIT_TYPE_CONFIG: Record<
     color: "#06b6d4",
     description: "Pipeline, process lines",
   },
+  liftingPermit: {
+    label: "Lifting Permit",
+    icon: <Truck className="w-4 h-4" />,
+    color: "#a855f7",
+    description: "Crane/hoist lifts over 8 tonnes",
+  },
+  generalWorkPermit: {
+    label: "General Work Permit",
+    icon: <Wrench className="w-4 h-4" />,
+    color: "#64748b",
+    description: "General maintenance and work activities",
+  },
 };
 
 const PERMIT_TYPE_TABS = [
@@ -88,6 +101,8 @@ const PERMIT_TYPE_TABS = [
   "heightWork",
   "confinedSpace",
   "lineBreaking",
+  "liftingPermit",
+  "generalWorkPermit",
 ] as const;
 const STATUS_TABS = [
   "all",
