@@ -6,6 +6,7 @@ type ActivityFeedItem__355436855 =
     message : Text;
     timestamp : Timestamp__301639476
   };
+type AttachmentMeta__267884555 = AttachmentMeta__815787466;
 type AttachmentMeta__815787466 =
   {
     contentType : Text;
@@ -223,6 +224,17 @@ type LegacyIncidentRecord__556790644 =
     title : Text;
     updatedAt : Int
   };
+type LegacyObservationRecord__979079632 =
+  {
+    actions : [Text];
+    createdAt : Int;
+    description : Text;
+    id : Text;
+    location : Text;
+    obsType : ObservationType__561387365;
+    reportedBy : Text;
+    status : ObservationStatus__377988550
+  };
 type LegacyPermitRecord__865214717 =
   {
     approvedBy : ?Text;
@@ -256,6 +268,7 @@ type Node__46230540<K, V> =
 type ObservationRecord__453530704 =
   {
     actions : [Text];
+    attachments : ?[AttachmentMeta__267884555];
     createdAt : Timestamp__301639476;
     description : Text;
     id : RecordId__634517021;
@@ -443,6 +456,11 @@ actor {
       var size : Nat__490723111
     };
   stable observations :
+    {
+      var root : Node__46230540<Text, LegacyObservationRecord__979079632>;
+      var size : Nat__490723111
+    };
+  stable observationsV2 :
     {
       var root : Node__46230540<Text, ObservationRecord__453530704>;
       var size : Nat__490723111

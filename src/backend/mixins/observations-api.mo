@@ -12,6 +12,10 @@ mixin (observations : Map.Map<Text, Types.ObservationRecord>) {
     ObsLib.getObservations({ observations });
   };
 
+  public func updateObservation(id : Text, obs : Types.ObservationRecord) : async Common.Result<(), Text> {
+    ObsLib.updateObservation({ observations }, id, obs);
+  };
+
   public func updateObservationStatus(id : Text, status : Types.ObservationStatus) : async Common.Result<(), Text> {
     ObsLib.updateObservationStatus({ observations }, id, status);
   };

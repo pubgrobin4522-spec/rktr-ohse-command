@@ -126,6 +126,7 @@ export interface ObservationRecord {
     reportedBy: string;
     obsType: ObservationType;
     location: string;
+    attachments?: Array<AttachmentMeta>;
 }
 export interface ESGGovernance {
     antiCorruptionTrainingCoverage: number;
@@ -484,6 +485,7 @@ export interface backendInterface {
     updateIncident(id: string, incident: IncidentRecord): Promise<Result>;
     updateIncidentStatus(id: string, status: IncidentStatus): Promise<Result>;
     updateInspectionStatus(id: string, status: InspectionStatus): Promise<Result>;
+    updateObservation(id: string, obs: ObservationRecord): Promise<Result>;
     updateObservationStatus(id: string, status: ObservationStatus): Promise<Result>;
     updatePermitStatus(id: string, status: PermitStatus, callerId: string, callerRole: string): Promise<Result>;
     updateRiskStatus(id: string, status: RiskStatus): Promise<Result>;

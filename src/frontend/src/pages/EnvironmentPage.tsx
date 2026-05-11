@@ -309,14 +309,19 @@ function CreateRecordModal({ onClose }: { onClose: () => void }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-lg rounded-2xl p-6 mx-4"
+        className="w-full max-w-lg rounded-2xl mx-4 flex flex-col"
         style={{
           background: "#0f1e33",
           border: "1px solid rgba(255,255,255,0.1)",
+          maxHeight: "90vh",
         }}
         data-ocid="env.dialog"
       >
-        <div className="flex items-center justify-between mb-5">
+        {/* Sticky header */}
+        <div
+          className="flex items-center justify-between p-6 pb-4 border-b flex-shrink-0"
+          style={{ borderColor: "rgba(255,255,255,0.1)" }}
+        >
           <h2 className="font-display font-semibold text-white">
             Add Monitoring Record
           </h2>
@@ -329,152 +334,159 @@ function CreateRecordModal({ onClose }: { onClose: () => void }) {
             <X className="w-4 h-4" />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label
-              htmlFor="env-type"
-              className="text-white/70 text-xs mb-1.5 block"
-            >
-              Record Type *
-            </Label>
-            <Select value={form.recordType} onValueChange={handleTypeChange}>
-              <SelectTrigger
-                id="env-type"
-                className="border-white/10 bg-white/5 text-white"
-                data-ocid="env.select"
-              >
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                {RECORD_TYPES.map((r) => (
-                  <SelectItem key={r.value} value={r.value}>
-                    {r.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          {/* Scrollable fields */}
+          <div className="flex-1 overflow-y-auto p-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/20">
             <div>
               <Label
-                htmlFor="env-value"
+                htmlFor="env-type"
                 className="text-white/70 text-xs mb-1.5 block"
               >
-                Value *
+                Record Type *
               </Label>
-              <Input
-                id="env-value"
-                type="number"
-                placeholder="0.00"
-                value={form.value}
+              <Select value={form.recordType} onValueChange={handleTypeChange}>
+                <SelectTrigger
+                  id="env-type"
+                  className="border-white/10 bg-white/5 text-white"
+                  data-ocid="env.select"
+                >
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {RECORD_TYPES.map((r) => (
+                    <SelectItem key={r.value} value={r.value}>
+                      {r.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label
+                  htmlFor="env-value"
+                  className="text-white/70 text-xs mb-1.5 block"
+                >
+                  Value *
+                </Label>
+                <Input
+                  id="env-value"
+                  type="number"
+                  placeholder="0.00"
+                  value={form.value}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, value: e.target.value }))
+                  }
+                  className="border-white/10 bg-white/5 text-white"
+                  data-ocid="env.input"
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="env-unit"
+                  className="text-white/70 text-xs mb-1.5 block"
+                >
+                  Unit
+                </Label>
+                <Input
+                  id="env-unit"
+                  value={form.unit}
+                  readOnly
+                  className="border-white/10 bg-white/5 text-white/50"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label
+                htmlFor="env-location"
+                className="text-white/70 text-xs mb-1.5 block"
+              >
+                Location *
+              </Label>
+              <Select
+                value={form.location}
+                onValueChange={(v) => setForm((f) => ({ ...f, location: v }))}
+              >
+                <SelectTrigger
+                  id="env-location"
+                  className="border-white/10 bg-white/5 text-white"
+                >
+                  <SelectValue placeholder="Select location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {LOCATIONS.map((l) => (
+                    <SelectItem key={l} value={l}>
+                      {l}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label
+                  htmlFor="env-recorded-by"
+                  className="text-white/70 text-xs mb-1.5 block"
+                >
+                  Recorded By
+                </Label>
+                <Input
+                  id="env-recorded-by"
+                  value={form.recordedBy}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, recordedBy: e.target.value }))
+                  }
+                  className="border-white/10 bg-white/5 text-white"
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="env-date"
+                  className="text-white/70 text-xs mb-1.5 block"
+                >
+                  Recording Date
+                </Label>
+                <Input
+                  id="env-date"
+                  type="date"
+                  value={form.date}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, date: e.target.value }))
+                  }
+                  className="border-white/10 bg-white/5 text-white"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label
+                htmlFor="env-notes"
+                className="text-white/70 text-xs mb-1.5 block"
+              >
+                Notes
+              </Label>
+              <Textarea
+                id="env-notes"
+                placeholder="Optional notes…"
+                value={form.notes}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, value: e.target.value }))
+                  setForm((f) => ({ ...f, notes: e.target.value }))
                 }
-                className="border-white/10 bg-white/5 text-white"
-                data-ocid="env.input"
-              />
-            </div>
-            <div>
-              <Label
-                htmlFor="env-unit"
-                className="text-white/70 text-xs mb-1.5 block"
-              >
-                Unit
-              </Label>
-              <Input
-                id="env-unit"
-                value={form.unit}
-                readOnly
-                className="border-white/10 bg-white/5 text-white/50"
+                className="border-white/10 bg-white/5 text-white resize-none"
+                rows={2}
+                data-ocid="env.textarea"
               />
             </div>
           </div>
 
-          <div>
-            <Label
-              htmlFor="env-location"
-              className="text-white/70 text-xs mb-1.5 block"
-            >
-              Location *
-            </Label>
-            <Select
-              value={form.location}
-              onValueChange={(v) => setForm((f) => ({ ...f, location: v }))}
-            >
-              <SelectTrigger
-                id="env-location"
-                className="border-white/10 bg-white/5 text-white"
-              >
-                <SelectValue placeholder="Select location" />
-              </SelectTrigger>
-              <SelectContent>
-                {LOCATIONS.map((l) => (
-                  <SelectItem key={l} value={l}>
-                    {l}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label
-                htmlFor="env-recorded-by"
-                className="text-white/70 text-xs mb-1.5 block"
-              >
-                Recorded By
-              </Label>
-              <Input
-                id="env-recorded-by"
-                value={form.recordedBy}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, recordedBy: e.target.value }))
-                }
-                className="border-white/10 bg-white/5 text-white"
-              />
-            </div>
-            <div>
-              <Label
-                htmlFor="env-date"
-                className="text-white/70 text-xs mb-1.5 block"
-              >
-                Recording Date
-              </Label>
-              <Input
-                id="env-date"
-                type="date"
-                value={form.date}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, date: e.target.value }))
-                }
-                className="border-white/10 bg-white/5 text-white"
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label
-              htmlFor="env-notes"
-              className="text-white/70 text-xs mb-1.5 block"
-            >
-              Notes
-            </Label>
-            <Textarea
-              id="env-notes"
-              placeholder="Optional notes…"
-              value={form.notes}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, notes: e.target.value }))
-              }
-              className="border-white/10 bg-white/5 text-white resize-none"
-              rows={2}
-              data-ocid="env.textarea"
-            />
-          </div>
-
-          <div className="flex gap-3 pt-2">
+          {/* Sticky footer */}
+          <div
+            className="flex gap-3 p-6 pt-4 border-t flex-shrink-0"
+            style={{ borderColor: "rgba(255,255,255,0.1)" }}
+          >
             <Button
               type="button"
               variant="outline"
@@ -545,14 +557,19 @@ function SpillModal({ onClose }: { onClose: () => void }) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-lg rounded-2xl p-6 mx-4"
+        className="w-full max-w-lg rounded-2xl mx-4 flex flex-col"
         style={{
           background: "#0f1e33",
           border: "1px solid rgba(255,255,255,0.1)",
+          maxHeight: "90vh",
         }}
         data-ocid="spill.dialog"
       >
-        <div className="flex items-center justify-between mb-5">
+        {/* Sticky header */}
+        <div
+          className="flex items-center justify-between p-6 pb-4 border-b flex-shrink-0"
+          style={{ borderColor: "rgba(255,255,255,0.1)" }}
+        >
           <h2 className="font-display font-semibold text-white">
             Report Spill Incident
           </h2>
@@ -565,130 +582,138 @@ function SpillModal({ onClose }: { onClose: () => void }) {
             <X className="w-4 h-4" />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label
-              htmlFor="spill-location"
-              className="text-white/70 text-xs mb-1.5 block"
-            >
-              Location *
-            </Label>
-            <Select
-              value={form.location}
-              onValueChange={(v) => setForm((f) => ({ ...f, location: v }))}
-            >
-              <SelectTrigger
-                id="spill-location"
-                className="border-white/10 bg-white/5 text-white"
-              >
-                <SelectValue placeholder="Select location" />
-              </SelectTrigger>
-              <SelectContent>
-                {LOCATIONS.map((l) => (
-                  <SelectItem key={l} value={l}>
-                    {l}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          {/* Scrollable fields */}
+          <div className="flex-1 overflow-y-auto p-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/20">
             <div>
               <Label
-                htmlFor="spill-material"
+                htmlFor="spill-location"
                 className="text-white/70 text-xs mb-1.5 block"
               >
-                Material Spilled *
+                Location *
+              </Label>
+              <Select
+                value={form.location}
+                onValueChange={(v) => setForm((f) => ({ ...f, location: v }))}
+              >
+                <SelectTrigger
+                  id="spill-location"
+                  className="border-white/10 bg-white/5 text-white"
+                >
+                  <SelectValue placeholder="Select location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {LOCATIONS.map((l) => (
+                    <SelectItem key={l} value={l}>
+                      {l}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label
+                  htmlFor="spill-material"
+                  className="text-white/70 text-xs mb-1.5 block"
+                >
+                  Material Spilled *
+                </Label>
+                <Input
+                  id="spill-material"
+                  placeholder="e.g. Hydraulic Oil"
+                  value={form.material}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, material: e.target.value }))
+                  }
+                  className="border-white/10 bg-white/5 text-white"
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="spill-volume"
+                  className="text-white/70 text-xs mb-1.5 block"
+                >
+                  Volume (litres)
+                </Label>
+                <Input
+                  id="spill-volume"
+                  type="number"
+                  placeholder="0"
+                  value={form.volume}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, volume: e.target.value }))
+                  }
+                  className="border-white/10 bg-white/5 text-white"
+                />
+              </div>
+            </div>
+            <div>
+              <Label
+                htmlFor="spill-action"
+                className="text-white/70 text-xs mb-1.5 block"
+              >
+                Immediate Action Taken
+              </Label>
+              <Textarea
+                id="spill-action"
+                placeholder="Describe immediate containment actions…"
+                value={form.action}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, action: e.target.value }))
+                }
+                className="border-white/10 bg-white/5 text-white resize-none"
+                rows={2}
+              />
+            </div>
+            <div>
+              <Label
+                htmlFor="spill-notified"
+                className="text-white/70 text-xs mb-1.5 block"
+              >
+                Notified Persons
               </Label>
               <Input
-                id="spill-material"
-                placeholder="e.g. Hydraulic Oil"
-                value={form.material}
+                id="spill-notified"
+                placeholder="e.g. EHS Manager, Shift Incharge"
+                value={form.notified}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, material: e.target.value }))
+                  setForm((f) => ({ ...f, notified: e.target.value }))
                 }
                 className="border-white/10 bg-white/5 text-white"
               />
             </div>
             <div>
               <Label
-                htmlFor="spill-volume"
+                htmlFor="spill-status"
                 className="text-white/70 text-xs mb-1.5 block"
               >
-                Volume (litres)
+                Cleanup Status
               </Label>
-              <Input
-                id="spill-volume"
-                type="number"
-                placeholder="0"
-                value={form.volume}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, volume: e.target.value }))
-                }
-                className="border-white/10 bg-white/5 text-white"
-              />
+              <Select
+                value={form.status}
+                onValueChange={(v) => setForm((f) => ({ ...f, status: v }))}
+              >
+                <SelectTrigger
+                  id="spill-status"
+                  className="border-white/10 bg-white/5 text-white"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Contained">Contained</SelectItem>
+                  <SelectItem value="Cleaned">Cleaned</SelectItem>
+                  <SelectItem value="Monitoring">Monitoring</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-          <div>
-            <Label
-              htmlFor="spill-action"
-              className="text-white/70 text-xs mb-1.5 block"
-            >
-              Immediate Action Taken
-            </Label>
-            <Textarea
-              id="spill-action"
-              placeholder="Describe immediate containment actions…"
-              value={form.action}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, action: e.target.value }))
-              }
-              className="border-white/10 bg-white/5 text-white resize-none"
-              rows={2}
-            />
-          </div>
-          <div>
-            <Label
-              htmlFor="spill-notified"
-              className="text-white/70 text-xs mb-1.5 block"
-            >
-              Notified Persons
-            </Label>
-            <Input
-              id="spill-notified"
-              placeholder="e.g. EHS Manager, Shift Incharge"
-              value={form.notified}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, notified: e.target.value }))
-              }
-              className="border-white/10 bg-white/5 text-white"
-            />
-          </div>
-          <div>
-            <Label
-              htmlFor="spill-status"
-              className="text-white/70 text-xs mb-1.5 block"
-            >
-              Cleanup Status
-            </Label>
-            <Select
-              value={form.status}
-              onValueChange={(v) => setForm((f) => ({ ...f, status: v }))}
-            >
-              <SelectTrigger
-                id="spill-status"
-                className="border-white/10 bg-white/5 text-white"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Contained">Contained</SelectItem>
-                <SelectItem value="Cleaned">Cleaned</SelectItem>
-                <SelectItem value="Monitoring">Monitoring</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex gap-3 pt-2">
+
+          {/* Sticky footer */}
+          <div
+            className="flex gap-3 p-6 pt-4 border-t flex-shrink-0"
+            style={{ borderColor: "rgba(255,255,255,0.1)" }}
+          >
             <Button
               type="button"
               variant="outline"

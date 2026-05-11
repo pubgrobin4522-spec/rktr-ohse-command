@@ -244,6 +244,7 @@ export interface ObservationRecord {
   'reportedBy' : string,
   'obsType' : ObservationType,
   'location' : string,
+  'attachments' : [] | [Array<AttachmentMeta>],
 }
 export type ObservationStatus = { 'closed' : null } |
   { 'open' : null } |
@@ -441,6 +442,7 @@ export interface _SERVICE {
   'updateIncident' : ActorMethod<[string, IncidentRecord], Result>,
   'updateIncidentStatus' : ActorMethod<[string, IncidentStatus], Result>,
   'updateInspectionStatus' : ActorMethod<[string, InspectionStatus], Result>,
+  'updateObservation' : ActorMethod<[string, ObservationRecord], Result>,
   'updateObservationStatus' : ActorMethod<[string, ObservationStatus], Result>,
   'updatePermitStatus' : ActorMethod<
     [string, PermitStatus, string, string],

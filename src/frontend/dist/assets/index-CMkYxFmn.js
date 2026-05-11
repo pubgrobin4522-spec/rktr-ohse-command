@@ -28015,7 +28015,8 @@ const ObservationRecord = Record({
   "actions": Vec(Text$1),
   "reportedBy": Text$1,
   "obsType": ObservationType$1,
-  "location": Text$1
+  "location": Text$1,
+  "attachments": Opt(Vec(AttachmentMeta))
 });
 const PermitStatus$1 = Variant({
   "closed": Null,
@@ -28291,6 +28292,7 @@ Service({
     [Result],
     []
   ),
+  "updateObservation": Func([Text$1, ObservationRecord], [Result], []),
   "updateObservationStatus": Func(
     [Text$1, ObservationStatus$1],
     [Result],
@@ -28496,7 +28498,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "actions": IDL2.Vec(IDL2.Text),
     "reportedBy": IDL2.Text,
     "obsType": ObservationType2,
-    "location": IDL2.Text
+    "location": IDL2.Text,
+    "attachments": IDL2.Opt(IDL2.Vec(AttachmentMeta2))
   });
   const PermitStatus2 = IDL2.Variant({
     "closed": IDL2.Null,
@@ -28776,6 +28779,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Result2],
       []
     ),
+    "updateObservation": IDL2.Func([IDL2.Text, ObservationRecord2], [Result2], []),
     "updateObservationStatus": IDL2.Func(
       [IDL2.Text, ObservationStatus2],
       [Result2],
@@ -29689,6 +29693,20 @@ class Backend {
       return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
     }
   }
+  async updateObservation(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateObservation(arg0, to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+      } catch (e3) {
+        this.processError(e3);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateObservation(arg0, to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async updateObservationStatus(arg0, arg1) {
     if (this.processError) {
       try {
@@ -30027,7 +30045,8 @@ function from_candid_record_n84(_uploadFile, _downloadFile, value) {
     actions: value.actions,
     reportedBy: value.reportedBy,
     obsType: from_candid_ObservationType_n87(_uploadFile, _downloadFile, value.obsType),
-    location: value.location
+    location: value.location,
+    attachments: record_opt_to_undefined(from_candid_opt_n72(_uploadFile, _downloadFile, value.attachments))
   };
 }
 function from_candid_record_n91(_uploadFile, _downloadFile, value) {
@@ -30320,7 +30339,8 @@ function to_candid_record_n24(_uploadFile, _downloadFile, value) {
     actions: value.actions,
     reportedBy: value.reportedBy,
     obsType: to_candid_ObservationType_n27(_uploadFile, _downloadFile, value.obsType),
-    location: value.location
+    location: value.location,
+    attachments: value.attachments ? candid_some(value.attachments) : candid_none()
   };
 }
 function to_candid_record_n30(_uploadFile, _downloadFile, value) {
@@ -34167,7 +34187,7 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1t = [
+const __iconNode$1s = [
   [
     "path",
     {
@@ -34176,18 +34196,7 @@ const __iconNode$1t = [
     }
   ]
 ];
-const Activity = createLucideIcon("activity", __iconNode$1t);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1s = [
-  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
-  ["path", { d: "M19 12H5", key: "x3x0zl" }]
-];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1s);
+const Activity = createLucideIcon("activity", __iconNode$1s);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34195,6 +34204,17 @@ const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1s);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1r = [
+  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
+  ["path", { d: "M19 12H5", key: "x3x0zl" }]
+];
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1r);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1q = [
   [
     "path",
     {
@@ -34204,14 +34224,14 @@ const __iconNode$1r = [
   ],
   ["circle", { cx: "12", cy: "8", r: "6", key: "1vp47v" }]
 ];
-const Award = createLucideIcon("award", __iconNode$1r);
+const Award = createLucideIcon("award", __iconNode$1q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1q = [
+const __iconNode$1p = [
   ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
   [
     "path",
@@ -34221,14 +34241,14 @@ const __iconNode$1q = [
     }
   ]
 ];
-const Bell = createLucideIcon("bell", __iconNode$1q);
+const Bell = createLucideIcon("bell", __iconNode$1p);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1p = [
+const __iconNode$1o = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -34238,14 +34258,14 @@ const __iconNode$1p = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$1p);
+const BookOpen = createLucideIcon("book-open", __iconNode$1o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1o = [
+const __iconNode$1n = [
   ["path", { d: "M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z", key: "1b4qmf" }],
   ["path", { d: "M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2", key: "i71pzd" }],
   ["path", { d: "M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2", key: "10jefs" }],
@@ -34254,20 +34274,7 @@ const __iconNode$1o = [
   ["path", { d: "M10 14h4", key: "kelpxr" }],
   ["path", { d: "M10 18h4", key: "1ulq68" }]
 ];
-const Building2 = createLucideIcon("building-2", __iconNode$1o);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1n = [
-  ["path", { d: "M8 2v4", key: "1cmpym" }],
-  ["path", { d: "M16 2v4", key: "4m81vk" }],
-  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
-  ["path", { d: "M3 10h18", key: "8toen8" }]
-];
-const Calendar = createLucideIcon("calendar", __iconNode$1n);
+const Building2 = createLucideIcon("building-2", __iconNode$1n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34275,16 +34282,12 @@ const Calendar = createLucideIcon("calendar", __iconNode$1n);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1m = [
-  [
-    "path",
-    {
-      d: "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z",
-      key: "1tc9qg"
-    }
-  ],
-  ["circle", { cx: "12", cy: "13", r: "3", key: "1vg3eu" }]
+  ["path", { d: "M8 2v4", key: "1cmpym" }],
+  ["path", { d: "M16 2v4", key: "4m81vk" }],
+  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+  ["path", { d: "M3 10h18", key: "8toen8" }]
 ];
-const Camera = createLucideIcon("camera", __iconNode$1m);
+const Calendar = createLucideIcon("calendar", __iconNode$1m);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -102423,7 +102426,7 @@ function AnalyticsPage() {
     const toastId = ue.loading("Generating PDF report…");
     try {
       const { jsPDF } = await __vitePreload(async () => {
-        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BETISG4x.js").then((n2) => n2.j);
+        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-CiXMul57.js").then((n2) => n2.j);
         return { jsPDF: jsPDF2 };
       }, true ? [] : void 0);
       const doc = new jsPDF({
@@ -109322,7 +109325,7 @@ function ESGPage() {
     const tid = ue.loading("Generating PDF report…");
     try {
       const { jsPDF } = await __vitePreload(async () => {
-        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BETISG4x.js").then((n3) => n3.j);
+        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-CiXMul57.js").then((n3) => n3.j);
         return { jsPDF: jsPDF2 };
       }, true ? [] : void 0);
       const doc = new jsPDF({
@@ -110269,207 +110272,224 @@ function CreateRecordModal({ onClose }) {
           initial: { opacity: 0, scale: 0.95 },
           animate: { opacity: 1, scale: 1 },
           exit: { opacity: 0, scale: 0.95 },
-          className: "w-full max-w-lg rounded-2xl p-6 mx-4",
+          className: "w-full max-w-lg rounded-2xl mx-4 flex flex-col",
           style: {
             background: "#0f1e33",
-            border: "1px solid rgba(255,255,255,0.1)"
+            border: "1px solid rgba(255,255,255,0.1)",
+            maxHeight: "90vh"
           },
           "data-ocid": "env.dialog",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-5", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display font-semibold text-white", children: "Add Monitoring Record" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "button",
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "flex items-center justify-between p-6 pb-4 border-b flex-shrink-0",
+                style: { borderColor: "rgba(255,255,255,0.1)" },
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display font-semibold text-white", children: "Add Monitoring Record" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: onClose,
+                      className: "w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-smooth",
+                      "data-ocid": "env.close_button",
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "w-4 h-4" })
+                    }
+                  )
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSubmit, className: "flex flex-col flex-1 min-h-0", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 overflow-y-auto p-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/20", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Label,
+                    {
+                      htmlFor: "env-type",
+                      className: "text-white/70 text-xs mb-1.5 block",
+                      children: "Record Type *"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: form.recordType, onValueChange: handleTypeChange, children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      SelectTrigger,
+                      {
+                        id: "env-type",
+                        className: "border-white/10 bg-white/5 text-white",
+                        "data-ocid": "env.select",
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select type" })
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: RECORD_TYPES.map((r2) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: r2.value, children: r2.label }, r2.value)) })
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Label,
+                      {
+                        htmlFor: "env-value",
+                        className: "text-white/70 text-xs mb-1.5 block",
+                        children: "Value *"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Input,
+                      {
+                        id: "env-value",
+                        type: "number",
+                        placeholder: "0.00",
+                        value: form.value,
+                        onChange: (e3) => setForm((f2) => ({ ...f2, value: e3.target.value })),
+                        className: "border-white/10 bg-white/5 text-white",
+                        "data-ocid": "env.input"
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Label,
+                      {
+                        htmlFor: "env-unit",
+                        className: "text-white/70 text-xs mb-1.5 block",
+                        children: "Unit"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Input,
+                      {
+                        id: "env-unit",
+                        value: form.unit,
+                        readOnly: true,
+                        className: "border-white/10 bg-white/5 text-white/50"
+                      }
+                    )
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Label,
+                    {
+                      htmlFor: "env-location",
+                      className: "text-white/70 text-xs mb-1.5 block",
+                      children: "Location *"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    Select,
+                    {
+                      value: form.location,
+                      onValueChange: (v2) => setForm((f2) => ({ ...f2, location: v2 })),
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          SelectTrigger,
+                          {
+                            id: "env-location",
+                            className: "border-white/10 bg-white/5 text-white",
+                            children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select location" })
+                          }
+                        ),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: LOCATIONS$4.map((l2) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: l2, children: l2 }, l2)) })
+                      ]
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Label,
+                      {
+                        htmlFor: "env-recorded-by",
+                        className: "text-white/70 text-xs mb-1.5 block",
+                        children: "Recorded By"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Input,
+                      {
+                        id: "env-recorded-by",
+                        value: form.recordedBy,
+                        onChange: (e3) => setForm((f2) => ({ ...f2, recordedBy: e3.target.value })),
+                        className: "border-white/10 bg-white/5 text-white"
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Label,
+                      {
+                        htmlFor: "env-date",
+                        className: "text-white/70 text-xs mb-1.5 block",
+                        children: "Recording Date"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Input,
+                      {
+                        id: "env-date",
+                        type: "date",
+                        value: form.date,
+                        onChange: (e3) => setForm((f2) => ({ ...f2, date: e3.target.value })),
+                        className: "border-white/10 bg-white/5 text-white"
+                      }
+                    )
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Label,
+                    {
+                      htmlFor: "env-notes",
+                      className: "text-white/70 text-xs mb-1.5 block",
+                      children: "Notes"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Textarea,
+                    {
+                      id: "env-notes",
+                      placeholder: "Optional notes…",
+                      value: form.notes,
+                      onChange: (e3) => setForm((f2) => ({ ...f2, notes: e3.target.value })),
+                      className: "border-white/10 bg-white/5 text-white resize-none",
+                      rows: 2,
+                      "data-ocid": "env.textarea"
+                    }
+                  )
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
                 {
-                  type: "button",
-                  onClick: onClose,
-                  className: "w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-smooth",
-                  "data-ocid": "env.close_button",
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "w-4 h-4" })
+                  className: "flex gap-3 p-6 pt-4 border-t flex-shrink-0",
+                  style: { borderColor: "rgba(255,255,255,0.1)" },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Button,
+                      {
+                        type: "button",
+                        variant: "outline",
+                        className: "flex-1 border-white/10 text-white/70 hover:bg-white/5",
+                        onClick: onClose,
+                        "data-ocid": "env.cancel_button",
+                        children: "Cancel"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Button,
+                      {
+                        type: "submit",
+                        disabled: createRecord.isPending,
+                        className: "flex-1",
+                        style: { background: "#18C37E", color: "#081426" },
+                        "data-ocid": "env.submit_button",
+                        children: createRecord.isPending ? "Saving…" : "Save Record"
+                      }
+                    )
+                  ]
                 }
               )
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSubmit, className: "space-y-4", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Label,
-                  {
-                    htmlFor: "env-type",
-                    className: "text-white/70 text-xs mb-1.5 block",
-                    children: "Record Type *"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: form.recordType, onValueChange: handleTypeChange, children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    SelectTrigger,
-                    {
-                      id: "env-type",
-                      className: "border-white/10 bg-white/5 text-white",
-                      "data-ocid": "env.select",
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select type" })
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: RECORD_TYPES.map((r2) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: r2.value, children: r2.label }, r2.value)) })
-                ] })
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Label,
-                    {
-                      htmlFor: "env-value",
-                      className: "text-white/70 text-xs mb-1.5 block",
-                      children: "Value *"
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Input,
-                    {
-                      id: "env-value",
-                      type: "number",
-                      placeholder: "0.00",
-                      value: form.value,
-                      onChange: (e3) => setForm((f2) => ({ ...f2, value: e3.target.value })),
-                      className: "border-white/10 bg-white/5 text-white",
-                      "data-ocid": "env.input"
-                    }
-                  )
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Label,
-                    {
-                      htmlFor: "env-unit",
-                      className: "text-white/70 text-xs mb-1.5 block",
-                      children: "Unit"
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Input,
-                    {
-                      id: "env-unit",
-                      value: form.unit,
-                      readOnly: true,
-                      className: "border-white/10 bg-white/5 text-white/50"
-                    }
-                  )
-                ] })
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Label,
-                  {
-                    htmlFor: "env-location",
-                    className: "text-white/70 text-xs mb-1.5 block",
-                    children: "Location *"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                  Select,
-                  {
-                    value: form.location,
-                    onValueChange: (v2) => setForm((f2) => ({ ...f2, location: v2 })),
-                    children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        SelectTrigger,
-                        {
-                          id: "env-location",
-                          className: "border-white/10 bg-white/5 text-white",
-                          children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select location" })
-                        }
-                      ),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: LOCATIONS$4.map((l2) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: l2, children: l2 }, l2)) })
-                    ]
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Label,
-                    {
-                      htmlFor: "env-recorded-by",
-                      className: "text-white/70 text-xs mb-1.5 block",
-                      children: "Recorded By"
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Input,
-                    {
-                      id: "env-recorded-by",
-                      value: form.recordedBy,
-                      onChange: (e3) => setForm((f2) => ({ ...f2, recordedBy: e3.target.value })),
-                      className: "border-white/10 bg-white/5 text-white"
-                    }
-                  )
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Label,
-                    {
-                      htmlFor: "env-date",
-                      className: "text-white/70 text-xs mb-1.5 block",
-                      children: "Recording Date"
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Input,
-                    {
-                      id: "env-date",
-                      type: "date",
-                      value: form.date,
-                      onChange: (e3) => setForm((f2) => ({ ...f2, date: e3.target.value })),
-                      className: "border-white/10 bg-white/5 text-white"
-                    }
-                  )
-                ] })
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Label,
-                  {
-                    htmlFor: "env-notes",
-                    className: "text-white/70 text-xs mb-1.5 block",
-                    children: "Notes"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Textarea,
-                  {
-                    id: "env-notes",
-                    placeholder: "Optional notes…",
-                    value: form.notes,
-                    onChange: (e3) => setForm((f2) => ({ ...f2, notes: e3.target.value })),
-                    className: "border-white/10 bg-white/5 text-white resize-none",
-                    rows: 2,
-                    "data-ocid": "env.textarea"
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-3 pt-2", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    type: "button",
-                    variant: "outline",
-                    className: "flex-1 border-white/10 text-white/70 hover:bg-white/5",
-                    onClick: onClose,
-                    "data-ocid": "env.cancel_button",
-                    children: "Cancel"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    type: "submit",
-                    disabled: createRecord.isPending,
-                    className: "flex-1",
-                    style: { background: "#18C37E", color: "#081426" },
-                    "data-ocid": "env.submit_button",
-                    children: createRecord.isPending ? "Saving…" : "Save Record"
-                  }
-                )
-              ] })
             ] })
           ]
         }
@@ -110522,72 +110542,144 @@ function SpillModal({ onClose }) {
           initial: { opacity: 0, scale: 0.95 },
           animate: { opacity: 1, scale: 1 },
           exit: { opacity: 0, scale: 0.95 },
-          className: "w-full max-w-lg rounded-2xl p-6 mx-4",
+          className: "w-full max-w-lg rounded-2xl mx-4 flex flex-col",
           style: {
             background: "#0f1e33",
-            border: "1px solid rgba(255,255,255,0.1)"
+            border: "1px solid rgba(255,255,255,0.1)",
+            maxHeight: "90vh"
           },
           "data-ocid": "spill.dialog",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-5", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display font-semibold text-white", children: "Report Spill Incident" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "button",
-                {
-                  type: "button",
-                  onClick: onClose,
-                  className: "w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-smooth",
-                  "data-ocid": "spill.close_button",
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "w-4 h-4" })
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSubmit, className: "space-y-4", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Label,
-                  {
-                    htmlFor: "spill-location",
-                    className: "text-white/70 text-xs mb-1.5 block",
-                    children: "Location *"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                  Select,
-                  {
-                    value: form.location,
-                    onValueChange: (v2) => setForm((f2) => ({ ...f2, location: v2 })),
-                    children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        SelectTrigger,
-                        {
-                          id: "spill-location",
-                          className: "border-white/10 bg-white/5 text-white",
-                          children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select location" })
-                        }
-                      ),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: LOCATIONS$4.map((l2) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: l2, children: l2 }, l2)) })
-                    ]
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "flex items-center justify-between p-6 pb-4 border-b flex-shrink-0",
+                style: { borderColor: "rgba(255,255,255,0.1)" },
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display font-semibold text-white", children: "Report Spill Incident" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: onClose,
+                      className: "w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-smooth",
+                      "data-ocid": "spill.close_button",
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "w-4 h-4" })
+                    }
+                  )
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSubmit, className: "flex flex-col flex-1 min-h-0", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 overflow-y-auto p-6 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/20", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(
                     Label,
                     {
-                      htmlFor: "spill-material",
+                      htmlFor: "spill-location",
                       className: "text-white/70 text-xs mb-1.5 block",
-                      children: "Material Spilled *"
+                      children: "Location *"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    Select,
+                    {
+                      value: form.location,
+                      onValueChange: (v2) => setForm((f2) => ({ ...f2, location: v2 })),
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          SelectTrigger,
+                          {
+                            id: "spill-location",
+                            className: "border-white/10 bg-white/5 text-white",
+                            children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select location" })
+                          }
+                        ),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: LOCATIONS$4.map((l2) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: l2, children: l2 }, l2)) })
+                      ]
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Label,
+                      {
+                        htmlFor: "spill-material",
+                        className: "text-white/70 text-xs mb-1.5 block",
+                        children: "Material Spilled *"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Input,
+                      {
+                        id: "spill-material",
+                        placeholder: "e.g. Hydraulic Oil",
+                        value: form.material,
+                        onChange: (e3) => setForm((f2) => ({ ...f2, material: e3.target.value })),
+                        className: "border-white/10 bg-white/5 text-white"
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Label,
+                      {
+                        htmlFor: "spill-volume",
+                        className: "text-white/70 text-xs mb-1.5 block",
+                        children: "Volume (litres)"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Input,
+                      {
+                        id: "spill-volume",
+                        type: "number",
+                        placeholder: "0",
+                        value: form.volume,
+                        onChange: (e3) => setForm((f2) => ({ ...f2, volume: e3.target.value })),
+                        className: "border-white/10 bg-white/5 text-white"
+                      }
+                    )
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Label,
+                    {
+                      htmlFor: "spill-action",
+                      className: "text-white/70 text-xs mb-1.5 block",
+                      children: "Immediate Action Taken"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Textarea,
+                    {
+                      id: "spill-action",
+                      placeholder: "Describe immediate containment actions…",
+                      value: form.action,
+                      onChange: (e3) => setForm((f2) => ({ ...f2, action: e3.target.value })),
+                      className: "border-white/10 bg-white/5 text-white resize-none",
+                      rows: 2
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Label,
+                    {
+                      htmlFor: "spill-notified",
+                      className: "text-white/70 text-xs mb-1.5 block",
+                      children: "Notified Persons"
                     }
                   ),
                   /* @__PURE__ */ jsxRuntimeExports.jsx(
                     Input,
                     {
-                      id: "spill-material",
-                      placeholder: "e.g. Hydraulic Oil",
-                      value: form.material,
-                      onChange: (e3) => setForm((f2) => ({ ...f2, material: e3.target.value })),
+                      id: "spill-notified",
+                      placeholder: "e.g. EHS Manager, Shift Incharge",
+                      value: form.notified,
+                      onChange: (e3) => setForm((f2) => ({ ...f2, notified: e3.target.value })),
                       className: "border-white/10 bg-white/5 text-white"
                     }
                   )
@@ -110596,121 +110688,66 @@ function SpillModal({ onClose }) {
                   /* @__PURE__ */ jsxRuntimeExports.jsx(
                     Label,
                     {
-                      htmlFor: "spill-volume",
+                      htmlFor: "spill-status",
                       className: "text-white/70 text-xs mb-1.5 block",
-                      children: "Volume (litres)"
+                      children: "Cleanup Status"
                     }
                   ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Input,
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    Select,
                     {
-                      id: "spill-volume",
-                      type: "number",
-                      placeholder: "0",
-                      value: form.volume,
-                      onChange: (e3) => setForm((f2) => ({ ...f2, volume: e3.target.value })),
-                      className: "border-white/10 bg-white/5 text-white"
+                      value: form.status,
+                      onValueChange: (v2) => setForm((f2) => ({ ...f2, status: v2 })),
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          SelectTrigger,
+                          {
+                            id: "spill-status",
+                            className: "border-white/10 bg-white/5 text-white",
+                            children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, {})
+                          }
+                        ),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs(SelectContent, { children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: "Contained", children: "Contained" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: "Cleaned", children: "Cleaned" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: "Monitoring", children: "Monitoring" })
+                        ] })
+                      ]
                     }
                   )
                 ] })
               ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Label,
-                  {
-                    htmlFor: "spill-action",
-                    className: "text-white/70 text-xs mb-1.5 block",
-                    children: "Immediate Action Taken"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Textarea,
-                  {
-                    id: "spill-action",
-                    placeholder: "Describe immediate containment actions…",
-                    value: form.action,
-                    onChange: (e3) => setForm((f2) => ({ ...f2, action: e3.target.value })),
-                    className: "border-white/10 bg-white/5 text-white resize-none",
-                    rows: 2
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Label,
-                  {
-                    htmlFor: "spill-notified",
-                    className: "text-white/70 text-xs mb-1.5 block",
-                    children: "Notified Persons"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Input,
-                  {
-                    id: "spill-notified",
-                    placeholder: "e.g. EHS Manager, Shift Incharge",
-                    value: form.notified,
-                    onChange: (e3) => setForm((f2) => ({ ...f2, notified: e3.target.value })),
-                    className: "border-white/10 bg-white/5 text-white"
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Label,
-                  {
-                    htmlFor: "spill-status",
-                    className: "text-white/70 text-xs mb-1.5 block",
-                    children: "Cleanup Status"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                  Select,
-                  {
-                    value: form.status,
-                    onValueChange: (v2) => setForm((f2) => ({ ...f2, status: v2 })),
-                    children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        SelectTrigger,
-                        {
-                          id: "spill-status",
-                          className: "border-white/10 bg-white/5 text-white",
-                          children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, {})
-                        }
-                      ),
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs(SelectContent, { children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: "Contained", children: "Contained" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: "Cleaned", children: "Cleaned" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: "Monitoring", children: "Monitoring" })
-                      ] })
-                    ]
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-3 pt-2", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    type: "button",
-                    variant: "outline",
-                    className: "flex-1 border-white/10 text-white/70 hover:bg-white/5",
-                    onClick: onClose,
-                    "data-ocid": "spill.cancel_button",
-                    children: "Cancel"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    type: "submit",
-                    disabled: createRecord.isPending,
-                    className: "flex-1",
-                    style: { background: "#18C37E", color: "#081426" },
-                    "data-ocid": "spill.submit_button",
-                    children: createRecord.isPending ? "Saving…" : "Submit Report"
-                  }
-                )
-              ] })
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  className: "flex gap-3 p-6 pt-4 border-t flex-shrink-0",
+                  style: { borderColor: "rgba(255,255,255,0.1)" },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Button,
+                      {
+                        type: "button",
+                        variant: "outline",
+                        className: "flex-1 border-white/10 text-white/70 hover:bg-white/5",
+                        onClick: onClose,
+                        "data-ocid": "spill.cancel_button",
+                        children: "Cancel"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Button,
+                      {
+                        type: "submit",
+                        disabled: createRecord.isPending,
+                        className: "flex-1",
+                        style: { background: "#18C37E", color: "#081426" },
+                        "data-ocid": "spill.submit_button",
+                        children: createRecord.isPending ? "Saving…" : "Submit Report"
+                      }
+                    )
+                  ]
+                }
+              )
             ] })
           ]
         }
@@ -111916,12 +111953,12 @@ function TimelineItem({
     ] })
   ] });
 }
-function formatBytes(bytes) {
+function formatBytes$1(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
-function FileTypeIcon({ contentType }) {
+function FileTypeIcon$1({ contentType }) {
   if (contentType.startsWith("image/"))
     return /* @__PURE__ */ jsxRuntimeExports.jsx(Image, { className: "w-4 h-4 text-blue-400" });
   if (contentType === "application/pdf")
@@ -111932,7 +111969,7 @@ function FileTypeIcon({ contentType }) {
     return /* @__PURE__ */ jsxRuntimeExports.jsx(FileSpreadsheet, { className: "w-4 h-4 text-green-400" });
   return /* @__PURE__ */ jsxRuntimeExports.jsx(File$1, { className: "w-4 h-4 text-white/40" });
 }
-function AttachmentChip({
+function AttachmentChip$1({
   attachment,
   readOnly,
   onRemove,
@@ -111960,7 +111997,7 @@ function AttachmentChip({
                 alt: attachment.name,
                 className: "w-full h-full object-cover"
               }
-            ) : /* @__PURE__ */ jsxRuntimeExports.jsx(FileTypeIcon, { contentType: attachment.contentType })
+            ) : /* @__PURE__ */ jsxRuntimeExports.jsx(FileTypeIcon$1, { contentType: attachment.contentType })
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 min-w-0", children: [
@@ -111975,7 +112012,7 @@ function AttachmentChip({
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-white/30 mt-0.5", children: [
-            formatBytes(attachment.size),
+            formatBytes$1(attachment.size),
             attachment.uploading && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ml-2 text-[#18C37E]", children: [
               "Uploading… ",
               attachment.uploadProgress ?? 0,
@@ -113286,7 +113323,7 @@ function IncidentFormPanel({
               }
             ),
             form.attachments.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-2", children: form.attachments.map((att) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-              AttachmentChip,
+              AttachmentChip$1,
               {
                 attachment: att,
                 readOnly: isReadOnly,
@@ -117077,6 +117114,43 @@ function ObsCard({
     }
   );
 }
+function DetailAttachments({ obsId }) {
+  const { getUrl } = useStorageUpload();
+  const attachments = loadAttachments(obsId);
+  if (attachments.length === 0) return null;
+  async function openAtt(att) {
+    if (att.previewUrl) {
+      window.open(att.previewUrl, "_blank");
+      return;
+    }
+    if (att.storageHash) {
+      try {
+        const url = await getUrl(att.storageHash);
+        window.open(url, "_blank");
+      } catch {
+        ue.error("Could not open file");
+      }
+    }
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-white/40 mb-2", children: [
+      "Attachments (",
+      attachments.length,
+      ")"
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-2", children: attachments.map((att) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      AttachmentChip,
+      {
+        attachment: att,
+        readOnly: true,
+        onRemove: () => {
+        },
+        onOpen: () => openAtt(att)
+      },
+      att.id
+    )) })
+  ] });
+}
 function DetailView({
   obs,
   onBack,
@@ -117181,7 +117255,8 @@ function DetailView({
                     },
                     `action-${a2.substring(0, 20)}`
                   )) })
-                ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(DetailAttachments, { obsId: obs.id })
               ] })
             ]
           }
@@ -117209,6 +117284,106 @@ function DetailView({
     }
   );
 }
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+function FileTypeIcon({ contentType }) {
+  if (contentType.startsWith("image/"))
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Image, { className: "w-4 h-4 text-blue-400" });
+  if (contentType === "application/pdf")
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "w-4 h-4 text-red-400" });
+  if (contentType.includes("word"))
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "w-4 h-4 text-blue-500" });
+  if (contentType.includes("excel") || contentType.includes("spreadsheet"))
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(FileSpreadsheet, { className: "w-4 h-4 text-green-400" });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(File$1, { className: "w-4 h-4 text-white/40" });
+}
+function AttachmentChip({
+  attachment,
+  readOnly,
+  onRemove,
+  onOpen
+}) {
+  const isImage2 = attachment.contentType.startsWith("image/");
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      className: "flex items-center gap-3 rounded-lg px-3 py-2.5",
+      style: {
+        background: attachment.error ? "rgba(239,68,68,0.08)" : "rgba(255,255,255,0.04)",
+        border: attachment.error ? "1px solid rgba(239,68,68,0.2)" : "1px solid rgba(255,255,255,0.07)"
+      },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "w-9 h-9 rounded flex items-center justify-center flex-shrink-0 overflow-hidden",
+            style: { background: "rgba(255,255,255,0.05)" },
+            children: isImage2 && attachment.previewUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src: attachment.previewUrl,
+                alt: attachment.name,
+                className: "w-full h-full object-cover"
+              }
+            ) : /* @__PURE__ */ jsxRuntimeExports.jsx(FileTypeIcon, { contentType: attachment.contentType })
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 min-w-0", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              onClick: onOpen,
+              className: "text-sm text-white/80 hover:text-white font-medium truncate block max-w-full text-left transition-colors duration-150",
+              title: attachment.name,
+              children: attachment.name
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-white/30 mt-0.5", children: [
+            formatBytes(attachment.size),
+            attachment.uploading && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ml-2 text-[#18C37E]", children: [
+              "Uploading\\u2026 ",
+              attachment.uploadProgress ?? 0,
+              "%"
+            ] }),
+            attachment.error && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-2 text-red-400", children: attachment.error }),
+            !attachment.uploading && !attachment.error && attachment.storageHash && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-2 text-[#18C37E]/60", children: "Uploaded" })
+          ] }),
+          attachment.uploading && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: "mt-1.5 h-1 rounded-full overflow-hidden",
+              style: { background: "rgba(255,255,255,0.08)" },
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "div",
+                {
+                  className: "h-full rounded-full transition-all duration-300",
+                  style: {
+                    width: `${attachment.uploadProgress ?? 0}%`,
+                    background: "#18C37E"
+                  }
+                }
+              )
+            }
+          )
+        ] }),
+        !readOnly && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            onClick: onRemove,
+            "aria-label": "Remove attachment",
+            className: "w-6 h-6 flex items-center justify-center rounded text-white/30 hover:text-red-400 transition-colors flex-shrink-0",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "w-3.5 h-3.5" })
+          }
+        )
+      ]
+    }
+  );
+}
 const EMPTY_FORM = {
   obsType: ObservationType.unsafeAct,
   description: "",
@@ -117217,7 +117392,8 @@ const EMPTY_FORM = {
   reportedBy: "Safety Officer",
   severity: "Medium",
   immediateAction: "",
-  correctiveActions: [""]
+  correctiveActions: [""],
+  attachments: []
 };
 function CreateForm({
   onSuccess,
@@ -117234,12 +117410,103 @@ function CreateForm({
       reportedBy: initialData.reportedBy,
       severity: "Medium",
       immediateAction: "",
-      correctiveActions: initialData.actions.length > 0 ? initialData.actions : [""]
+      correctiveActions: initialData.actions.length > 0 ? initialData.actions : [""],
+      attachments: loadAttachments(initialData.id)
     } : EMPTY_FORM
   );
   const [obsId] = reactExports.useState((initialData == null ? void 0 : initialData.id) ?? generateObsId);
   const createObs = useCreateObservation();
   const updateObs = useUpdateObservation();
+  const { upload, getUrl } = useStorageUpload();
+  const [isDragOver, setIsDragOver] = reactExports.useState(false);
+  const fileInputRef = reactExports.useRef(null);
+  const processFiles = reactExports.useCallback(
+    async (files) => {
+      const fileArray = Array.from(files);
+      for (const file of fileArray) {
+        const err = validateFile(file);
+        if (err) {
+          ue.error(err);
+          continue;
+        }
+        const id2 = crypto.randomUUID();
+        const pending = {
+          id: id2,
+          name: file.name,
+          contentType: file.type,
+          size: file.size,
+          uploadedAt: (/* @__PURE__ */ new Date()).toISOString(),
+          uploading: true,
+          uploadProgress: 0
+        };
+        setForm((prev) => ({
+          ...prev,
+          attachments: [...prev.attachments, pending]
+        }));
+        try {
+          const { hash, previewUrl } = await upload(file, (pct) => {
+            setForm((prev) => ({
+              ...prev,
+              attachments: prev.attachments.map(
+                (a2) => a2.id === id2 ? { ...a2, uploadProgress: pct } : a2
+              )
+            }));
+          });
+          setForm((prev) => {
+            const updated = prev.attachments.map(
+              (a2) => a2.id === id2 ? {
+                ...a2,
+                uploading: false,
+                uploadProgress: 100,
+                storageHash: hash,
+                previewUrl
+              } : a2
+            );
+            saveAttachments(obsId, updated);
+            return { ...prev, attachments: updated };
+          });
+          ue.success(`"${file.name}" uploaded`);
+        } catch {
+          setForm((prev) => ({
+            ...prev,
+            attachments: prev.attachments.map(
+              (a2) => a2.id === id2 ? { ...a2, uploading: false, error: "Upload failed" } : a2
+            )
+          }));
+          ue.error(`Failed to upload "${file.name}"`);
+        }
+      }
+    },
+    [upload, obsId]
+  );
+  const removeAttachment = reactExports.useCallback(
+    (id2) => {
+      setForm((prev) => {
+        const updated = prev.attachments.filter((a2) => a2.id !== id2);
+        saveAttachments(obsId, updated);
+        return { ...prev, attachments: updated };
+      });
+      removeAttachmentFromStorage(obsId, id2);
+    },
+    [obsId]
+  );
+  const openAttachment = reactExports.useCallback(
+    async (att) => {
+      if (att.previewUrl) {
+        window.open(att.previewUrl, "_blank");
+        return;
+      }
+      if (att.storageHash) {
+        try {
+          const url = await getUrl(att.storageHash);
+          window.open(url, "_blank");
+        } catch {
+          ue.error("Could not open file");
+        }
+      }
+    },
+    [getUrl]
+  );
   function setField(k2, v2) {
     setForm((prev) => ({ ...prev, [k2]: v2 }));
   }
@@ -117264,6 +117531,10 @@ function CreateForm({
       return;
     }
     const now2 = BigInt(Date.now()) * BigInt(1e6);
+    const completedAttachments = form.attachments.filter(
+      (a2) => !a2.uploading && !a2.error
+    );
+    saveAttachments(obsId, completedAttachments);
     const rec = {
       id: obsId,
       status: (initialData == null ? void 0 : initialData.status) ?? ObservationStatus.open,
@@ -117574,23 +117845,85 @@ function CreateForm({
             )) })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { className: "text-white/60 text-sm mb-1.5 block", children: "Photo Evidence" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { className: "text-white/60 text-sm mb-2 block", children: "Photo Evidence & Documents" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                ref: fileInputRef,
+                type: "file",
+                accept: "image/*,.pdf,.doc,.docx,.xls,.xlsx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                multiple: true,
+                className: "sr-only",
+                onChange: (e3) => {
+                  if (e3.target.files) processFiles(e3.target.files);
+                  e3.target.value = "";
+                },
+                "data-ocid": "observations.file_input"
+              }
+            ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "div",
               {
-                className: "rounded-xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-smooth",
+                className: "rounded-xl border-2 border-dashed flex flex-col items-center gap-3 py-8 px-6 transition-all duration-200",
                 style: {
-                  background: "rgba(255,255,255,0.03)",
-                  border: "2px dashed rgba(255,255,255,0.12)"
+                  borderColor: isDragOver ? "rgba(24,195,126,0.6)" : "rgba(255,255,255,0.1)",
+                  background: isDragOver ? "rgba(24,195,126,0.06)" : "transparent"
                 },
-                "data-ocid": "observations.upload_button",
+                onDragOver: (e3) => {
+                  e3.preventDefault();
+                  setIsDragOver(true);
+                },
+                onDragLeave: () => setIsDragOver(false),
+                onDrop: (e3) => {
+                  e3.preventDefault();
+                  setIsDragOver(false);
+                  if (e3.dataTransfer.files) processFiles(e3.dataTransfer.files);
+                },
+                "data-ocid": "observations.dropzone",
                 children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(Camera, { className: "w-8 h-8 text-white/30" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-white/50", children: "Click to upload photo evidence" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-white/30", children: "PNG, JPG up to 10MB" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "div",
+                    {
+                      className: "w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200",
+                      style: {
+                        background: isDragOver ? "rgba(24,195,126,0.2)" : "rgba(24,195,126,0.1)",
+                        border: "1px solid rgba(24,195,126,0.2)"
+                      },
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Upload, { className: "w-5 h-5 text-[#18C37E]" })
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-white/60 font-medium", children: "Drag & drop or click to upload" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-white/30 mt-1", children: "Images, PDF, Word, Excel — max 10 MB each" })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Button,
+                    {
+                      type: "button",
+                      variant: "outline",
+                      size: "sm",
+                      className: "border-white/10 text-white/50 hover:text-white",
+                      onClick: () => {
+                        var _a3;
+                        return (_a3 = fileInputRef.current) == null ? void 0 : _a3.click();
+                      },
+                      "data-ocid": "observations.upload_button",
+                      children: "Browse Files"
+                    }
+                  )
                 ]
               }
-            )
+            ),
+            form.attachments.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-2 mt-3", children: form.attachments.map((att) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+              AttachmentChip,
+              {
+                attachment: att,
+                readOnly: false,
+                onRemove: () => removeAttachment(att.id),
+                onOpen: () => openAttachment(att)
+              },
+              att.id
+            )) })
           ] }),
           form.severity && /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "div",
@@ -120019,7 +120352,7 @@ function PermitQrCard({ permit }) {
   const handleDownloadPdf = async () => {
     if (!qrDataUrl) return;
     const { jsPDF } = await __vitePreload(async () => {
-      const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BETISG4x.js").then((n2) => n2.j);
+      const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-CiXMul57.js").then((n2) => n2.j);
       return { jsPDF: jsPDF2 };
     }, true ? [] : void 0);
     const doc = new jsPDF({

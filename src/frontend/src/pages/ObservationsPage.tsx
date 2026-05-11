@@ -8,6 +8,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { RKTR_LOCATIONS } from "@/constants/locations";
 import {
+  loadAttachments,
+  removeAttachmentFromStorage,
+  saveAttachments,
+  useStorageUpload,
+  validateFile,
+} from "@/hooks/useAttachments";
+import type { AttachmentMetadata } from "@/hooks/useAttachments";
+import {
   useCreateObservation,
   useDeleteObservation,
   useObservations,
@@ -22,7 +30,11 @@ import {
   ChevronRight,
   Clock,
   Eye,
+  File,
+  FileSpreadsheet,
+  FileText,
   FlameKindling,
+  ImageIcon,
   Info,
   Loader2,
   MapPin,
@@ -30,12 +42,13 @@ import {
   Plus,
   Search,
   Trash2,
+  Upload,
   User,
   X,
   Zap,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -53,6 +66,7 @@ interface FormData {
   severity: string;
   immediateAction: string;
   correctiveActions: string[];
+  attachments: AttachmentMetadata[];
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -464,6 +478,46 @@ function ObsCard({
 
 // ─── Detail View ──────────────────────────────────────────────────────────────
 
+function DetailAttachments({ obsId }: { obsId: string }) {
+  const { getUrl } = useStorageUpload();
+  const attachments = loadAttachments(obsId);
+  if (attachments.length === 0) return null;
+
+  async function openAtt(att: AttachmentMetadata) {
+    if (att.previewUrl) {
+      window.open(att.previewUrl, "_blank");
+      return;
+    }
+    if (att.storageHash) {
+      try {
+        const url = await getUrl(att.storageHash);
+        window.open(url, "_blank");
+      } catch {
+        toast.error("Could not open file");
+      }
+    }
+  }
+
+  return (
+    <div>
+      <p className="text-xs text-white/40 mb-2">
+        Attachments ({attachments.length})
+      </p>
+      <div className="space-y-2">
+        {attachments.map((att) => (
+          <AttachmentChip
+            key={att.id}
+            attachment={att}
+            readOnly
+            onRemove={() => {}}
+            onOpen={() => openAtt(att)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DetailView({
   obs,
   onBack,
@@ -587,6 +641,9 @@ function DetailView({
               </ul>
             </div>
           )}
+
+          {/* Attachments (detail view) */}
+          <DetailAttachments obsId={obs.id} />
         </div>
       </div>
 
@@ -615,6 +672,118 @@ function DetailView({
   );
 }
 
+// ─── Attachment helpers ──────────────────────────────────────────────────────
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function FileTypeIcon({ contentType }: { contentType: string }) {
+  if (contentType.startsWith("image/"))
+    return <ImageIcon className="w-4 h-4 text-blue-400" />;
+  if (contentType === "application/pdf")
+    return <FileText className="w-4 h-4 text-red-400" />;
+  if (contentType.includes("word"))
+    return <FileText className="w-4 h-4 text-blue-500" />;
+  if (contentType.includes("excel") || contentType.includes("spreadsheet"))
+    return <FileSpreadsheet className="w-4 h-4 text-green-400" />;
+  return <File className="w-4 h-4 text-white/40" />;
+}
+
+function AttachmentChip({
+  attachment,
+  readOnly,
+  onRemove,
+  onOpen,
+}: {
+  attachment: AttachmentMetadata;
+  readOnly: boolean;
+  onRemove: () => void;
+  onOpen: () => void;
+}) {
+  const isImage = attachment.contentType.startsWith("image/");
+  return (
+    <div
+      className="flex items-center gap-3 rounded-lg px-3 py-2.5"
+      style={{
+        background: attachment.error
+          ? "rgba(239,68,68,0.08)"
+          : "rgba(255,255,255,0.04)",
+        border: attachment.error
+          ? "1px solid rgba(239,68,68,0.2)"
+          : "1px solid rgba(255,255,255,0.07)",
+      }}
+    >
+      <div
+        className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0 overflow-hidden"
+        style={{ background: "rgba(255,255,255,0.05)" }}
+      >
+        {isImage && attachment.previewUrl ? (
+          <img
+            src={attachment.previewUrl}
+            alt={attachment.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <FileTypeIcon contentType={attachment.contentType} />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <button
+          type="button"
+          onClick={onOpen}
+          className="text-sm text-white/80 hover:text-white font-medium truncate block max-w-full text-left transition-colors duration-150"
+          title={attachment.name}
+        >
+          {attachment.name}
+        </button>
+        <p className="text-xs text-white/30 mt-0.5">
+          {formatBytes(attachment.size)}
+          {attachment.uploading && (
+            <span className="ml-2 text-[#18C37E]">
+              Uploading\u2026 {attachment.uploadProgress ?? 0}%
+            </span>
+          )}
+          {attachment.error && (
+            <span className="ml-2 text-red-400">{attachment.error}</span>
+          )}
+          {!attachment.uploading &&
+            !attachment.error &&
+            attachment.storageHash && (
+              <span className="ml-2 text-[#18C37E]/60">Uploaded</span>
+            )}
+        </p>
+        {attachment.uploading && (
+          <div
+            className="mt-1.5 h-1 rounded-full overflow-hidden"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          >
+            <div
+              className="h-full rounded-full transition-all duration-300"
+              style={{
+                width: `${attachment.uploadProgress ?? 0}%`,
+                background: "#18C37E",
+              }}
+            />
+          </div>
+        )}
+      </div>
+      {!readOnly && (
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label="Remove attachment"
+          className="w-6 h-6 flex items-center justify-center rounded text-white/30 hover:text-red-400 transition-colors flex-shrink-0"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      )}
+    </div>
+  );
+}
+
 // ─── Create Form ──────────────────────────────────────────────────────────────
 
 const EMPTY_FORM: FormData = {
@@ -626,6 +795,7 @@ const EMPTY_FORM: FormData = {
   severity: "Medium",
   immediateAction: "",
   correctiveActions: [""],
+  attachments: [],
 };
 
 function CreateForm({
@@ -652,12 +822,110 @@ function CreateForm({
           immediateAction: "",
           correctiveActions:
             initialData.actions.length > 0 ? initialData.actions : [""],
+          attachments: loadAttachments(initialData.id),
         }
       : EMPTY_FORM,
   );
   const [obsId] = useState(initialData?.id ?? generateObsId);
   const createObs = useCreateObservation();
   const updateObs = useUpdateObservation();
+  const { upload, getUrl } = useStorageUpload();
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const processFiles = useCallback(
+    async (files: FileList | File[]) => {
+      const fileArray = Array.from(files);
+      for (const file of fileArray) {
+        const err = validateFile(file);
+        if (err) {
+          toast.error(err);
+          continue;
+        }
+        const id = crypto.randomUUID();
+        const pending: AttachmentMetadata = {
+          id,
+          name: file.name,
+          contentType: file.type,
+          size: file.size,
+          uploadedAt: new Date().toISOString(),
+          uploading: true,
+          uploadProgress: 0,
+        };
+        setForm((prev) => ({
+          ...prev,
+          attachments: [...prev.attachments, pending],
+        }));
+        try {
+          const { hash, previewUrl } = await upload(file, (pct) => {
+            setForm((prev) => ({
+              ...prev,
+              attachments: prev.attachments.map((a) =>
+                a.id === id ? { ...a, uploadProgress: pct } : a,
+              ),
+            }));
+          });
+          setForm((prev) => {
+            const updated = prev.attachments.map((a) =>
+              a.id === id
+                ? {
+                    ...a,
+                    uploading: false,
+                    uploadProgress: 100,
+                    storageHash: hash,
+                    previewUrl,
+                  }
+                : a,
+            );
+            saveAttachments(obsId, updated);
+            return { ...prev, attachments: updated };
+          });
+          toast.success(`"${file.name}" uploaded`);
+        } catch {
+          setForm((prev) => ({
+            ...prev,
+            attachments: prev.attachments.map((a) =>
+              a.id === id
+                ? { ...a, uploading: false, error: "Upload failed" }
+                : a,
+            ),
+          }));
+          toast.error(`Failed to upload "${file.name}"`);
+        }
+      }
+    },
+    [upload, obsId],
+  );
+
+  const removeAttachment = useCallback(
+    (id: string) => {
+      setForm((prev) => {
+        const updated = prev.attachments.filter((a) => a.id !== id);
+        saveAttachments(obsId, updated);
+        return { ...prev, attachments: updated };
+      });
+      removeAttachmentFromStorage(obsId, id);
+    },
+    [obsId],
+  );
+
+  const openAttachment = useCallback(
+    async (att: AttachmentMetadata) => {
+      if (att.previewUrl) {
+        window.open(att.previewUrl, "_blank");
+        return;
+      }
+      if (att.storageHash) {
+        try {
+          const url = await getUrl(att.storageHash);
+          window.open(url, "_blank");
+        } catch {
+          toast.error("Could not open file");
+        }
+      }
+    },
+    [getUrl],
+  );
 
   function setField<K extends keyof FormData>(k: K, v: FormData[K]) {
     setForm((prev) => ({ ...prev, [k]: v }));
@@ -687,6 +955,10 @@ function CreateForm({
       return;
     }
     const now = BigInt(Date.now()) * BigInt(1_000_000);
+    const completedAttachments = form.attachments.filter(
+      (a) => !a.uploading && !a.error,
+    );
+    saveAttachments(obsId, completedAttachments);
     const rec: ObservationRecord = {
       id: obsId,
       status: initialData?.status ?? ObservationStatus.open,
@@ -987,25 +1259,89 @@ function CreateForm({
           </div>
         </div>
 
-        {/* Photo Upload Zone */}
+        {/* Attachments */}
         <div>
-          <Label className="text-white/60 text-sm mb-1.5 block">
-            Photo Evidence
+          <Label className="text-white/60 text-sm mb-2 block">
+            Photo Evidence &amp; Documents
           </Label>
-          <div
-            className="rounded-xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-smooth"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "2px dashed rgba(255,255,255,0.12)",
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            multiple
+            className="sr-only"
+            onChange={(e) => {
+              if (e.target.files) processFiles(e.target.files);
+              e.target.value = "";
             }}
-            data-ocid="observations.upload_button"
+            data-ocid="observations.file_input"
+          />
+          {/* Drop zone */}
+          <div
+            className="rounded-xl border-2 border-dashed flex flex-col items-center gap-3 py-8 px-6 transition-all duration-200"
+            style={{
+              borderColor: isDragOver
+                ? "rgba(24,195,126,0.6)"
+                : "rgba(255,255,255,0.1)",
+              background: isDragOver ? "rgba(24,195,126,0.06)" : "transparent",
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDragOver(true);
+            }}
+            onDragLeave={() => setIsDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsDragOver(false);
+              if (e.dataTransfer.files) processFiles(e.dataTransfer.files);
+            }}
+            data-ocid="observations.dropzone"
           >
-            <Camera className="w-8 h-8 text-white/30" />
-            <p className="text-sm text-white/50">
-              Click to upload photo evidence
-            </p>
-            <p className="text-xs text-white/30">PNG, JPG up to 10MB</p>
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200"
+              style={{
+                background: isDragOver
+                  ? "rgba(24,195,126,0.2)"
+                  : "rgba(24,195,126,0.1)",
+                border: "1px solid rgba(24,195,126,0.2)",
+              }}
+            >
+              <Upload className="w-5 h-5 text-[#18C37E]" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-white/60 font-medium">
+                Drag &amp; drop or click to upload
+              </p>
+              <p className="text-xs text-white/30 mt-1">
+                Images, PDF, Word, Excel — max 10 MB each
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="border-white/10 text-white/50 hover:text-white"
+              onClick={() => fileInputRef.current?.click()}
+              data-ocid="observations.upload_button"
+            >
+              Browse Files
+            </Button>
           </div>
+          {/* Attachment chips */}
+          {form.attachments.length > 0 && (
+            <div className="space-y-2 mt-3">
+              {form.attachments.map((att) => (
+                <AttachmentChip
+                  key={att.id}
+                  attachment={att}
+                  readOnly={false}
+                  onRemove={() => removeAttachment(att.id)}
+                  onOpen={() => openAttachment(att)}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Severity visual */}

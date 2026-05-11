@@ -184,6 +184,7 @@ type ObservationStatus =
 type ObservationRecord = 
  record {
    actions: vec text;
+   attachments: opt vec AttachmentMeta;
    createdAt: Timestamp;
    description: text;
    id: RecordId;
@@ -509,6 +510,7 @@ service : {
   updateIncident: (id: text, incident: IncidentRecord) -> (Result);
   updateIncidentStatus: (id: text, status: IncidentStatus) -> (Result);
   updateInspectionStatus: (id: text, status: InspectionStatus) -> (Result);
+  updateObservation: (id: text, obs: ObservationRecord) -> (Result);
   updateObservationStatus: (id: text, status: ObservationStatus) -> (Result);
   updatePermitStatus: (id: text, status: PermitStatus, callerId: text,
    callerRole: text) -> (Result);

@@ -33,7 +33,7 @@ import Time "mo:core/Time";
 
 
 actor {
-  // ── Legacy type declarations for stable migration ───────────────────────────────
+  // ── Legacy type declarations for stable migration ─────────────────────────────────────
   // The OLD IncidentRecord and PermitRecord types that were previously stored
   // in stable memory. These must match backend.most exactly for migration.
   type LegacyIncidentRecord = {
@@ -67,6 +67,14 @@ actor {
     responsiblePerson : ?Text; targetDate : ?Text;
     teamLead : ?Text; teamMembers : ?[Text]; investigationDueDate : ?Text;
     // Note: no `attachments` field — this is what changed
+  };
+
+  // ObservationRecord BEFORE the `attachments` field was added
+  type LegacyObservationRecord = {
+    id : Text; obsType : ObsTypes.ObservationType;
+    description : Text; location : Text; reportedBy : Text;
+    status : ObsTypes.ObservationStatus; actions : [Text];
+    createdAt : Int;
   };
 
   // OLD stable maps (previous deployed types — kept for upgrade reading)
@@ -106,12 +114,17 @@ actor {
   let esgRecords = Map.empty<Text, ESGTypes.ESGRecord>();
 
   let capas = Map.empty<Text, CapaTypes.CapaRecord>();
-  let observations = Map.empty<Text, ObsTypes.ObservationRecord>();
+
+  // OLD observations stable map (previous deployed type — kept for upgrade reading)
+  let observations : Map.Map<Text, LegacyObservationRecord> = Map.empty();
+  // NEW observations stable map — holds ObservationRecord with `attachments` field
+  let observationsV2 = Map.empty<Text, ObsTypes.ObservationRecord>();
+
   let departments = Map.empty<Text, DeptTypes.DepartmentRecord>();
   let activityFeed = List.empty<DashTypes.ActivityFeedItem>();
   let notifLastRead = Map.empty<Principal, Time.Time>();
 
-  // ── Stable migration: promote legacy and v2 incidents/permits/users to current types ──
+  // ── Stable migration: promote legacy and v2 incidents/permits/users/observations to current types ──
   system func postupgrade() {
     // Migrate legacy users to v2 Map with new required fields defaulted to ""
     for ((k, v) in users.entries()) {
@@ -197,6 +210,18 @@ actor {
         });
       };
     };
+    // Migrate legacy observations (without attachments) to observationsV2
+    for ((k, v) in observations.entries()) {
+      if (observationsV2.get(k) == null) {
+        observationsV2.add(k, {
+          id = v.id; obsType = v.obsType;
+          description = v.description; location = v.location;
+          reportedBy = v.reportedBy; status = v.status;
+          actions = v.actions; createdAt = v.createdAt;
+          attachments = null;
+        });
+      };
+    };
   };
 
   // --- Mixin includes ---
@@ -208,10 +233,10 @@ actor {
   include TrainingMixin(trainingRecords);
   include EnvironmentMixin(environmentRecords);
   include CapaMixin(capas);
-  include ObservationsMixin(observations);
+  include ObservationsMixin(observationsV2);
   include DepartmentsMixin(departments);
   include ESGMixin(esgRecords, usersV2);
-  include DashboardMixin(incidentsV3, permitsV2, risks, trainingRecords, observations, activityFeed, usersV2, capas, inspections, environmentRecords, departments, notifLastRead);
+  include DashboardMixin(incidentsV3, permitsV2, risks, trainingRecords, observationsV2, activityFeed, usersV2, capas, inspections, environmentRecords, departments, notifLastRead);
   include NotificationsMixin(usersV2, incidentsV3, permitsV2, capas, trainingRecords, inspections);
 
   // 24-hour deadline check timer — registered once at actor init

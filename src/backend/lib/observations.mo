@@ -16,6 +16,20 @@ module {
     #ok(obs.id);
   };
 
+  public func updateObservation(
+    state : State,
+    id : Text,
+    updated : Types.ObservationRecord,
+  ) : Common.Result<(), Text> {
+    switch (state.observations.get(id)) {
+      case null { #err("Observation not found.") };
+      case _ {
+        state.observations.add(id, updated);
+        #ok(());
+      };
+    };
+  };
+
   public func getObservations(state : State) : [Types.ObservationRecord] {
     state.observations.values().toArray();
   };

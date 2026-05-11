@@ -208,6 +208,7 @@ export interface ObservationRecord {
     reportedBy: string;
     obsType: ObservationType;
     location: string;
+    attachments?: Array<AttachmentMeta>;
 }
 export interface ESGGovernance {
     antiCorruptionTrainingCoverage: number;
@@ -566,6 +567,7 @@ export interface backendInterface {
     updateIncident(id: string, incident: IncidentRecord): Promise<Result>;
     updateIncidentStatus(id: string, status: IncidentStatus): Promise<Result>;
     updateInspectionStatus(id: string, status: InspectionStatus): Promise<Result>;
+    updateObservation(id: string, obs: ObservationRecord): Promise<Result>;
     updateObservationStatus(id: string, status: ObservationStatus): Promise<Result>;
     updatePermitStatus(id: string, status: PermitStatus, callerId: string, callerRole: string): Promise<Result>;
     updateRiskStatus(id: string, status: RiskStatus): Promise<Result>;
@@ -1359,6 +1361,20 @@ export class Backend implements backendInterface {
             return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
         }
     }
+    async updateObservation(arg0: string, arg1: ObservationRecord): Promise<Result> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateObservation(arg0, to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateObservation(arg0, to_candid_ObservationRecord_n23(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_Result_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async updateObservationStatus(arg0: string, arg1: ObservationStatus): Promise<Result> {
         if (this.processError) {
             try {
@@ -1913,6 +1929,7 @@ function from_candid_record_n84(_uploadFile: (file: ExternalBlob) => Promise<Uin
     reportedBy: string;
     obsType: _ObservationType;
     location: string;
+    attachments: [] | [Array<_AttachmentMeta>];
 }): {
     id: RecordId;
     status: ObservationStatus;
@@ -1922,6 +1939,7 @@ function from_candid_record_n84(_uploadFile: (file: ExternalBlob) => Promise<Uin
     reportedBy: string;
     obsType: ObservationType;
     location: string;
+    attachments?: Array<AttachmentMeta>;
 } {
     return {
         id: value.id,
@@ -1931,7 +1949,8 @@ function from_candid_record_n84(_uploadFile: (file: ExternalBlob) => Promise<Uin
         actions: value.actions,
         reportedBy: value.reportedBy,
         obsType: from_candid_ObservationType_n87(_uploadFile, _downloadFile, value.obsType),
-        location: value.location
+        location: value.location,
+        attachments: record_opt_to_undefined(from_candid_opt_n72(_uploadFile, _downloadFile, value.attachments))
     };
 }
 function from_candid_record_n91(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -2572,6 +2591,7 @@ function to_candid_record_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8
     reportedBy: string;
     obsType: ObservationType;
     location: string;
+    attachments?: Array<AttachmentMeta>;
 }): {
     id: _RecordId;
     status: _ObservationStatus;
@@ -2581,6 +2601,7 @@ function to_candid_record_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8
     reportedBy: string;
     obsType: _ObservationType;
     location: string;
+    attachments: [] | [Array<_AttachmentMeta>];
 } {
     return {
         id: value.id,
@@ -2590,7 +2611,8 @@ function to_candid_record_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         actions: value.actions,
         reportedBy: value.reportedBy,
         obsType: to_candid_ObservationType_n27(_uploadFile, _downloadFile, value.obsType),
-        location: value.location
+        location: value.location,
+        attachments: value.attachments ? candid_some(value.attachments) : candid_none()
     };
 }
 function to_candid_record_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {

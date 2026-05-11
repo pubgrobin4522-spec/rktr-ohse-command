@@ -199,6 +199,7 @@ export const ObservationRecord = IDL.Record({
   'reportedBy' : IDL.Text,
   'obsType' : ObservationType,
   'location' : IDL.Text,
+  'attachments' : IDL.Opt(IDL.Vec(AttachmentMeta)),
 });
 export const PermitStatus = IDL.Variant({
   'closed' : IDL.Null,
@@ -475,6 +476,7 @@ export const idlService = IDL.Service({
       [Result],
       [],
     ),
+  'updateObservation' : IDL.Func([IDL.Text, ObservationRecord], [Result], []),
   'updateObservationStatus' : IDL.Func(
       [IDL.Text, ObservationStatus],
       [Result],
@@ -684,6 +686,7 @@ export const idlFactory = ({ IDL }) => {
     'reportedBy' : IDL.Text,
     'obsType' : ObservationType,
     'location' : IDL.Text,
+    'attachments' : IDL.Opt(IDL.Vec(AttachmentMeta)),
   });
   const PermitStatus = IDL.Variant({
     'closed' : IDL.Null,
@@ -964,6 +967,7 @@ export const idlFactory = ({ IDL }) => {
         [Result],
         [],
       ),
+    'updateObservation' : IDL.Func([IDL.Text, ObservationRecord], [Result], []),
     'updateObservationStatus' : IDL.Func(
         [IDL.Text, ObservationStatus],
         [Result],

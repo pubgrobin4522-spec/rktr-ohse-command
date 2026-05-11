@@ -1,6 +1,9 @@
 import Common "common";
+import Incidents "incidents";
 
 module {
+  public type AttachmentMeta = Incidents.AttachmentMeta;
+
   public type ObservationType = {
     #unsafeAct;
     #unsafeCondition;
@@ -22,5 +25,6 @@ module {
     status : ObservationStatus;
     actions : [Text];
     createdAt : Common.Timestamp;
+    attachments : ?[AttachmentMeta];
   };
 };
