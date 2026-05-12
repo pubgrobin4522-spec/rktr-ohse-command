@@ -12,6 +12,7 @@ mixin (
   users : Map.Map<Text, Types.UserRecord>,
   registrationEvents : List.List<DashTypes.ActivityFeedItem>,
   otpStore : Map.Map<Text, Types.OtpRecord>,
+  passwords : Map.Map<Text, Text>,
 ) {
   public func login(email : Text, password : Text) : async Common.Result<Types.AuthSession, Text> {
     UserLib.login({ users }, email, password);
@@ -24,7 +25,7 @@ mixin (
         // Fire-and-forget: notify admin + registrant
         ignore (async { await Notifications.notifyUserRegistration(users, user) });
         // Add to activity feed for registration events
-        DashLib.addRegistrationEvent(registrationEvents, user.name, user.email, Time.now());
+        DashLib.addRegistrationEvent(registrationEvents, user.name, user.email, user.employeeNumber, Time.now());
       };
       case (#err(_)) {};
     };
@@ -53,5 +54,9 @@ mixin (
 
   public func activateUser(id : Text) : async Common.Result<(), Text> {
     UserLib.activateUser({ users }, id);
+  };
+
+  public func resetPasswordByMobile(employeeNumber : Text, mobileNumber : Text) : async Common.Result<Text, Text> {
+    UserLib.resetPasswordByMobile({ users }, { passwords }, employeeNumber, mobileNumber);
   };
 };

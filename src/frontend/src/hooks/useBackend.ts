@@ -819,6 +819,53 @@ export function useUpdateIncident() {
   });
 }
 
+// ─── Principal Registration Hook ────────────────────────────────────────────
+
+/**
+ * Bind the caller's IC principal to their employee number.
+ * Must be called once after every successful login so the backend
+ * can filter the activity feed (and other per-user data) by principal.
+ */
+export function useRegisterCallerPrincipal() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (employeeNumber: string) => {
+      if (!actor) return;
+      try {
+        await actor.registerCallerPrincipal(employeeNumber);
+      } catch {
+        // Non-critical — silently ignore if canister is unavailable
+      }
+    },
+  });
+}
+
+// ─── Password Reset Hook ─────────────────────────────────────────────────────
+
+export function useResetPasswordByMobile() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async ({
+      employeeNumber,
+      mobileNumber,
+    }: { employeeNumber: string; mobileNumber: string }) => {
+      if (!actor) throw new Error("Not connected");
+      const result = await (
+        actor as unknown as {
+          resetPasswordByMobile: (
+            employeeNumber: string,
+            mobileNumber: string,
+          ) => Promise<
+            { __kind__: "ok"; ok: string } | { __kind__: "err"; err: string }
+          >;
+        }
+      ).resetPasswordByMobile(employeeNumber, mobileNumber);
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+  });
+}
+
 // ─── OTP Hooks ───────────────────────────────────────────────────────────────
 
 export function useSendMobileOtp() {

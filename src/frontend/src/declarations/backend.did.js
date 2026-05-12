@@ -339,9 +339,11 @@ export const UserRecord = IDL.Record({
 });
 export const ActivityFeedItem = IDL.Record({
   'id' : RecordId,
+  'recipient' : IDL.Opt(IDL.Text),
   'message' : IDL.Text,
   'timestamp' : Timestamp,
   'category' : IDL.Text,
+  'recipientRole' : IDL.Opt(IDL.Text),
 });
 export const HighRiskAlertDetail = IDL.Record({
   'id' : IDL.Text,
@@ -465,7 +467,9 @@ export const idlService = IDL.Service({
   'getUsers' : IDL.Func([], [IDL.Vec(UserRecord)], ['query']),
   'login' : IDL.Func([IDL.Text, IDL.Text], [Result_4], []),
   'markNotificationsRead' : IDL.Func([], [], []),
+  'registerCallerPrincipal' : IDL.Func([IDL.Text], [], []),
   'removeIncidentAttachment' : IDL.Func([IDL.Text, IDL.Text], [Result_1], []),
+  'resetPasswordByMobile' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
   'runDeadlineChecks' : IDL.Func([], [], []),
   'seedMockData' : IDL.Func([], [IDL.Text], []),
   'sendMobileOtp' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
@@ -836,9 +840,11 @@ export const idlFactory = ({ IDL }) => {
   });
   const ActivityFeedItem = IDL.Record({
     'id' : RecordId,
+    'recipient' : IDL.Opt(IDL.Text),
     'message' : IDL.Text,
     'timestamp' : Timestamp,
     'category' : IDL.Text,
+    'recipientRole' : IDL.Opt(IDL.Text),
   });
   const HighRiskAlertDetail = IDL.Record({
     'id' : IDL.Text,
@@ -962,7 +968,9 @@ export const idlFactory = ({ IDL }) => {
     'getUsers' : IDL.Func([], [IDL.Vec(UserRecord)], ['query']),
     'login' : IDL.Func([IDL.Text, IDL.Text], [Result_4], []),
     'markNotificationsRead' : IDL.Func([], [], []),
+    'registerCallerPrincipal' : IDL.Func([IDL.Text], [], []),
     'removeIncidentAttachment' : IDL.Func([IDL.Text, IDL.Text], [Result_1], []),
+    'resetPasswordByMobile' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),
     'runDeadlineChecks' : IDL.Func([], [], []),
     'seedMockData' : IDL.Func([], [IDL.Text], []),
     'sendMobileOtp' : IDL.Func([IDL.Text, IDL.Text], [Result_3], []),

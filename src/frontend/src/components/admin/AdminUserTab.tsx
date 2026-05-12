@@ -1,5 +1,4 @@
 import type { UserRecord, UserRole } from "@/backend";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RKTR_DEPARTMENTS } from "@/constants/departments";
@@ -13,6 +12,9 @@ import {
 import { ROLE_LABELS } from "@/types";
 import {
   AlertTriangle,
+  Bell,
+  CheckCircle2,
+  Clock,
   Crown,
   Edit2,
   Loader2,
@@ -25,6 +27,7 @@ import {
   UserX,
   Users,
   X,
+  XCircle,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
@@ -53,28 +56,80 @@ const ROLES: UserRole[] = [
 ] as UserRole[];
 
 const DEPARTMENTS = RKTR_DEPARTMENTS;
-const BOOTSTRAP_ADMIN_EMAIL = "sumesh.j@rktrwheels.com";
+const BOOTSTRAP_ADMIN_EMP = "230034";
+const BOOTSTRAP_ADMIN_NAME_DISPLAY = "Sumesh J";
+
+// Hardcoded fallback entries — always shown even if backend returns empty or fails
+const BOOTSTRAP_USERS: UserRecord[] = [
+  {
+    id: "sumesh-bootstrap",
+    name: "Sumesh J",
+    employeeNumber: "230034",
+    email: "sumesh.j@rktrwheels.com",
+    role: "systemAdmin" as UserRole,
+    department: "EHS",
+    active: true,
+    mobileNumber: "",
+  },
+  {
+    id: "pramod-bootstrap",
+    name: "Pramod",
+    employeeNumber: "230035",
+    email: "pramod@rktrwheels.com",
+    role: "safetyOfficer" as UserRole,
+    department: "EHS",
+    active: true,
+    mobileNumber: "",
+  },
+];
+
+// Bootstrap/seeded user check — robust, case-insensitive
+const isBootstrapUser = (u: UserRecord) =>
+  u.employeeNumber === BOOTSTRAP_ADMIN_EMP ||
+  u.name.toLowerCase().includes("pramod");
+
+// A real registered user is one with active=false who is NOT a bootstrap user.
+// These must NEVER be auto-deleted — they are waiting for admin approval.
+const isPendingRegistration = (u: UserRecord) =>
+  !u.active && !isBootstrapUser(u);
+
+// Merge backend users with hardcoded bootstrap fallbacks.
+// If a bootstrap user already exists in the fetched list, skip the fallback.
+function mergeWithBootstrap(fetched: UserRecord[]): UserRecord[] {
+  const merged = [...fetched];
+  for (const bootstrap of BOOTSTRAP_USERS) {
+    const alreadyPresent = fetched.some(
+      (u) =>
+        u.employeeNumber === bootstrap.employeeNumber ||
+        u.name.toLowerCase().includes(bootstrap.name.toLowerCase()),
+    );
+    if (!alreadyPresent) {
+      merged.unshift(bootstrap);
+    }
+  }
+  return merged;
+}
 
 interface UserFormData {
   name: string;
-  email: string;
+  employeeNumber: string;
   password: string;
   role: UserRole;
   department: string;
-  employeeId: string;
   phone: string;
   active: boolean;
+  empNumError: string;
 }
 
 const defaultForm: UserFormData = {
   name: "",
-  email: "",
+  employeeNumber: "",
   password: "",
   role: "employee" as UserRole,
   department: "EHS",
-  employeeId: "",
   phone: "",
   active: true,
+  empNumError: "",
 };
 
 function UserAvatar({ name }: { name: string }) {
@@ -95,7 +150,7 @@ function UserAvatar({ name }: { name: string }) {
 }
 
 export default function AdminUserTab() {
-  const { data: users = [], isLoading } = useUsers();
+  const { data: rawUsers, isLoading } = useUsers();
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();
   const activateUser = useActivateUser();
@@ -108,8 +163,22 @@ export default function AdminUserTab() {
   const [editingUser, setEditingUser] = useState<UserRecord | null>(null);
   const [form, setForm] = useState<UserFormData>(defaultForm);
   const [deleteTarget, setDeleteTarget] = useState<UserRecord | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<UserRecord | null>(null);
 
-  const filtered = users.filter((u) => {
+  // Merge backend users with bootstrap fallbacks — bootstrap users always visible
+  // even when backend returns empty, is loading, or errors out.
+  const users = mergeWithBootstrap(rawUsers ?? []);
+
+  // ─── Segment users ─────────────────────────────────────────────────────────
+  // pendingUsers: real self-registrations waiting for admin approval (active=false, non-bootstrap)
+  const pendingUsers = users.filter(isPendingRegistration);
+
+  // activeUsers: bootstrap users + any user who has been activated (active=true)
+  // We deliberately exclude pending registrations from this table so the admin
+  // sees a clean separation: pending queue at top, activated users below.
+  const activeUsers = users.filter((u) => isBootstrapUser(u) || u.active);
+
+  const filtered = activeUsers.filter((u) => {
     const matchSearch =
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase());
@@ -122,7 +191,7 @@ export default function AdminUserTab() {
   });
 
   const roleCounts = ROLES.reduce<Record<string, number>>((acc, r) => {
-    acc[r] = users.filter((u) => u.role === r).length;
+    acc[r] = activeUsers.filter((u) => u.role === r).length;
     return acc;
   }, {});
 
@@ -133,49 +202,47 @@ export default function AdminUserTab() {
   }
 
   function openEdit(u: UserRecord) {
-    // Block editing the bootstrap admin
-    if (u.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL) return;
+    if (u.employeeNumber === BOOTSTRAP_ADMIN_EMP) return;
     setEditingUser(u);
     setForm({
       name: u.name,
-      email: u.email,
+      employeeNumber: u.employeeNumber ?? "",
       password: "",
       role: u.role as UserRole,
       department: u.department,
-      employeeId: "",
-      phone: "",
+      phone: u.mobileNumber ?? "",
       active: u.active,
+      empNumError: "",
     });
     setShowModal(true);
   }
 
   async function handleSave() {
-    if (!form.name || !form.email) {
-      toast.error("Name and email are required");
+    if (!form.name.trim()) {
+      toast.error("Full name is required");
       return;
     }
-    if (!form.email.endsWith("@rktrwheels.com")) {
-      toast.error("Email must end with @rktrwheels.com");
+    if (!/^23\d{4}$/.test(form.employeeNumber.trim())) {
+      toast.error("Employee number must start with 23 and be exactly 6 digits");
       return;
     }
-    // CRITICAL: Block assigning systemAdmin to anyone except the designated admin
     if (
       form.role === "systemAdmin" &&
-      form.email.toLowerCase() !== BOOTSTRAP_ADMIN_EMAIL
+      form.employeeNumber.trim() !== BOOTSTRAP_ADMIN_EMP
     ) {
       toast.error(
-        "System Admin role is reserved exclusively for Sumesh J (sumesh.j@rktrwheels.com). Only one System Admin is allowed.",
+        `System Admin role is reserved exclusively for ${BOOTSTRAP_ADMIN_NAME_DISPLAY} (Employee #${BOOTSTRAP_ADMIN_EMP}).`,
       );
       return;
     }
     const record: UserRecord = {
       id: editingUser?.id ?? `u_${Date.now()}`,
       name: form.name,
-      email: form.email,
+      email: "",
       role: form.role,
       department: form.department,
-      employeeNumber: "",
-      mobileNumber: "",
+      employeeNumber: form.employeeNumber.trim(),
+      mobileNumber: form.phone,
       active: form.active,
     };
     try {
@@ -195,9 +262,30 @@ export default function AdminUserTab() {
   async function handleActivate(u: UserRecord) {
     try {
       await activateUser.mutateAsync(u.id);
-      toast.success(`${u.name}'s account has been activated`);
+      toast.success(
+        `${u.name}'s account has been activated — they can now sign in`,
+      );
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Activation failed");
+    }
+  }
+
+  async function handleApprovePending(u: UserRecord) {
+    try {
+      await activateUser.mutateAsync(u.id);
+      toast.success(`${u.name} approved — account is now active`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Approval failed");
+    }
+  }
+
+  async function handleRejectPending(u: UserRecord) {
+    try {
+      await deleteUser.mutateAsync(u.id);
+      toast.success(`Registration for ${u.name} has been rejected`);
+      setRejectTarget(null);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Rejection failed");
     }
   }
 
@@ -241,7 +329,7 @@ export default function AdminUserTab() {
               className="font-mono text-xs px-1.5 py-0.5 rounded"
               style={{ background: "rgba(168,85,247,0.15)", color: "#c084fc" }}
             >
-              sumesh.j@rktrwheels.com
+              Employee #230034 (Sumesh J)
             </span>{" "}
             holds the System Admin role. This cannot be changed, duplicated, or
             assigned to any other user.
@@ -249,19 +337,190 @@ export default function AdminUserTab() {
         </div>
       </div>
 
+      {/* ── PENDING REGISTRATIONS SECTION ─────────────────────────────────── */}
+      <div
+        className="rounded-xl overflow-hidden"
+        style={{
+          background: "rgba(8,20,38,0.6)",
+          border:
+            pendingUsers.length > 0
+              ? "1px solid rgba(245,158,11,0.35)"
+              : "1px solid rgba(255,255,255,0.08)",
+        }}
+        data-ocid="admin.pending.section"
+      >
+        {/* Section header */}
+        <div
+          className="flex items-center justify-between px-4 py-3"
+          style={{
+            background:
+              pendingUsers.length > 0
+                ? "rgba(245,158,11,0.08)"
+                : "rgba(255,255,255,0.03)",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{
+                background:
+                  pendingUsers.length > 0
+                    ? "rgba(245,158,11,0.18)"
+                    : "rgba(255,255,255,0.06)",
+              }}
+            >
+              <Bell
+                className="w-3.5 h-3.5"
+                style={{
+                  color: pendingUsers.length > 0 ? "#f59e0b" : "#6b7280",
+                }}
+              />
+            </div>
+            <span
+              className="font-semibold text-sm"
+              style={{ color: pendingUsers.length > 0 ? "#f59e0b" : "#9ca3af" }}
+            >
+              Pending Registrations
+            </span>
+            {pendingUsers.length > 0 && (
+              <span
+                className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-bold"
+                style={{
+                  background: "rgba(245,158,11,0.25)",
+                  color: "#f59e0b",
+                  border: "1px solid rgba(245,158,11,0.4)",
+                }}
+                data-ocid="admin.pending.count_badge"
+              >
+                {pendingUsers.length}
+              </span>
+            )}
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {pendingUsers.length === 0
+              ? "No pending registrations"
+              : `${pendingUsers.length} awaiting approval`}
+          </span>
+        </div>
+
+        {/* Pending users list */}
+        {pendingUsers.length === 0 ? (
+          <div
+            className="flex items-center gap-3 px-4 py-5 text-sm text-muted-foreground"
+            data-ocid="admin.pending.empty_state"
+          >
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0 opacity-50" />
+            <span>
+              All registrations have been reviewed. New sign-ups will appear
+              here automatically.
+            </span>
+          </div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            {pendingUsers.map((u, i) => (
+              <motion.div
+                key={u.id}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3.5"
+                data-ocid={`admin.pending.item.${i + 1}`}
+              >
+                {/* Avatar + info */}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <UserAvatar name={u.name} />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-medium text-sm text-foreground truncate">
+                        {u.name}
+                      </p>
+                      <span
+                        className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0"
+                        style={{
+                          background: "rgba(245,158,11,0.15)",
+                          color: "#f59e0b",
+                          border: "1px solid rgba(245,158,11,0.3)",
+                        }}
+                      >
+                        <Clock className="w-2.5 h-2.5" />
+                        Pending
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                      <span className="text-xs text-muted-foreground font-mono">
+                        #{u.employeeNumber}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {u.department}
+                      </span>
+                      {u.mobileNumber && (
+                        <span className="text-xs text-muted-foreground">
+                          {u.mobileNumber}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex items-center gap-2 flex-shrink-0 pl-11 sm:pl-0">
+                  <button
+                    type="button"
+                    data-ocid={`admin.pending.approve_button.${i + 1}`}
+                    onClick={() => handleApprovePending(u)}
+                    disabled={activateUser.isPending}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-smooth hover:opacity-90 disabled:opacity-50"
+                    style={{
+                      background: "rgba(24,195,126,0.18)",
+                      color: "#18C37E",
+                      border: "1px solid rgba(24,195,126,0.35)",
+                    }}
+                    aria-label={`Approve registration for ${u.name}`}
+                  >
+                    {activateUser.isPending ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    )}
+                    Approve
+                  </button>
+                  <button
+                    type="button"
+                    data-ocid={`admin.pending.reject_button.${i + 1}`}
+                    onClick={() => setRejectTarget(u)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-smooth hover:opacity-90"
+                    style={{
+                      background: "rgba(220,38,38,0.12)",
+                      color: "#f87171",
+                      border: "1px solid rgba(220,38,38,0.3)",
+                    }}
+                    aria-label={`Reject registration for ${u.name}`}
+                  >
+                    <XCircle className="w-3.5 h-3.5" />
+                    Reject
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard label="Total Users" value={users.length} color="#18C37E" />
+        <StatCard
+          label="Total Users"
+          value={activeUsers.length}
+          color="#18C37E"
+        />
         <StatCard
           label="Active"
-          value={users.filter((u) => u.active).length}
+          value={activeUsers.filter((u) => u.active).length}
           color="#3b82f6"
         />
-        <StatCard
-          label="Inactive"
-          value={users.filter((u) => !u.active).length}
-          color="#f59e0b"
-        />
+        <StatCard label="Pending" value={pendingUsers.length} color="#f59e0b" />
         <div
           className="glass rounded-xl p-3"
           style={{ background: "rgba(8,20,38,0.5)" }}
@@ -333,17 +592,20 @@ export default function AdminUserTab() {
         className="glass rounded-xl overflow-hidden"
         style={{ background: "rgba(8,20,38,0.5)" }}
       >
-        {isLoading ? (
+        {/* Subtle loading bar when backend is still fetching — does NOT hide bootstrap users */}
+        {isLoading && (
           <div
-            className="flex items-center justify-center py-16"
+            className="h-0.5 w-full overflow-hidden"
             data-ocid="admin.users.loading_state"
+            style={{ background: "rgba(255,255,255,0.06)" }}
           >
-            <Loader2
-              className="w-8 h-8 animate-spin"
-              style={{ color: "#18C37E" }}
+            <div
+              className="h-full animate-pulse"
+              style={{ background: "#18C37E", width: "60%" }}
             />
           </div>
-        ) : filtered.length === 0 ? (
+        )}
+        {filtered.length === 0 ? (
           <div
             className="text-center py-16 text-muted-foreground"
             data-ocid="admin.users.empty_state"
@@ -381,19 +643,19 @@ export default function AdminUserTab() {
                     <div className="flex items-center gap-3">
                       <UserAvatar
                         name={
-                          u.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL
-                            ? "Sumesh J"
+                          u.employeeNumber === BOOTSTRAP_ADMIN_EMP
+                            ? BOOTSTRAP_ADMIN_NAME_DISPLAY
                             : u.name
                         }
                       />
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-foreground truncate">
-                            {u.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL
-                              ? "Sumesh J"
+                            {u.employeeNumber === BOOTSTRAP_ADMIN_EMP
+                              ? BOOTSTRAP_ADMIN_NAME_DISPLAY
                               : u.name}
                           </p>
-                          {u.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL && (
+                          {u.employeeNumber === BOOTSTRAP_ADMIN_EMP && (
                             <span
                               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0"
                               style={{
@@ -416,14 +678,13 @@ export default function AdminUserTab() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    {/* If a non-Sumesh user somehow has systemAdmin role — show a Role Error warning */}
                     {u.role === "systemAdmin" &&
-                    u.email.toLowerCase() !== BOOTSTRAP_ADMIN_EMAIL ? (
+                    u.employeeNumber !== BOOTSTRAP_ADMIN_EMP ? (
                       <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border font-medium bg-destructive/20 text-destructive border-destructive/30">
                         <AlertTriangle className="w-3 h-3" />
                         Role Error
                       </span>
-                    ) : u.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL ? (
+                    ) : u.employeeNumber === BOOTSTRAP_ADMIN_EMP ? (
                       <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border font-medium bg-purple-500/20 text-purple-300 border-purple-500/30">
                         <ShieldCheck className="w-3 h-3" />
                         System Admin
@@ -459,7 +720,7 @@ export default function AdminUserTab() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    {u.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL ? (
+                    {u.employeeNumber === BOOTSTRAP_ADMIN_EMP ? (
                       <div className="flex items-center gap-2">
                         <span
                           className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg font-medium"
@@ -551,6 +812,18 @@ export default function AdminUserTab() {
           />
         )}
       </AnimatePresence>
+
+      {/* Reject Registration Confirm */}
+      <AnimatePresence>
+        {rejectTarget && (
+          <RejectConfirmModal
+            name={rejectTarget.name}
+            isPending={deleteUser.isPending}
+            onConfirm={() => handleRejectPending(rejectTarget)}
+            onCancel={() => setRejectTarget(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -592,38 +865,62 @@ function UserFormModal({
   onClose: () => void;
   isPending: boolean;
 }) {
-  // Whether the email in the form matches the protected admin email
-  const isBootstrapAdmin = form.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL;
-
-  // systemAdmin is only selectable if the email matches the bootstrap admin
+  const isBootstrapAdmin = form.employeeNumber === BOOTSTRAP_ADMIN_EMP;
   const systemAdminBlocked = form.role === "systemAdmin" && !isBootstrapAdmin;
+
+  function handleEmpNumChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+    let error = "";
+    if (value.length > 0 && !/^23/.test(value) && value.length >= 2) {
+      error = "Employee number must start with 23 and be exactly 6 digits";
+    } else if (
+      value.length > 0 &&
+      value.length < 6 &&
+      value.length >= 2 &&
+      /^23/.test(value)
+    ) {
+      error = "";
+    } else if (value.length === 6 && !/^23\d{4}$/.test(value)) {
+      error = "Employee number must start with 23 and be exactly 6 digits";
+    }
+    // Reset systemAdmin role if employee number no longer matches bootstrap admin
+    if (value !== BOOTSTRAP_ADMIN_EMP && form.role === "systemAdmin") {
+      setForm({
+        ...form,
+        employeeNumber: value,
+        role: "employee" as UserRole,
+        empNumError: error,
+      });
+    } else {
+      setForm({ ...form, employeeNumber: value, empNumError: error });
+    }
+  }
+
+  function handleEmpNumBlur() {
+    const value = form.employeeNumber.trim();
+    if (value.length > 0 && !/^23\d{4}$/.test(value)) {
+      setForm({
+        ...form,
+        empNumError:
+          "Employee number must start with 23 and be exactly 6 digits",
+      });
+    } else {
+      setForm({ ...form, empNumError: "" });
+    }
+  }
 
   function field(key: keyof UserFormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const value = e.target.value;
-      // If someone clears the email away from BOOTSTRAP_ADMIN_EMAIL but role is systemAdmin, reset role
-      if (
-        key === "email" &&
-        value.toLowerCase() !== BOOTSTRAP_ADMIN_EMAIL &&
-        form.role === "systemAdmin"
-      ) {
-        setForm({ ...form, email: value, role: "employee" as UserRole });
-      } else {
-        setForm({ ...form, [key]: value });
-      }
+      setForm({ ...form, [key]: e.target.value });
     };
   }
 
   function handleRoleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const selected = e.target.value as UserRole;
-    if (selected === "systemAdmin" && !isBootstrapAdmin) {
-      // Silently block — the option is disabled, but guard here too
-      return;
-    }
+    if (selected === "systemAdmin" && !isBootstrapAdmin) return;
     setForm({ ...form, role: selected });
   }
 
-  // Roles shown in dropdown — systemAdmin is only shown when email matches
   const availableRoles = ROLES.filter(
     (r) => r !== "systemAdmin" || isBootstrapAdmin,
   );
@@ -664,6 +961,7 @@ function UserFormModal({
         </div>
 
         <div className="space-y-4">
+          {/* Full Name */}
           <FormField label="Full Name *">
             <Input
               data-ocid="admin.users.name_input"
@@ -674,17 +972,32 @@ function UserFormModal({
             />
           </FormField>
 
-          <FormField label="Email *">
+          {/* Employee Number */}
+          <FormField label="Employee Number *">
             <Input
-              data-ocid="admin.users.email_input"
-              type="email"
-              value={form.email}
-              onChange={field("email")}
-              placeholder="name@rktrwheels.com"
-              className="bg-white/5 border-white/10"
+              data-ocid="admin.users.employee_number_input"
+              value={form.employeeNumber}
+              onChange={handleEmpNumChange}
+              onBlur={handleEmpNumBlur}
+              placeholder="e.g. 230034"
+              maxLength={6}
+              inputMode="numeric"
+              className={`bg-white/5 ${
+                form.empNumError ? "border-destructive" : "border-white/10"
+              }`}
             />
+            {form.empNumError && (
+              <p
+                className="mt-1.5 flex items-center gap-1 text-[11px] text-destructive"
+                data-ocid="admin.users.emp_number.field_error"
+              >
+                <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+                {form.empNumError}
+              </p>
+            )}
           </FormField>
 
+          {/* Password (create only) */}
           {!isEditing && (
             <FormField label="Password *">
               <Input
@@ -698,6 +1011,7 @@ function UserFormModal({
             </FormField>
           )}
 
+          {/* Role & Department */}
           <div className="grid grid-cols-2 gap-4">
             <FormField label="Role">
               <select
@@ -712,7 +1026,6 @@ function UserFormModal({
                   </option>
                 ))}
               </select>
-              {/* Protected role notice when System Admin is already selected (editing Sumesh) */}
               {isBootstrapAdmin && (
                 <p
                   className="mt-1.5 flex items-center gap-1 text-[11px]"
@@ -722,12 +1035,11 @@ function UserFormModal({
                   Protected role — reserved for Sumesh J only
                 </p>
               )}
-              {/* Safety net: if somehow systemAdmin is selected for wrong email, show inline error */}
               {systemAdminBlocked && (
                 <p className="mt-1.5 flex items-start gap-1 text-[11px] text-destructive">
                   <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                  System Admin role is reserved exclusively for Sumesh J
-                  (sumesh.j@rktrwheels.com). Only one System Admin is allowed.
+                  System Admin role is reserved exclusively for Sumesh J. Only
+                  one System Admin is allowed.
                 </p>
               )}
             </FormField>
@@ -748,28 +1060,18 @@ function UserFormModal({
             </FormField>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <FormField label="Employee ID">
-              <Input
-                data-ocid="admin.users.employee_id_input"
-                value={form.employeeId}
-                onChange={field("employeeId")}
-                placeholder="EMP-001"
-                className="bg-white/5 border-white/10"
-              />
-            </FormField>
+          {/* Phone */}
+          <FormField label="Phone">
+            <Input
+              data-ocid="admin.users.phone_input"
+              value={form.phone}
+              onChange={field("phone")}
+              placeholder="+91 XXXXXXXXXX"
+              className="bg-white/5 border-white/10"
+            />
+          </FormField>
 
-            <FormField label="Phone">
-              <Input
-                data-ocid="admin.users.phone_input"
-                value={form.phone}
-                onChange={field("phone")}
-                placeholder="+91 XXXXXXXXXX"
-                className="bg-white/5 border-white/10"
-              />
-            </FormField>
-          </div>
-
+          {/* Active toggle */}
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -804,8 +1106,8 @@ function UserFormModal({
             <span>
               <strong>Role assignment blocked.</strong> System Admin is reserved
               exclusively for{" "}
-              <span className="font-mono">sumesh.j@rktrwheels.com</span>. Only
-              one System Admin is allowed in this application.
+              <span className="font-mono">Employee #230034 (Sumesh J)</span>.
+              Only one System Admin is allowed in this application.
             </span>
           </div>
         )}
@@ -908,6 +1210,80 @@ function DeleteConfirmModal({
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               "Remove"
+            )}
+          </Button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function RejectConfirmModal({
+  name,
+  isPending,
+  onConfirm,
+  onCancel,
+}: {
+  name: string;
+  isPending: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.7)" }}
+      data-ocid="admin.pending.reject_dialog"
+    >
+      <motion.div
+        initial={{ scale: 0.92 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.92 }}
+        className="glass-elevated rounded-2xl p-6 w-full max-w-sm"
+        style={{
+          background: "rgba(8,20,38,0.95)",
+          borderColor: "rgba(245,158,11,0.35)",
+        }}
+      >
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+          style={{ background: "rgba(245,158,11,0.12)" }}
+        >
+          <XCircle className="w-6 h-6" style={{ color: "#f59e0b" }} />
+        </div>
+        <h3 className="text-lg font-bold text-foreground text-center mb-2">
+          Reject Registration?
+        </h3>
+        <p className="text-sm text-muted-foreground text-center">
+          Rejecting <span className="text-foreground font-medium">{name}</span>
+          's registration will permanently delete their account. This cannot be
+          undone.
+        </p>
+        <div className="flex gap-3 mt-6">
+          <Button
+            type="button"
+            data-ocid="admin.pending.reject_cancel_button"
+            variant="outline"
+            onClick={onCancel}
+            className="flex-1 border-white/10"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            data-ocid="admin.pending.reject_confirm_button"
+            onClick={onConfirm}
+            disabled={isPending}
+            variant="destructive"
+            className="flex-1"
+          >
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Reject Registration"
             )}
           </Button>
         </div>

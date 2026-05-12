@@ -456,6 +456,8 @@ type ActivityFeedItem =
    category: text;
    id: RecordId;
    message: text;
+   recipient: opt text;
+   recipientRole: opt text;
    timestamp: Timestamp;
  };
 service : {
@@ -505,8 +507,11 @@ service : {
   getUsers: () -> (vec UserRecord) query;
   login: (email: text, password: text) -> (Result_4);
   markNotificationsRead: () -> ();
+  registerCallerPrincipal: (employeeNumber: text) -> ();
   removeIncidentAttachment: (incidentId: text, attachmentId: text) ->
    (Result_1);
+  resetPasswordByMobile: (employeeNumber: text, mobileNumber: text) ->
+   (Result_3);
   runDeadlineChecks: () -> ();
   seedMockData: () -> (text);
   sendMobileOtp: (email: text, mobileNumber: text) -> (Result_3);

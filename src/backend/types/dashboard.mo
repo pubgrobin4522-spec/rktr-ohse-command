@@ -63,5 +63,9 @@ module {
     message : Text;
     timestamp : Common.Timestamp;
     category : Text;
+    /// Employee number of the intended recipient (e.g. "230034"), or null for legacy items.
+    recipient : ?Text;
+    /// Role that should receive this item (e.g. #safetyOfficer). null means no role filter.
+    recipientRole : ?Text;
   };
 };

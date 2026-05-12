@@ -1,9 +1,11 @@
-// Version: 1.0.0
+// Version: 3.0.0
 type ActivityFeedItem__355436855 =
   {
     category : Text;
     id : RecordId__634517021;
     message : Text;
+    recipient : ?Text;
+    recipientRole : ?Text;
     timestamp : Timestamp__301639476
   };
 type AttachmentMeta__267884555 = AttachmentMeta__815787466;
@@ -296,6 +298,17 @@ type LegacyUserRecord__93257400 =
     name : Text;
     role : UserRole__41952412
   };
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
 type Node__46230540<K, V> =
@@ -314,6 +327,7 @@ type ObservationRecord__453530704 =
   };
 type ObservationStatus__377988550 = {#closed; #inProgress; #open};
 type ObservationType__561387365 = {#nearMiss; #unsafeAct; #unsafeCondition};
+type OldActivityFeedItem__735645309 = ActivityFeedItem__355436855;
 type OtpRecord__515533055 = {expires : Int; mobileNumber : Text; otp : Text};
 type PermitRecord__504737684 =
   {
@@ -442,7 +456,109 @@ type UserRole__41952412 =
     #supervisor;
     #systemAdmin
   };
-actor {
+actor ({
+  in activityFeed : List__415060402<OldActivityFeedItem__735645309>;
+  stable capas :
+    {
+      var root : Node__46230540<Text, CapaRecord__696506886>;
+      var size : Nat__490723111
+    };
+  stable departments :
+    {
+      var root : Node__46230540<Text, DepartmentRecord__978223546>;
+      var size : Nat__490723111
+    };
+  stable environmentRecords :
+    {
+      var root : Node__46230540<Text, EnvironmentRecord__796468981>;
+      var size : Nat__490723111
+    };
+  stable esgRecords :
+    {
+      var root : Node__46230540<Text, ESGRecord__384563760>;
+      var size : Nat__490723111
+    };
+  stable incidents :
+    {
+      var root : Node__46230540<Text, LegacyIncidentRecord__556790644>;
+      var size : Nat__490723111
+    };
+  stable incidentsV2 :
+    {
+      var root : Node__46230540<Text, IncidentRecordV2__205602987>;
+      var size : Nat__490723111
+    };
+  stable incidentsV3 :
+    {
+      var root : Node__46230540<Text, IncidentRecord__367788537>;
+      var size : Nat__490723111
+    };
+  stable inspections :
+    {
+      var root : Node__46230540<Text, InspectionRecord__540275885>;
+      var size : Nat__490723111
+    };
+  stable notifLastRead :
+    {
+      var root : Node__46230540<Principal, Time__900049286>;
+      var size : Nat__490723111
+    };
+  stable observations :
+    {
+      var root : Node__46230540<Text, LegacyObservationRecord__979079632>;
+      var size : Nat__490723111
+    };
+  stable observationsV2 :
+    {
+      var root : Node__46230540<Text, ObservationRecord__453530704>;
+      var size : Nat__490723111
+    };
+  stable otpStore :
+    {
+      var root : Node__46230540<Text, OtpRecord__515533055>;
+      var size : Nat__490723111
+    };
+  stable passwords :
+    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
+  stable permitCounter : {var nextId : Nat};
+  stable permits :
+    {
+      var root : Node__46230540<Text, LegacyPermitRecord__865214717>;
+      var size : Nat__490723111
+    };
+  stable permitsV2 :
+    {
+      var root : Node__46230540<Text, LegacyPermitRecordV2__727595764>;
+      var size : Nat__490723111
+    };
+  stable permitsV3 :
+    {
+      var root : Node__46230540<Text, PermitRecord__504737684>;
+      var size : Nat__490723111
+    };
+  in principalToEmployee : Map__605269027<Principal, Text>;
+  in registrationEvents : List__415060402<OldActivityFeedItem__735645309>;
+  stable risks :
+    {
+      var root : Node__46230540<Text, RiskRecord__144234028>;
+      var size : Nat__490723111
+    };
+  stable trainingRecords :
+    {
+      var root : Node__46230540<Text, TrainingRecord__375010159>;
+      var size : Nat__490723111
+    };
+  stable users :
+    {
+      var root : Node__46230540<Text, LegacyUserRecord__93257400>;
+      var size : Nat__490723111
+    };
+  stable usersV2 :
+    {
+      var root : Node__46230540<Text, UserRecord__195968172>;
+      var size : Nat__490723111
+    }
+}, {
   stable activityFeed :
     {
       var blockIndex : Nat__490723111;
@@ -509,6 +625,8 @@ actor {
       var root : Node__46230540<Text, OtpRecord__515533055>;
       var size : Nat__490723111
     };
+  stable passwords :
+    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
   stable permitCounter : {var nextId : Nat};
   stable permits :
     {
@@ -525,6 +643,8 @@ actor {
       var root : Node__46230540<Text, PermitRecord__504737684>;
       var size : Nat__490723111
     };
+  stable principalToEmployee :
+    {var root : Node__46230540<Principal, Text>; var size : Nat__490723111};
   stable registrationEvents :
     {
       var blockIndex : Nat__490723111;
@@ -551,4 +671,4 @@ actor {
       var root : Node__46230540<Text, UserRecord__195968172>;
       var size : Nat__490723111
     }
-};
+});

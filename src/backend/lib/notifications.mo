@@ -485,23 +485,13 @@ module {
       let body = "<h2>New User Registration</h2>"
         # "<p>A new user has registered and is awaiting activation.</p>"
         # "<p><b>Name:</b> " # newUser.name # "</p>"
-        # "<p><b>Email:</b> " # newUser.email # "</p>"
         # "<p><b>Department:</b> " # newUser.department # "</p>"
         # "<p><b>Employee Number:</b> " # newUser.employeeNumber # "</p>"
         # "<p><b>Mobile:</b> " # newUser.mobileNumber # "</p>"
         # "<p>Please log in to the Admin Panel to review and activate this account.</p>";
       ignore (await EmailClient.sendServiceEmail(FROM_USERNAME, toAdmins, subject, body));
     };
-    // Confirmation email to the registrant
-    if (not newUser.email.isEmpty()) {
-      let confirmSubject = "RKTR OHSE Command Center \u{2014} Registration Received";
-      let confirmBody = "<h2>Registration Received</h2>"
-        # "<p>Thank you for registering, " # newUser.name # ".</p>"
-        # "<p>Your account has been submitted for approval. The system administrator will review and activate your account shortly.</p>"
-        # "<p>Once activated, you can log in using your registered email address.</p>"
-        # "<p>If you have any questions, please contact Sumesh J at <a href='mailto:sumesh.j@rktrwheels.com'>sumesh.j@rktrwheels.com</a>.</p>";
-      ignore (await EmailClient.sendServiceEmail(FROM_USERNAME, [newUser.email], confirmSubject, confirmBody));
-    };
+    // Confirmation email to registrant is skipped — email field is a constructed address, not real
   };
 
   // ── ESG email notifications ──────────────────────────────────────────────

@@ -2,14 +2,21 @@ import { createActor } from "@/backend";
 import { UserRole } from "@/backend";
 import type { AuthUser } from "@/types";
 import { useActor } from "@caffeineai/core-infrastructure";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 interface AuthContextValue {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (
-    email: string,
+    employeeNumber: string,
     password: string,
     remember: boolean,
   ) => Promise<{ success: boolean; error?: string }>;
@@ -27,12 +34,13 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const SESSION_KEY = "rktr_ohse_session";
-const BOOTSTRAP_ADMIN_EMAIL = "sumesh.j@rktrwheels.com";
+const BOOTSTRAP_ADMIN_EMP = "230034";
+const BOOTSTRAP_ADMIN_PASSWORD = "D3IK-IBY8@janu";
 const BOOTSTRAP_ADMIN_NAME = "Sumesh J";
 
 function enforceBootstrapAdmin(u: AuthUser): AuthUser {
-  // Sumesh J is permanently System Admin — enforce it
-  if (u.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL) {
+  // Sumesh J (employee #230034) is permanently System Admin — enforce it
+  if (u.employeeNumber === BOOTSTRAP_ADMIN_EMP) {
     return { ...u, role: "systemAdmin", name: BOOTSTRAP_ADMIN_NAME };
   }
   // Any non-Sumesh user that somehow holds systemAdmin must be downgraded to employee
@@ -46,7 +54,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { actor } = useActor(createActor);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [seedDone, setSeedDone] = useState(false);
+
+  // Keep a stable ref to the actor so the principal registration
+  // callback can access the latest actor without being re-created
+  const actorRef = useRef(actor);
+  useEffect(() => {
+    actorRef.current = actor;
+  }, [actor]);
+
+  /**
+   * Bind the caller's IC principal to their employee number.
+   * Fire-and-forget — never blocks login; silently ignored if canister is unavailable.
+   */
+  const registerPrincipal = useCallback((employeeNumber: string) => {
+    const a = actorRef.current;
+    if (!a) return;
+    a.registerCallerPrincipal(employeeNumber).catch(() => {
+      // Non-critical — backend may not be available yet
+    });
+  }, []);
+  // Track the employee number that needs principal registration on session restore.
+  // We store it separately so the registration effect can fire once the actor is ready.
+  const [pendingRegisterEmp, setPendingRegisterEmp] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const stored =
@@ -55,6 +86,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const parsed = enforceBootstrapAdmin(JSON.parse(stored) as AuthUser);
         setUser(parsed);
+        // Schedule principal registration — actor may not be ready yet, so
+        // a dedicated effect below will execute it once the actor is available.
+        if (parsed.employeeNumber) {
+          setPendingRegisterEmp(parsed.employeeNumber);
+        }
       } catch {
         localStorage.removeItem(SESSION_KEY);
         sessionStorage.removeItem(SESSION_KEY);
@@ -63,26 +99,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  // Once the actor becomes available AND there is a pending registration from
+  // a session restore, bind the principal — then clear the pending flag.
   useEffect(() => {
-    if (actor && !seedDone) {
-      actor
-        .seedMockData()
-        .then(() => setSeedDone(true))
-        .catch((err: unknown) => {
-          console.warn("[AuthContext] seedMockData failed:", err);
-          // Still mark done so login is not permanently blocked
-          setSeedDone(true);
-        });
+    if (actor && pendingRegisterEmp) {
+      registerPrincipal(pendingRegisterEmp);
+      setPendingRegisterEmp(null);
     }
-  }, [actor, seedDone]);
+  }, [actor, pendingRegisterEmp, registerPrincipal]);
 
-  const login = async (email: string, password: string, remember: boolean) => {
-    if (!email.endsWith("@rktrwheels.com")) {
-      return {
-        success: false,
-        error: "Access restricted to RKTR Wheels employees only.",
+  const login = async (
+    employeeNumber: string,
+    password: string,
+    remember: boolean,
+  ) => {
+    const empNum = employeeNumber.trim();
+
+    // PRIMARY PATH: Bootstrap admin — handled entirely in frontend, no backend call needed
+    if (empNum === BOOTSTRAP_ADMIN_EMP) {
+      if (password !== BOOTSTRAP_ADMIN_PASSWORD) {
+        return {
+          success: false,
+          error: "Invalid employee number or password.",
+        };
+      }
+      const adminUser: AuthUser = {
+        id: "bootstrap-admin",
+        name: BOOTSTRAP_ADMIN_NAME,
+        email: "sumesh.j@rktrwheels.com",
+        role: "systemAdmin",
+        department: "EHS",
+        employeeNumber: BOOTSTRAP_ADMIN_EMP,
+        mobileNumber: "",
       };
+      const storage = remember ? localStorage : sessionStorage;
+      storage.setItem(SESSION_KEY, JSON.stringify(adminUser));
+      setUser(adminUser);
+      // Bind this IC principal to the admin employee number so the backend
+      // can filter the activity feed for this session
+      registerPrincipal(BOOTSTRAP_ADMIN_EMP);
+      return { success: true };
     }
+
     if (!actor) {
       return {
         success: false,
@@ -90,58 +148,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     }
     try {
-      const result = await actor.login(email, password);
-      if (result.__kind__ === "err") {
-        const raw = result.err;
-        if (
-          raw.toLowerCase().includes("inactive") ||
-          raw.toLowerCase().includes("not active") ||
-          raw.toLowerCase().includes("pending")
-        ) {
-          return {
-            success: false,
-            error:
-              "Your account is pending activation. Please contact your administrator.",
-          };
-        }
-        if (
-          raw.toLowerCase().includes("not found") ||
-          raw.toLowerCase().includes("does not exist")
-        ) {
-          return {
-            success: false,
-            error: "No account found with this email address.",
-          };
-        }
-        return { success: false, error: raw };
-      }
-      const session = result.ok;
+      // SECONDARY PATH: Find regular user by employee number from backend
       const allUsers = await actor.getUsers();
-      const backendUser = allUsers.find((u) => u.id === session.userId);
-      const authUser: AuthUser = backendUser
-        ? {
-            id: backendUser.id,
-            name: backendUser.name,
-            email: backendUser.email,
-            role: backendUser.role as AuthUser["role"],
-            department: backendUser.department,
-            employeeNumber: backendUser.employeeNumber,
-            mobileNumber: backendUser.mobileNumber,
-          }
-        : {
-            id: session.userId,
-            name: email
-              .split("@")[0]
-              .replace(/[._]/g, " ")
-              .replace(/\b\w/g, (c) => c.toUpperCase()),
-            email,
-            role: "employee",
-            department: "General",
-          };
+      const backendUser = allUsers.find((u) => u.employeeNumber === empNum);
+      if (!backendUser) {
+        return {
+          success: false,
+          error: "Invalid employee number or password.",
+        };
+      }
+      if (!backendUser.active) {
+        return {
+          success: false,
+          error:
+            "Account pending activation. Please contact your administrator.",
+        };
+      }
+      // Attempt backend login using stored email (backend still uses email internally)
+      const result = await actor.login(backendUser.email, password);
+      if (result.__kind__ === "err") {
+        return {
+          success: false,
+          error: "Invalid employee number or password.",
+        };
+      }
+      const authUser: AuthUser = {
+        id: backendUser.id,
+        name: backendUser.name,
+        email: backendUser.email,
+        role: backendUser.role as AuthUser["role"],
+        department: backendUser.department,
+        employeeNumber: backendUser.employeeNumber,
+        mobileNumber: backendUser.mobileNumber,
+      };
       const finalUser = enforceBootstrapAdmin(authUser);
       const storage = remember ? localStorage : sessionStorage;
       storage.setItem(SESSION_KEY, JSON.stringify(finalUser));
       setUser(finalUser);
+      // Bind this IC principal to the logged-in user's employee number
+      if (finalUser.employeeNumber) registerPrincipal(finalUser.employeeNumber);
       return { success: true };
     } catch {
       return {
@@ -188,7 +233,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return {
             success: false,
             error:
-              "Email already registered. Please sign in or use a different email.",
+              "Employee number already registered. Please sign in or contact your administrator.",
           };
         }
         return {

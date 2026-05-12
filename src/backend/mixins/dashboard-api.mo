@@ -29,6 +29,7 @@ mixin (
   departments : Map.Map<Text, DeptTypes.DepartmentRecord>,
   notifLastRead : Map.Map<Principal, Time.Time>,
   registrationEvents : List.List<DashTypes.ActivityFeedItem>,
+  principalToEmployee : Map.Map<Principal, Text>,
 ) {
   public query func getDashboardStats() : async DashTypes.DashboardStats {
     DashLib.getDashboardStats({
@@ -38,12 +39,39 @@ mixin (
     });
   };
 
-  public query func getActivityFeed() : async [DashTypes.ActivityFeedItem] {
+  /// Returns activity feed items filtered to the calling user.
+  /// System Admin (employee 230034) always receives all items.
+  /// Other users see only items targeted at their employee number or role.
+  public shared query ({ caller }) func getActivityFeed() : async [DashTypes.ActivityFeedItem] {
+    var callerEmployeeNumber = "";
+    var callerRole = "";
+    var isAdmin = false;
+    switch (principalToEmployee.get(caller)) {
+      case (?empNum) {
+        callerEmployeeNumber := empNum;
+        isAdmin := empNum == "230034";
+        for ((_, u) in users.entries()) {
+          if (u.employeeNumber == empNum) {
+            callerRole := DashLib.roleToText(u.role);
+          };
+        };
+      };
+      case null {
+        // Unknown principal — return empty to avoid leaking data
+        return [];
+      };
+    };
     DashLib.getActivityFeed({
       incidents; permits; risks; trainingRecords; observations; activityFeed;
       users; capas; inspections; environmentRecords; departments;
       registrationEvents;
-    });
+    }, callerEmployeeNumber, callerRole, isAdmin);
+  };
+
+  /// Registers the caller's Internet Computer principal to their employee number.
+  /// Must be called once after login so getActivityFeed can filter correctly.
+  public shared ({ caller }) func registerCallerPrincipal(employeeNumber : Text) : async () {
+    principalToEmployee.add(caller, employeeNumber);
   };
 
   /// Records the current timestamp as the caller's last-read time for notifications.

@@ -233,7 +233,7 @@ export default function AdminRolesTab() {
             className="font-mono text-xs px-1.5 py-0.5 rounded"
             style={{ background: "rgba(168,85,247,0.15)", color: "#c084fc" }}
           >
-            sumesh.j@rktrwheels.com
+            Employee #230034 (Sumesh J)
           </span>
           .
         </span>
@@ -380,7 +380,7 @@ export default function AdminRolesTab() {
                       color: "#a855f7",
                       border: "1px solid rgba(168,85,247,0.3)",
                     }}
-                    title="sumesh.j@rktrwheels.com — permanent, read-only"
+                    title="Employee #230034 (Sumesh J) — permanent, read-only"
                   >
                     <Lock className="w-2.5 h-2.5" />1 user only
                   </span>
@@ -394,7 +394,7 @@ export default function AdminRolesTab() {
                   className="mt-2 text-[11px] font-mono"
                   style={{ color: "#c084fc" }}
                 >
-                  sumesh.j@rktrwheels.com
+                  Employee #230034 (Sumesh J)
                 </p>
               )}
             </motion.div>

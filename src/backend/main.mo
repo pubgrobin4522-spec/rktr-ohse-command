@@ -1,6 +1,7 @@
 import Map "mo:core/Map";
 import List "mo:core/List";
 import Timer "mo:core/Timer";
+import Migration "migration";
 
 
 import UsersMixin "mixins/users-api";
@@ -34,6 +35,7 @@ import Time "mo:core/Time";
 
 
 
+(with migration = Migration.run)
 actor {
   // ── Legacy type declarations for stable migration ─────────────────────────────────────
   // The OLD IncidentRecord and PermitRecord types that were previously stored
@@ -133,8 +135,10 @@ actor {
   // Bootstrap: ensure admin account is always available and unique
   do {
     if (usersV2.get("sumesh.j@rktrwheels.com") == null) {
-      usersV2.add("sumesh.j@rktrwheels.com", { id = "user-6"; name = "Sumesh J"; email = "sumesh.j@rktrwheels.com"; role = #systemAdmin; department = "EHS"; active = true; employeeNumber = "RKTR-ADMIN-001"; mobileNumber = "" });
+      usersV2.add("sumesh.j@rktrwheels.com", { id = "user-6"; name = "Sumesh J"; email = "sumesh.j@rktrwheels.com"; role = #systemAdmin; department = "EHS"; active = true; employeeNumber = "230034"; mobileNumber = "" });
     };
+    // Ensure Pramod is always present (seed unconditionally — safe to overwrite)
+    usersV2.add("pramod@rktrwheels.com", { id = "user-7"; name = "Pramod"; email = "pramod@rktrwheels.com"; role = #employee; department = "EHS"; active = true; employeeNumber = "230035"; mobileNumber = "" });
     // Auto-downgrade any other user holding systemAdmin to ehsManager
     ignore UserLib.enforceSystemAdminUniqueness({ users = usersV2 });
   };
@@ -155,7 +159,9 @@ actor {
   let activityFeed = List.empty<DashTypes.ActivityFeedItem>();
   let registrationEvents = List.empty<DashTypes.ActivityFeedItem>();
   let notifLastRead = Map.empty<Principal, Time.Time>();
+  let principalToEmployee = Map.empty<Principal, Text>();
   let otpStore = Map.empty<Text, UserTypes.OtpRecord>();
+  let passwords = Map.empty<Text, Text>();
 
   // Helper to convert frozen 6-value LegacyPermitType to the current 8-value PermitType
   func legacyPermitTypeToNew(pt : LegacyPermitType) : PermitTypes.PermitType {
@@ -182,7 +188,7 @@ actor {
       };
     };
     // Always ensure admin account is correct after any upgrade
-    usersV2.add("sumesh.j@rktrwheels.com", { id = "user-6"; name = "Sumesh J"; email = "sumesh.j@rktrwheels.com"; role = #systemAdmin; department = "EHS"; active = true; employeeNumber = "RKTR-ADMIN-001"; mobileNumber = "" });
+    usersV2.add("sumesh.j@rktrwheels.com", { id = "user-6"; name = "Sumesh J"; email = "sumesh.j@rktrwheels.com"; role = #systemAdmin; department = "EHS"; active = true; employeeNumber = "230034"; mobileNumber = "" });
     // Auto-downgrade any other user holding systemAdmin to ehsManager
     ignore UserLib.enforceSystemAdminUniqueness({ users = usersV2 });
     // Migrate legacy incidents (v1) to v3
@@ -288,12 +294,29 @@ actor {
         });
       };
     };
+    // ── Cleanup: remove all users except Sumesh J (230034) and any user named Pramod ──
+    let keysToDelete = List.empty<Text>();
+    for ((k, v) in usersV2.entries()) {
+      let isSumesh = v.employeeNumber == "230034";
+      let isPramod = v.name.toLower().contains(#text "pramod");
+      if (not isSumesh and not isPramod) {
+        keysToDelete.add(k);
+      };
+    };
+    for (k in keysToDelete.values()) {
+      usersV2.remove(k);
+    };
+    // Re-ensure admin record and Pramod are always present after cleanup
+    usersV2.add("sumesh.j@rktrwheels.com", { id = "user-6"; name = "Sumesh J"; email = "sumesh.j@rktrwheels.com"; role = #systemAdmin; department = "EHS"; active = true; employeeNumber = "230034"; mobileNumber = "" });
+    // Always re-seed Pramod after cleanup — unconditional to prevent missing user
+    usersV2.add("pramod@rktrwheels.com", { id = "user-7"; name = "Pramod"; email = "pramod@rktrwheels.com"; role = #employee; department = "EHS"; active = true; employeeNumber = "230035"; mobileNumber = "" });
+    ignore UserLib.enforceSystemAdminUniqueness({ users = usersV2 });
   };
 
   // ── Mixin includes ───
-  include UsersMixin(usersV2, registrationEvents, otpStore);
-  include IncidentsMixin(incidentsV3, usersV2);
-  include PermitsMixin(permitsV3, permitCounter, usersV2);
+  include UsersMixin(usersV2, registrationEvents, otpStore, passwords);
+  include IncidentsMixin(incidentsV3, usersV2, activityFeed);
+  include PermitsMixin(permitsV3, permitCounter, usersV2, activityFeed);
   include RisksMixin(risks);
   include InspectionsMixin(inspections, usersV2, activityFeed);
   include TrainingMixin(trainingRecords);
@@ -301,8 +324,8 @@ actor {
   include CapaMixin(capas);
   include ObservationsMixin(observationsV2);
   include DepartmentsMixin(departments);
-  include ESGMixin(esgRecords, usersV2);
-  include DashboardMixin(incidentsV3, permitsV3, risks, trainingRecords, observationsV2, activityFeed, usersV2, capas, inspections, environmentRecords, departments, notifLastRead, registrationEvents);
+  include ESGMixin(esgRecords, usersV2, activityFeed);
+  include DashboardMixin(incidentsV3, permitsV3, risks, trainingRecords, observationsV2, activityFeed, usersV2, capas, inspections, environmentRecords, departments, notifLastRead, registrationEvents, principalToEmployee);
   include NotificationsMixin(usersV2, incidentsV3, permitsV3, capas, trainingRecords, inspections);
 
   // 24-hour deadline check timer — registered once at actor init

@@ -19,12 +19,22 @@ mixin (
       case (#ok(_)) {
         // Fire email to all Safety Officers + System Admin (fire-and-forget)
         ignore NotifLib.notifyInspectionScheduled(users, inspection);
-        // Prepend a new activity feed entry so the notification bell shows it immediately
+        // Add two feed items: one for Safety Officers (by role), one for System Admin
         activityFeed.add({
-          id = "feed-insp-" # inspection.id;
+          id = "feed-insp-" # inspection.id # "_officers";
           message = "New Inspection Scheduled: " # inspection.title # " at " # inspection.area;
           timestamp = Time.now();
           category = "inspection";
+          recipient = null;
+          recipientRole = ?"safetyOfficer";
+        });
+        activityFeed.add({
+          id = "feed-insp-" # inspection.id # "_admin";
+          message = "New Inspection Scheduled: " # inspection.title # " at " # inspection.area;
+          timestamp = Time.now();
+          category = "inspection";
+          recipient = ?"230034";
+          recipientRole = null;
         });
       };
       case (#err(_)) {};

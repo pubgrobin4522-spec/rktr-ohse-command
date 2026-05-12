@@ -12,9 +12,11 @@ import type { Principal } from '@icp-sdk/core/principal';
 
 export interface ActivityFeedItem {
   'id' : RecordId,
+  'recipient' : [] | [string],
   'message' : string,
   'timestamp' : Timestamp,
   'category' : string,
+  'recipientRole' : [] | [string],
 }
 export interface AttachmentMeta {
   'id' : string,
@@ -433,7 +435,9 @@ export interface _SERVICE {
   'getUsers' : ActorMethod<[], Array<UserRecord>>,
   'login' : ActorMethod<[string, string], Result_4>,
   'markNotificationsRead' : ActorMethod<[], undefined>,
+  'registerCallerPrincipal' : ActorMethod<[string], undefined>,
   'removeIncidentAttachment' : ActorMethod<[string, string], Result_1>,
+  'resetPasswordByMobile' : ActorMethod<[string, string], Result_3>,
   'runDeadlineChecks' : ActorMethod<[], undefined>,
   'seedMockData' : ActorMethod<[], string>,
   'sendMobileOtp' : ActorMethod<[string, string], Result_3>,

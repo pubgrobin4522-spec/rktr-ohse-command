@@ -28156,9 +28156,11 @@ const UserRecord = Record({
 });
 const ActivityFeedItem = Record({
   "id": RecordId,
+  "recipient": Opt(Text$1),
   "message": Text$1,
   "timestamp": Timestamp,
-  "category": Text$1
+  "category": Text$1,
+  "recipientRole": Opt(Text$1)
 });
 const HighRiskAlertDetail = Record({
   "id": Text$1,
@@ -28281,7 +28283,9 @@ Service({
   "getUsers": Func([], [Vec(UserRecord)], ["query"]),
   "login": Func([Text$1, Text$1], [Result_4], []),
   "markNotificationsRead": Func([], [], []),
+  "registerCallerPrincipal": Func([Text$1], [], []),
   "removeIncidentAttachment": Func([Text$1, Text$1], [Result_1], []),
+  "resetPasswordByMobile": Func([Text$1, Text$1], [Result_3], []),
   "runDeadlineChecks": Func([], [], []),
   "seedMockData": Func([], [Text$1], []),
   "sendMobileOtp": Func([Text$1, Text$1], [Result_3], []),
@@ -28649,9 +28653,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
   });
   const ActivityFeedItem2 = IDL2.Record({
     "id": RecordId2,
+    "recipient": IDL2.Opt(IDL2.Text),
     "message": IDL2.Text,
     "timestamp": Timestamp2,
-    "category": IDL2.Text
+    "category": IDL2.Text,
+    "recipientRole": IDL2.Opt(IDL2.Text)
   });
   const HighRiskAlertDetail2 = IDL2.Record({
     "id": IDL2.Text,
@@ -28774,7 +28780,9 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "getUsers": IDL2.Func([], [IDL2.Vec(UserRecord2)], ["query"]),
     "login": IDL2.Func([IDL2.Text, IDL2.Text], [Result_42], []),
     "markNotificationsRead": IDL2.Func([], [], []),
+    "registerCallerPrincipal": IDL2.Func([IDL2.Text], [], []),
     "removeIncidentAttachment": IDL2.Func([IDL2.Text, IDL2.Text], [Result_12], []),
+    "resetPasswordByMobile": IDL2.Func([IDL2.Text, IDL2.Text], [Result_32], []),
     "runDeadlineChecks": IDL2.Func([], [], []),
     "seedMockData": IDL2.Func([], [IDL2.Text], []),
     "sendMobileOtp": IDL2.Func([IDL2.Text, IDL2.Text], [Result_32], []),
@@ -29294,28 +29302,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getActivityFeed();
-        return result;
-      } catch (e3) {
-        this.processError(e3);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getActivityFeed();
-      return result;
-    }
-  }
-  async getCapas() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getCapas();
         return from_candid_vec_n49(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.getCapas();
+      const result = await this.actor.getActivityFeed();
       return from_candid_vec_n49(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getCapas() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getCapas();
+        return from_candid_vec_n53(this._uploadFile, this._downloadFile, result);
+      } catch (e3) {
+        this.processError(e3);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getCapas();
+      return from_candid_vec_n53(this._uploadFile, this._downloadFile, result);
     }
   }
   async getDashboardStats() {
@@ -29350,210 +29358,210 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getESGRecords();
-        return from_candid_vec_n55(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n58(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getESGRecords();
-      return from_candid_vec_n55(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n58(this._uploadFile, this._downloadFile, result);
     }
   }
   async getESGRecordsByPeriod(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getESGRecordsByPeriod(arg0);
-        return from_candid_vec_n55(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n58(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getESGRecordsByPeriod(arg0);
-      return from_candid_vec_n55(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n58(this._uploadFile, this._downloadFile, result);
     }
   }
   async getEnvironmentRecords() {
     if (this.processError) {
       try {
         const result = await this.actor.getEnvironmentRecords();
-        return from_candid_vec_n60(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n63(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getEnvironmentRecords();
-      return from_candid_vec_n60(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n63(this._uploadFile, this._downloadFile, result);
     }
   }
   async getIncident(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getIncident(arg0);
-        return from_candid_opt_n63(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n66(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getIncident(arg0);
-      return from_candid_opt_n63(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n66(this._uploadFile, this._downloadFile, result);
     }
   }
   async getIncidentAttachments(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getIncidentAttachments(arg0);
-        return from_candid_Result_5_n73(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_5_n76(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getIncidentAttachments(arg0);
-      return from_candid_Result_5_n73(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_5_n76(this._uploadFile, this._downloadFile, result);
     }
   }
   async getIncidents() {
     if (this.processError) {
       try {
         const result = await this.actor.getIncidents();
-        return from_candid_vec_n75(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n78(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getIncidents();
-      return from_candid_vec_n75(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n78(this._uploadFile, this._downloadFile, result);
     }
   }
   async getInspections() {
     if (this.processError) {
       try {
         const result = await this.actor.getInspections();
-        return from_candid_vec_n76(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n79(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getInspections();
-      return from_candid_vec_n76(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n79(this._uploadFile, this._downloadFile, result);
     }
   }
   async getNotifLastRead() {
     if (this.processError) {
       try {
         const result = await this.actor.getNotifLastRead();
-        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getNotifLastRead();
-      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
     }
   }
   async getObservations() {
     if (this.processError) {
       try {
         const result = await this.actor.getObservations();
-        return from_candid_vec_n82(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n85(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getObservations();
-      return from_candid_vec_n82(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n85(this._uploadFile, this._downloadFile, result);
     }
   }
   async getPermit(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getPermit(arg0);
-        return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getPermit(arg0);
-      return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
     }
   }
   async getPermits() {
     if (this.processError) {
       try {
         const result = await this.actor.getPermits();
-        return from_candid_vec_n101(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n104(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getPermits();
-      return from_candid_vec_n101(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n104(this._uploadFile, this._downloadFile, result);
     }
   }
   async getRisks() {
     if (this.processError) {
       try {
         const result = await this.actor.getRisks();
-        return from_candid_vec_n102(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n105(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getRisks();
-      return from_candid_vec_n102(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n105(this._uploadFile, this._downloadFile, result);
     }
   }
   async getTrainingRecords() {
     if (this.processError) {
       try {
         const result = await this.actor.getTrainingRecords();
-        return from_candid_vec_n109(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n112(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getTrainingRecords();
-      return from_candid_vec_n109(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n112(this._uploadFile, this._downloadFile, result);
     }
   }
   async getUsers() {
     if (this.processError) {
       try {
         const result = await this.actor.getUsers();
-        return from_candid_vec_n115(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n118(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getUsers();
-      return from_candid_vec_n115(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n118(this._uploadFile, this._downloadFile, result);
     }
   }
   async login(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.login(arg0, arg1);
-        return from_candid_Result_4_n120(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_4_n123(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.login(arg0, arg1);
-      return from_candid_Result_4_n120(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_4_n123(this._uploadFile, this._downloadFile, result);
     }
   }
   async markNotificationsRead() {
@@ -29570,6 +29578,20 @@ class Backend {
       return result;
     }
   }
+  async registerCallerPrincipal(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.registerCallerPrincipal(arg0);
+        return result;
+      } catch (e3) {
+        this.processError(e3);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.registerCallerPrincipal(arg0);
+      return result;
+    }
+  }
   async removeIncidentAttachment(arg0, arg1) {
     if (this.processError) {
       try {
@@ -29582,6 +29604,20 @@ class Backend {
     } else {
       const result = await this.actor.removeIncidentAttachment(arg0, arg1);
       return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async resetPasswordByMobile(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.resetPasswordByMobile(arg0, arg1);
+        return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
+      } catch (e3) {
+        this.processError(e3);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.resetPasswordByMobile(arg0, arg1);
+      return from_candid_Result_3_n7(this._uploadFile, this._downloadFile, result);
     }
   }
   async runDeadlineChecks() {
@@ -29686,14 +29722,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.updateESGStatus(arg0, to_candid_ESGStatus_n11(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-        return from_candid_Result_2_n122(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_2_n125(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateESGStatus(arg0, to_candid_ESGStatus_n11(this._uploadFile, this._downloadFile, arg1), arg2, arg3);
-      return from_candid_Result_2_n122(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_2_n125(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateIncident(arg0, arg1) {
@@ -29826,121 +29862,121 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.verifyMobileOtp(arg0, arg1);
-        return from_candid_Result_n124(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_n127(this._uploadFile, this._downloadFile, result);
       } catch (e3) {
         this.processError(e3);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.verifyMobileOtp(arg0, arg1);
-      return from_candid_Result_n124(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_n127(this._uploadFile, this._downloadFile, result);
     }
   }
 }
-function from_candid_CapaRecord_n50(_uploadFile, _downloadFile, value) {
+function from_candid_ActivityFeedItem_n50(_uploadFile, _downloadFile, value) {
   return from_candid_record_n51(_uploadFile, _downloadFile, value);
 }
-function from_candid_CapaStatus_n52(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n53(_uploadFile, _downloadFile, value);
+function from_candid_CapaRecord_n54(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n55(_uploadFile, _downloadFile, value);
 }
-function from_candid_ESGRecord_n56(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n57(_uploadFile, _downloadFile, value);
+function from_candid_CapaStatus_n56(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n57(_uploadFile, _downloadFile, value);
 }
-function from_candid_ESGStatus_n58(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n59(_uploadFile, _downloadFile, value);
+function from_candid_ESGRecord_n59(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n60(_uploadFile, _downloadFile, value);
 }
-function from_candid_EnvironmentRecord_n61(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n62(_uploadFile, _downloadFile, value);
+function from_candid_ESGStatus_n61(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n62(_uploadFile, _downloadFile, value);
 }
-function from_candid_IncidentRecord_n64(_uploadFile, _downloadFile, value) {
+function from_candid_EnvironmentRecord_n64(_uploadFile, _downloadFile, value) {
   return from_candid_record_n65(_uploadFile, _downloadFile, value);
 }
-function from_candid_IncidentStatus_n66(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n67(_uploadFile, _downloadFile, value);
+function from_candid_IncidentRecord_n67(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n68(_uploadFile, _downloadFile, value);
 }
-function from_candid_InspectionRecord_n77(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n78(_uploadFile, _downloadFile, value);
+function from_candid_IncidentStatus_n69(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n70(_uploadFile, _downloadFile, value);
 }
-function from_candid_InspectionStatus_n79(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n80(_uploadFile, _downloadFile, value);
+function from_candid_InspectionRecord_n80(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n81(_uploadFile, _downloadFile, value);
 }
-function from_candid_ObservationRecord_n83(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n84(_uploadFile, _downloadFile, value);
+function from_candid_InspectionStatus_n82(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n83(_uploadFile, _downloadFile, value);
 }
-function from_candid_ObservationStatus_n85(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n86(_uploadFile, _downloadFile, value);
+function from_candid_ObservationRecord_n86(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n87(_uploadFile, _downloadFile, value);
 }
-function from_candid_ObservationType_n87(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n88(_uploadFile, _downloadFile, value);
+function from_candid_ObservationStatus_n88(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n89(_uploadFile, _downloadFile, value);
 }
-function from_candid_PermitRecord_n90(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n91(_uploadFile, _downloadFile, value);
+function from_candid_ObservationType_n90(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n91(_uploadFile, _downloadFile, value);
 }
-function from_candid_PermitStatus_n92(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n93(_uploadFile, _downloadFile, value);
+function from_candid_PermitRecord_n93(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n94(_uploadFile, _downloadFile, value);
 }
-function from_candid_PermitType_n96(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n97(_uploadFile, _downloadFile, value);
+function from_candid_PermitStatus_n95(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n96(_uploadFile, _downloadFile, value);
+}
+function from_candid_PermitType_n99(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n100(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_1_n1(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n2(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_2_n122(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n123(_uploadFile, _downloadFile, value);
+function from_candid_Result_2_n125(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n126(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_3_n7(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n8(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_4_n120(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n121(_uploadFile, _downloadFile, value);
+function from_candid_Result_4_n123(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n124(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_5_n73(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n74(_uploadFile, _downloadFile, value);
+function from_candid_Result_5_n76(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n77(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n124(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n125(_uploadFile, _downloadFile, value);
+function from_candid_Result_n127(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n128(_uploadFile, _downloadFile, value);
 }
-function from_candid_RiskLevel_n107(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n108(_uploadFile, _downloadFile, value);
+function from_candid_RiskLevel_n110(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n111(_uploadFile, _downloadFile, value);
 }
-function from_candid_RiskRecord_n103(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n104(_uploadFile, _downloadFile, value);
+function from_candid_RiskRecord_n106(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n107(_uploadFile, _downloadFile, value);
 }
-function from_candid_RiskStatus_n105(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n106(_uploadFile, _downloadFile, value);
+function from_candid_RiskStatus_n108(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n109(_uploadFile, _downloadFile, value);
 }
-function from_candid_TrainingRecord_n110(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n111(_uploadFile, _downloadFile, value);
+function from_candid_TrainingRecord_n113(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n114(_uploadFile, _downloadFile, value);
 }
-function from_candid_TrainingStatus_n112(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n113(_uploadFile, _downloadFile, value);
+function from_candid_TrainingStatus_n115(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n116(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRecord_n116(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n117(_uploadFile, _downloadFile, value);
+function from_candid_UserRecord_n119(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n120(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n118(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n119(_uploadFile, _downloadFile, value);
+function from_candid_UserRole_n121(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n122(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n100(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n101(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n114(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n102(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n54(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n103(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n63(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_IncidentRecord_n64(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n68(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n117(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n69(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n52(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n70(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
+function from_candid_opt_n66(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_IncidentRecord_n67(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n71(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
@@ -29948,28 +29984,31 @@ function from_candid_opt_n71(_uploadFile, _downloadFile, value) {
 function from_candid_opt_n72(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n81(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n73(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n89(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_PermitRecord_n90(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n94(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n74(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n95(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n75(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n84(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n92(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_PermitRecord_n93(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n97(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n98(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n99(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_record_n104(_uploadFile, _downloadFile, value) {
+function from_candid_record_n107(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_RiskStatus_n105(_uploadFile, _downloadFile, value.status),
+    status: from_candid_RiskStatus_n108(_uploadFile, _downloadFile, value.status),
     controls: value.controls,
     createdAt: value.createdAt,
     createdBy: value.createdBy,
@@ -29978,28 +30017,28 @@ function from_candid_record_n104(_uploadFile, _downloadFile, value) {
     severity: value.severity,
     hazard: value.hazard,
     likelihood: value.likelihood,
-    riskLevel: from_candid_RiskLevel_n107(_uploadFile, _downloadFile, value.riskLevel),
+    riskLevel: from_candid_RiskLevel_n110(_uploadFile, _downloadFile, value.riskLevel),
     location: value.location
   };
 }
-function from_candid_record_n111(_uploadFile, _downloadFile, value) {
+function from_candid_record_n114(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_TrainingStatus_n112(_uploadFile, _downloadFile, value.status),
-    completionDate: record_opt_to_undefined(from_candid_opt_n114(_uploadFile, _downloadFile, value.completionDate)),
+    status: from_candid_TrainingStatus_n115(_uploadFile, _downloadFile, value.status),
+    completionDate: record_opt_to_undefined(from_candid_opt_n117(_uploadFile, _downloadFile, value.completionDate)),
     employeeName: value.employeeName,
-    expiryDate: record_opt_to_undefined(from_candid_opt_n114(_uploadFile, _downloadFile, value.expiryDate)),
-    score: record_opt_to_undefined(from_candid_opt_n71(_uploadFile, _downloadFile, value.score)),
+    expiryDate: record_opt_to_undefined(from_candid_opt_n117(_uploadFile, _downloadFile, value.expiryDate)),
+    score: record_opt_to_undefined(from_candid_opt_n74(_uploadFile, _downloadFile, value.score)),
     employeeId: value.employeeId,
     course: value.course
   };
 }
-function from_candid_record_n117(_uploadFile, _downloadFile, value) {
+function from_candid_record_n120(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     active: value.active,
     name: value.name,
-    role: from_candid_UserRole_n118(_uploadFile, _downloadFile, value.role),
+    role: from_candid_UserRole_n121(_uploadFile, _downloadFile, value.role),
     mobileNumber: value.mobileNumber,
     email: value.email,
     employeeNumber: value.employeeNumber,
@@ -30009,22 +30048,32 @@ function from_candid_record_n117(_uploadFile, _downloadFile, value) {
 function from_candid_record_n51(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_CapaStatus_n52(_uploadFile, _downloadFile, value.status),
+    recipient: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.recipient)),
+    message: value.message,
+    timestamp: value.timestamp,
+    category: value.category,
+    recipientRole: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.recipientRole))
+  };
+}
+function from_candid_record_n55(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_CapaStatus_n56(_uploadFile, _downloadFile, value.status),
     title: value.title,
     owner: value.owner,
     createdAt: value.createdAt,
     actionPlan: value.actionPlan,
-    verificationDetails: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.verificationDetails)),
+    verificationDetails: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.verificationDetails)),
     updatedAt: value.updatedAt,
     targetDate: value.targetDate,
     department: value.department,
     rootCause: value.rootCause
   };
 }
-function from_candid_record_n57(_uploadFile, _downloadFile, value) {
+function from_candid_record_n60(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_ESGStatus_n58(_uploadFile, _downloadFile, value.status),
+    status: from_candid_ESGStatus_n61(_uploadFile, _downloadFile, value.status),
     periodType: value.periodType,
     dataSource: value.dataSource,
     social: value.social,
@@ -30040,7 +30089,7 @@ function from_candid_record_n57(_uploadFile, _downloadFile, value) {
     department: value.department
   };
 }
-function from_candid_record_n62(_uploadFile, _downloadFile, value) {
+function from_candid_record_n65(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     value: value.value,
@@ -30048,47 +30097,47 @@ function from_candid_record_n62(_uploadFile, _downloadFile, value) {
     unit: value.unit,
     recordType: value.recordType,
     recordedBy: value.recordedBy,
-    notes: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.notes)),
+    notes: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.notes)),
     location: value.location
   };
 }
-function from_candid_record_n65(_uploadFile, _downloadFile, value) {
+function from_candid_record_n68(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_IncidentStatus_n66(_uploadFile, _downloadFile, value.status),
+    status: from_candid_IncidentStatus_n69(_uploadFile, _downloadFile, value.status),
     title: value.title,
-    teamLead: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.teamLead)),
+    teamLead: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.teamLead)),
     createdAt: value.createdAt,
-    areaBarricaded: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.areaBarricaded)),
+    areaBarricaded: record_opt_to_undefined(from_candid_opt_n71(_uploadFile, _downloadFile, value.areaBarricaded)),
     description: value.description,
-    personsInvolved: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.personsInvolved)),
+    personsInvolved: record_opt_to_undefined(from_candid_opt_n72(_uploadFile, _downloadFile, value.personsInvolved)),
     ticketNumber: value.ticketNumber,
-    teamMembers: record_opt_to_undefined(from_candid_opt_n70(_uploadFile, _downloadFile, value.teamMembers)),
+    teamMembers: record_opt_to_undefined(from_candid_opt_n73(_uploadFile, _downloadFile, value.teamMembers)),
     updatedAt: value.updatedAt,
     reportedBy: value.reportedBy,
-    medicalTreatment: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.medicalTreatment)),
-    investigationDueDate: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.investigationDueDate)),
-    targetDate: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.targetDate)),
-    natureOfInjury: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.natureOfInjury)),
-    actionsTaken: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.actionsTaken)),
-    rootCauseCategory: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.rootCauseCategory)),
+    medicalTreatment: record_opt_to_undefined(from_candid_opt_n71(_uploadFile, _downloadFile, value.medicalTreatment)),
+    investigationDueDate: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.investigationDueDate)),
+    targetDate: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.targetDate)),
+    natureOfInjury: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.natureOfInjury)),
+    actionsTaken: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.actionsTaken)),
+    rootCauseCategory: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.rootCauseCategory)),
     severity: value.severity,
-    bodyPartAffected: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.bodyPartAffected)),
-    contributingFactors: record_opt_to_undefined(from_candid_opt_n70(_uploadFile, _downloadFile, value.contributingFactors)),
+    bodyPartAffected: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.bodyPartAffected)),
+    contributingFactors: record_opt_to_undefined(from_candid_opt_n73(_uploadFile, _downloadFile, value.contributingFactors)),
     department: value.department,
-    firstAidGiven: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.firstAidGiven)),
-    correctiveAction: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.correctiveAction)),
-    daysLost: record_opt_to_undefined(from_candid_opt_n71(_uploadFile, _downloadFile, value.daysLost)),
+    firstAidGiven: record_opt_to_undefined(from_candid_opt_n71(_uploadFile, _downloadFile, value.firstAidGiven)),
+    correctiveAction: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.correctiveAction)),
+    daysLost: record_opt_to_undefined(from_candid_opt_n74(_uploadFile, _downloadFile, value.daysLost)),
     location: value.location,
-    attachments: record_opt_to_undefined(from_candid_opt_n72(_uploadFile, _downloadFile, value.attachments)),
-    rootCause: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.rootCause)),
-    responsiblePerson: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.responsiblePerson))
+    attachments: record_opt_to_undefined(from_candid_opt_n75(_uploadFile, _downloadFile, value.attachments)),
+    rootCause: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.rootCause)),
+    responsiblePerson: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.responsiblePerson))
   };
 }
-function from_candid_record_n78(_uploadFile, _downloadFile, value) {
+function from_candid_record_n81(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_InspectionStatus_n79(_uploadFile, _downloadFile, value.status),
+    status: from_candid_InspectionStatus_n82(_uploadFile, _downloadFile, value.status),
     inspectionDate: value.inspectionDate,
     title: value.title,
     area: value.area,
@@ -30098,59 +30147,62 @@ function from_candid_record_n78(_uploadFile, _downloadFile, value) {
     inspector: value.inspector
   };
 }
-function from_candid_record_n84(_uploadFile, _downloadFile, value) {
+function from_candid_record_n87(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_ObservationStatus_n85(_uploadFile, _downloadFile, value.status),
+    status: from_candid_ObservationStatus_n88(_uploadFile, _downloadFile, value.status),
     createdAt: value.createdAt,
     description: value.description,
     actions: value.actions,
     reportedBy: value.reportedBy,
-    obsType: from_candid_ObservationType_n87(_uploadFile, _downloadFile, value.obsType),
+    obsType: from_candid_ObservationType_n90(_uploadFile, _downloadFile, value.obsType),
     location: value.location,
-    attachments: record_opt_to_undefined(from_candid_opt_n72(_uploadFile, _downloadFile, value.attachments))
+    attachments: record_opt_to_undefined(from_candid_opt_n75(_uploadFile, _downloadFile, value.attachments))
   };
 }
-function from_candid_record_n91(_uploadFile, _downloadFile, value) {
+function from_candid_record_n94(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     startTime: value.startTime,
-    status: from_candid_PermitStatus_n92(_uploadFile, _downloadFile, value.status),
-    isolationVerifiedBy: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.isolationVerifiedBy)),
+    status: from_candid_PermitStatus_n95(_uploadFile, _downloadFile, value.status),
+    isolationVerifiedBy: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.isolationVerifiedBy)),
     hazards: value.hazards,
     endTime: value.endTime,
     permitNumber: value.permitNumber,
-    lotoApplied: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.lotoApplied)),
-    approvedBy: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.approvedBy)),
+    lotoApplied: record_opt_to_undefined(from_candid_opt_n71(_uploadFile, _downloadFile, value.lotoApplied)),
+    approvedBy: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.approvedBy)),
     ppeRequired: value.ppeRequired,
     jobDescription: value.jobDescription,
     createdAt: value.createdAt,
-    gasTestResults: record_opt_to_undefined(from_candid_opt_n94(_uploadFile, _downloadFile, value.gasTestResults)),
-    emergencyContacts: record_opt_to_undefined(from_candid_opt_n95(_uploadFile, _downloadFile, value.emergencyContacts)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.reviewedBy)),
-    permitType: from_candid_PermitType_n96(_uploadFile, _downloadFile, value.permitType),
-    isolationTypes: record_opt_to_undefined(from_candid_opt_n70(_uploadFile, _downloadFile, value.isolationTypes)),
-    signatures: record_opt_to_undefined(from_candid_opt_n98(_uploadFile, _downloadFile, value.signatures)),
-    hazardControls: record_opt_to_undefined(from_candid_opt_n99(_uploadFile, _downloadFile, value.hazardControls)),
+    gasTestResults: record_opt_to_undefined(from_candid_opt_n97(_uploadFile, _downloadFile, value.gasTestResults)),
+    emergencyContacts: record_opt_to_undefined(from_candid_opt_n98(_uploadFile, _downloadFile, value.emergencyContacts)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.reviewedBy)),
+    permitType: from_candid_PermitType_n99(_uploadFile, _downloadFile, value.permitType),
+    isolationTypes: record_opt_to_undefined(from_candid_opt_n73(_uploadFile, _downloadFile, value.isolationTypes)),
+    signatures: record_opt_to_undefined(from_candid_opt_n101(_uploadFile, _downloadFile, value.signatures)),
+    hazardControls: record_opt_to_undefined(from_candid_opt_n102(_uploadFile, _downloadFile, value.hazardControls)),
     location: value.location,
     requestedBy: value.requestedBy,
-    toolboxTalk: record_opt_to_undefined(from_candid_opt_n100(_uploadFile, _downloadFile, value.toolboxTalk)),
-    supervisorOnDuty: record_opt_to_undefined(from_candid_opt_n54(_uploadFile, _downloadFile, value.supervisorOnDuty))
+    toolboxTalk: record_opt_to_undefined(from_candid_opt_n103(_uploadFile, _downloadFile, value.toolboxTalk)),
+    supervisorOnDuty: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.supervisorOnDuty))
   };
 }
-function from_candid_variant_n106(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n100(_uploadFile, _downloadFile, value) {
+  return "confinedSpace" in value ? "confinedSpace" : "heightWork" in value ? "heightWork" : "liftingPermit" in value ? "liftingPermit" : "lineBreaking" in value ? "lineBreaking" : "hotWork" in value ? "hotWork" : "generalWorkPermit" in value ? "generalWorkPermit" : "electrical" in value ? "electrical" : "excavation" in value ? "excavation" : value;
+}
+function from_candid_variant_n109(_uploadFile, _downloadFile, value) {
   return "submitted" in value ? "submitted" : "approved" in value ? "approved" : "draft" in value ? "draft" : value;
 }
-function from_candid_variant_n108(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n111(_uploadFile, _downloadFile, value) {
   return "low" in value ? "low" : "high" in value ? "high" : "veryLow" in value ? "veryLow" : "critical" in value ? "critical" : "medium" in value ? "medium" : value;
 }
-function from_candid_variant_n113(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n116(_uploadFile, _downloadFile, value) {
   return "notStarted" in value ? "notStarted" : "pending" in value ? "pending" : "completed" in value ? "completed" : "overdue" in value ? "overdue" : value;
 }
-function from_candid_variant_n119(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n122(_uploadFile, _downloadFile, value) {
   return "departmentHOD" in value ? "departmentHOD" : "supervisor" in value ? "supervisor" : "systemAdmin" in value ? "systemAdmin" : "ehsManager" in value ? "ehsManager" : "areaInCharge" in value ? "areaInCharge" : "employee" in value ? "employee" : "safetyOfficer" in value ? "safetyOfficer" : "contractorAdmin" in value ? "contractorAdmin" : value;
 }
-function from_candid_variant_n121(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n124(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -30159,16 +30211,16 @@ function from_candid_variant_n121(_uploadFile, _downloadFile, value) {
     err: value.err
   } : value;
 }
-function from_candid_variant_n123(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n126(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_ESGRecord_n56(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_ESGRecord_n59(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
     err: value.err
   } : value;
 }
-function from_candid_variant_n125(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n128(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -30186,16 +30238,16 @@ function from_candid_variant_n2(_uploadFile, _downloadFile, value) {
     err: value.err
   } : value;
 }
-function from_candid_variant_n53(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n57(_uploadFile, _downloadFile, value) {
   return "closed" in value ? "closed" : "verified" in value ? "verified" : "open" in value ? "open" : "inProgress" in value ? "inProgress" : value;
 }
-function from_candid_variant_n59(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n62(_uploadFile, _downloadFile, value) {
   return "submitted" in value ? "submitted" : "approved" in value ? "approved" : "rejected" in value ? "rejected" : "draft" in value ? "draft" : value;
 }
-function from_candid_variant_n67(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n70(_uploadFile, _downloadFile, value) {
   return "closed" in value ? "closed" : "submitted" in value ? "submitted" : "escalated" in value ? "escalated" : "underReview" in value ? "underReview" : "approved" in value ? "approved" : "overdue" in value ? "overdue" : "rejected" in value ? "rejected" : "draft" in value ? "draft" : value;
 }
-function from_candid_variant_n74(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n77(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -30213,50 +30265,50 @@ function from_candid_variant_n8(_uploadFile, _downloadFile, value) {
     err: value.err
   } : value;
 }
-function from_candid_variant_n80(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n83(_uploadFile, _downloadFile, value) {
   return "scheduled" in value ? "scheduled" : "completed" in value ? "completed" : "overdue" in value ? "overdue" : "inProgress" in value ? "inProgress" : value;
 }
-function from_candid_variant_n86(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n89(_uploadFile, _downloadFile, value) {
   return "closed" in value ? "closed" : "open" in value ? "open" : "inProgress" in value ? "inProgress" : value;
 }
-function from_candid_variant_n88(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n91(_uploadFile, _downloadFile, value) {
   return "unsafeAct" in value ? "unsafeAct" : "nearMiss" in value ? "nearMiss" : "unsafeCondition" in value ? "unsafeCondition" : value;
 }
-function from_candid_variant_n93(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n96(_uploadFile, _downloadFile, value) {
   return "closed" in value ? "closed" : "active" in value ? "active" : "expired" in value ? "expired" : "submitted" in value ? "submitted" : "underReview" in value ? "underReview" : "validated" in value ? "validated" : "approved" in value ? "approved" : "rejected" in value ? "rejected" : "draft" in value ? "draft" : value;
 }
-function from_candid_variant_n97(_uploadFile, _downloadFile, value) {
-  return "confinedSpace" in value ? "confinedSpace" : "heightWork" in value ? "heightWork" : "liftingPermit" in value ? "liftingPermit" : "lineBreaking" in value ? "lineBreaking" : "hotWork" in value ? "hotWork" : "generalWorkPermit" in value ? "generalWorkPermit" : "electrical" in value ? "electrical" : "excavation" in value ? "excavation" : value;
+function from_candid_vec_n104(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_PermitRecord_n93(_uploadFile, _downloadFile, x3));
 }
-function from_candid_vec_n101(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_PermitRecord_n90(_uploadFile, _downloadFile, x3));
+function from_candid_vec_n105(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_RiskRecord_n106(_uploadFile, _downloadFile, x3));
 }
-function from_candid_vec_n102(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_RiskRecord_n103(_uploadFile, _downloadFile, x3));
+function from_candid_vec_n112(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_TrainingRecord_n113(_uploadFile, _downloadFile, x3));
 }
-function from_candid_vec_n109(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_TrainingRecord_n110(_uploadFile, _downloadFile, x3));
-}
-function from_candid_vec_n115(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_UserRecord_n116(_uploadFile, _downloadFile, x3));
+function from_candid_vec_n118(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_UserRecord_n119(_uploadFile, _downloadFile, x3));
 }
 function from_candid_vec_n49(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_CapaRecord_n50(_uploadFile, _downloadFile, x3));
+  return value.map((x3) => from_candid_ActivityFeedItem_n50(_uploadFile, _downloadFile, x3));
 }
-function from_candid_vec_n55(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_ESGRecord_n56(_uploadFile, _downloadFile, x3));
+function from_candid_vec_n53(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_CapaRecord_n54(_uploadFile, _downloadFile, x3));
 }
-function from_candid_vec_n60(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_EnvironmentRecord_n61(_uploadFile, _downloadFile, x3));
+function from_candid_vec_n58(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_ESGRecord_n59(_uploadFile, _downloadFile, x3));
 }
-function from_candid_vec_n75(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_IncidentRecord_n64(_uploadFile, _downloadFile, x3));
+function from_candid_vec_n63(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_EnvironmentRecord_n64(_uploadFile, _downloadFile, x3));
 }
-function from_candid_vec_n76(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_InspectionRecord_n77(_uploadFile, _downloadFile, x3));
+function from_candid_vec_n78(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_IncidentRecord_n67(_uploadFile, _downloadFile, x3));
 }
-function from_candid_vec_n82(_uploadFile, _downloadFile, value) {
-  return value.map((x3) => from_candid_ObservationRecord_n83(_uploadFile, _downloadFile, x3));
+function from_candid_vec_n79(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_InspectionRecord_n80(_uploadFile, _downloadFile, x3));
+}
+function from_candid_vec_n85(_uploadFile, _downloadFile, value) {
+  return value.map((x3) => from_candid_ObservationRecord_n86(_uploadFile, _downloadFile, x3));
 }
 function to_candid_CapaRecord_n3(_uploadFile, _downloadFile, value) {
   return to_candid_record_n4(_uploadFile, _downloadFile, value);
@@ -30674,10 +30726,11 @@ function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
 }
 const AuthContext = reactExports.createContext(null);
 const SESSION_KEY = "rktr_ohse_session";
-const BOOTSTRAP_ADMIN_EMAIL$1 = "sumesh.j@rktrwheels.com";
+const BOOTSTRAP_ADMIN_EMP$1 = "230034";
+const BOOTSTRAP_ADMIN_PASSWORD = "D3IK-IBY8@janu";
 const BOOTSTRAP_ADMIN_NAME = "Sumesh J";
 function enforceBootstrapAdmin(u2) {
-  if (u2.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL$1) {
+  if (u2.employeeNumber === BOOTSTRAP_ADMIN_EMP$1) {
     return { ...u2, role: "systemAdmin", name: BOOTSTRAP_ADMIN_NAME };
   }
   if (u2.role === "systemAdmin") {
@@ -30689,13 +30742,28 @@ function AuthProvider({ children }) {
   const { actor } = useActor(createActor);
   const [user, setUser] = reactExports.useState(null);
   const [isLoading, setIsLoading] = reactExports.useState(true);
-  const [seedDone, setSeedDone] = reactExports.useState(false);
+  const actorRef = reactExports.useRef(actor);
+  reactExports.useEffect(() => {
+    actorRef.current = actor;
+  }, [actor]);
+  const registerPrincipal = reactExports.useCallback((employeeNumber) => {
+    const a2 = actorRef.current;
+    if (!a2) return;
+    a2.registerCallerPrincipal(employeeNumber).catch(() => {
+    });
+  }, []);
+  const [pendingRegisterEmp, setPendingRegisterEmp] = reactExports.useState(
+    null
+  );
   reactExports.useEffect(() => {
     const stored = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
     if (stored) {
       try {
         const parsed = enforceBootstrapAdmin(JSON.parse(stored));
         setUser(parsed);
+        if (parsed.employeeNumber) {
+          setPendingRegisterEmp(parsed.employeeNumber);
+        }
       } catch {
         localStorage.removeItem(SESSION_KEY);
         sessionStorage.removeItem(SESSION_KEY);
@@ -30704,19 +30772,34 @@ function AuthProvider({ children }) {
     setIsLoading(false);
   }, []);
   reactExports.useEffect(() => {
-    if (actor && !seedDone) {
-      actor.seedMockData().then(() => setSeedDone(true)).catch((err) => {
-        console.warn("[AuthContext] seedMockData failed:", err);
-        setSeedDone(true);
-      });
+    if (actor && pendingRegisterEmp) {
+      registerPrincipal(pendingRegisterEmp);
+      setPendingRegisterEmp(null);
     }
-  }, [actor, seedDone]);
-  const login = async (email, password, remember) => {
-    if (!email.endsWith("@rktrwheels.com")) {
-      return {
-        success: false,
-        error: "Access restricted to RKTR Wheels employees only."
+  }, [actor, pendingRegisterEmp, registerPrincipal]);
+  const login = async (employeeNumber, password, remember) => {
+    const empNum = employeeNumber.trim();
+    if (empNum === BOOTSTRAP_ADMIN_EMP$1) {
+      if (password !== BOOTSTRAP_ADMIN_PASSWORD) {
+        return {
+          success: false,
+          error: "Invalid employee number or password."
+        };
+      }
+      const adminUser = {
+        id: "bootstrap-admin",
+        name: BOOTSTRAP_ADMIN_NAME,
+        email: "sumesh.j@rktrwheels.com",
+        role: "systemAdmin",
+        department: "EHS",
+        employeeNumber: BOOTSTRAP_ADMIN_EMP$1,
+        mobileNumber: ""
       };
+      const storage = remember ? localStorage : sessionStorage;
+      storage.setItem(SESSION_KEY, JSON.stringify(adminUser));
+      setUser(adminUser);
+      registerPrincipal(BOOTSTRAP_ADMIN_EMP$1);
+      return { success: true };
     }
     if (!actor) {
       return {
@@ -30725,27 +30808,28 @@ function AuthProvider({ children }) {
       };
     }
     try {
-      const result = await actor.login(email, password);
-      if (result.__kind__ === "err") {
-        const raw = result.err;
-        if (raw.toLowerCase().includes("inactive") || raw.toLowerCase().includes("not active") || raw.toLowerCase().includes("pending")) {
-          return {
-            success: false,
-            error: "Your account is pending activation. Please contact your administrator."
-          };
-        }
-        if (raw.toLowerCase().includes("not found") || raw.toLowerCase().includes("does not exist")) {
-          return {
-            success: false,
-            error: "No account found with this email address."
-          };
-        }
-        return { success: false, error: raw };
-      }
-      const session = result.ok;
       const allUsers = await actor.getUsers();
-      const backendUser = allUsers.find((u2) => u2.id === session.userId);
-      const authUser = backendUser ? {
+      const backendUser = allUsers.find((u2) => u2.employeeNumber === empNum);
+      if (!backendUser) {
+        return {
+          success: false,
+          error: "Invalid employee number or password."
+        };
+      }
+      if (!backendUser.active) {
+        return {
+          success: false,
+          error: "Account pending activation. Please contact your administrator."
+        };
+      }
+      const result = await actor.login(backendUser.email, password);
+      if (result.__kind__ === "err") {
+        return {
+          success: false,
+          error: "Invalid employee number or password."
+        };
+      }
+      const authUser = {
         id: backendUser.id,
         name: backendUser.name,
         email: backendUser.email,
@@ -30753,17 +30837,12 @@ function AuthProvider({ children }) {
         department: backendUser.department,
         employeeNumber: backendUser.employeeNumber,
         mobileNumber: backendUser.mobileNumber
-      } : {
-        id: session.userId,
-        name: email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c2) => c2.toUpperCase()),
-        email,
-        role: "employee",
-        department: "General"
       };
       const finalUser = enforceBootstrapAdmin(authUser);
       const storage = remember ? localStorage : sessionStorage;
       storage.setItem(SESSION_KEY, JSON.stringify(finalUser));
       setUser(finalUser);
+      if (finalUser.employeeNumber) registerPrincipal(finalUser.employeeNumber);
       return { success: true };
     } catch {
       return {
@@ -30796,7 +30875,7 @@ function AuthProvider({ children }) {
         if (raw.includes("already") || raw.includes("exists") || raw.includes("taken") || raw.includes("duplicate")) {
           return {
             success: false,
-            error: "Email already registered. Please sign in or use a different email."
+            error: "Employee number already registered. Please sign in or contact your administrator."
           };
         }
         return {
@@ -34042,6 +34121,20 @@ function useUpdateIncident() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["incidents"] })
   });
 }
+function useResetPasswordByMobile() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async ({
+      employeeNumber,
+      mobileNumber
+    }) => {
+      if (!actor) throw new Error("Not connected");
+      const result = await actor.resetPasswordByMobile(employeeNumber, mobileNumber);
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    }
+  });
+}
 function useESGRecords() {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
@@ -34261,7 +34354,7 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1u = [
+const __iconNode$1w = [
   [
     "path",
     {
@@ -34270,25 +34363,25 @@ const __iconNode$1u = [
     }
   ]
 ];
-const Activity = createLucideIcon("activity", __iconNode$1u);
+const Activity = createLucideIcon("activity", __iconNode$1w);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1t = [
+const __iconNode$1v = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1t);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1v);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1s = [
+const __iconNode$1u = [
   [
     "path",
     {
@@ -34298,14 +34391,14 @@ const __iconNode$1s = [
   ],
   ["circle", { cx: "12", cy: "8", r: "6", key: "1vp47v" }]
 ];
-const Award = createLucideIcon("award", __iconNode$1s);
+const Award = createLucideIcon("award", __iconNode$1u);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1r = [
+const __iconNode$1t = [
   ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
   [
     "path",
@@ -34315,14 +34408,14 @@ const __iconNode$1r = [
     }
   ]
 ];
-const Bell = createLucideIcon("bell", __iconNode$1r);
+const Bell = createLucideIcon("bell", __iconNode$1t);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1q = [
+const __iconNode$1s = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -34332,14 +34425,14 @@ const __iconNode$1q = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$1q);
+const BookOpen = createLucideIcon("book-open", __iconNode$1s);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1p = [
+const __iconNode$1r = [
   ["path", { d: "M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z", key: "1b4qmf" }],
   ["path", { d: "M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2", key: "i71pzd" }],
   ["path", { d: "M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2", key: "10jefs" }],
@@ -34348,7 +34441,33 @@ const __iconNode$1p = [
   ["path", { d: "M10 14h4", key: "kelpxr" }],
   ["path", { d: "M10 18h4", key: "1ulq68" }]
 ];
-const Building2 = createLucideIcon("building-2", __iconNode$1p);
+const Building2 = createLucideIcon("building-2", __iconNode$1r);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1q = [
+  ["path", { d: "M8 2v4", key: "1cmpym" }],
+  ["path", { d: "M16 2v4", key: "4m81vk" }],
+  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+  ["path", { d: "M3 10h18", key: "8toen8" }]
+];
+const Calendar = createLucideIcon("calendar", __iconNode$1q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1p = [
+  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }],
+  ["path", { d: "M18 17V9", key: "2bz60n" }],
+  ["path", { d: "M13 17V5", key: "1frdt8" }],
+  ["path", { d: "M8 17v-3", key: "17ska0" }]
+];
+const ChartColumn = createLucideIcon("chart-column", __iconNode$1p);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34356,77 +34475,74 @@ const Building2 = createLucideIcon("building-2", __iconNode$1p);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1o = [
-  ["path", { d: "M8 2v4", key: "1cmpym" }],
-  ["path", { d: "M16 2v4", key: "4m81vk" }],
-  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
-  ["path", { d: "M3 10h18", key: "8toen8" }]
-];
-const Calendar = createLucideIcon("calendar", __iconNode$1o);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1n = [
-  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }],
-  ["path", { d: "M18 17V9", key: "2bz60n" }],
-  ["path", { d: "M13 17V5", key: "1frdt8" }],
-  ["path", { d: "M8 17v-3", key: "17ska0" }]
-];
-const ChartColumn = createLucideIcon("chart-column", __iconNode$1n);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1m = [
   ["line", { x1: "18", x2: "18", y1: "20", y2: "10", key: "1xfpm4" }],
   ["line", { x1: "12", x2: "12", y1: "20", y2: "4", key: "be30l9" }],
   ["line", { x1: "6", x2: "6", y1: "20", y2: "14", key: "1r4le6" }]
 ];
-const ChartNoAxesColumn = createLucideIcon("chart-no-axes-column", __iconNode$1m);
+const ChartNoAxesColumn = createLucideIcon("chart-no-axes-column", __iconNode$1o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1l = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$1l);
+const __iconNode$1n = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$1n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1k = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$1k);
+const __iconNode$1m = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$1m);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1j = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
-const ChevronLeft = createLucideIcon("chevron-left", __iconNode$1j);
+const __iconNode$1l = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
+const ChevronLeft = createLucideIcon("chevron-left", __iconNode$1l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1i = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$1i);
+const __iconNode$1k = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$1k);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1h = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-const ChevronUp = createLucideIcon("chevron-up", __iconNode$1h);
+const __iconNode$1j = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+const ChevronUp = createLucideIcon("chevron-up", __iconNode$1j);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1i = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
+  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+];
+const CircleAlert = createLucideIcon("circle-alert", __iconNode$1i);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1h = [
+  ["path", { d: "M21.801 10A10 10 0 1 1 17 3.335", key: "yps3ct" }],
+  ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
+];
+const CircleCheckBig = createLucideIcon("circle-check-big", __iconNode$1h);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34435,10 +34551,9 @@ const ChevronUp = createLucideIcon("chevron-up", __iconNode$1h);
  */
 const __iconNode$1g = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
-  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleAlert = createLucideIcon("circle-alert", __iconNode$1g);
+const CircleCheck = createLucideIcon("circle-check", __iconNode$1g);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34446,10 +34561,10 @@ const CircleAlert = createLucideIcon("circle-alert", __iconNode$1g);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1f = [
-  ["path", { d: "M21.801 10A10 10 0 1 1 17 3.335", key: "yps3ct" }],
-  ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["polygon", { points: "10 8 16 12 10 16 10 8", key: "1cimsy" }]
 ];
-const CircleCheckBig = createLucideIcon("circle-check-big", __iconNode$1f);
+const CirclePlay = createLucideIcon("circle-play", __iconNode$1f);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34458,9 +34573,10 @@ const CircleCheckBig = createLucideIcon("circle-check-big", __iconNode$1f);
  */
 const __iconNode$1e = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["path", { d: "M8 12h8", key: "1wcyev" }],
+  ["path", { d: "M12 8v8", key: "napkw2" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$1e);
+const CirclePlus = createLucideIcon("circle-plus", __iconNode$1e);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34469,9 +34585,9 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$1e);
  */
 const __iconNode$1d = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polygon", { points: "10 8 16 12 10 16 10 8", key: "1cimsy" }]
+  ["rect", { x: "9", y: "9", width: "6", height: "6", rx: "1", key: "1ssd4o" }]
 ];
-const CirclePlay = createLucideIcon("circle-play", __iconNode$1d);
+const CircleStop = createLucideIcon("circle-stop", __iconNode$1d);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34480,21 +34596,18 @@ const CirclePlay = createLucideIcon("circle-play", __iconNode$1d);
  */
 const __iconNode$1c = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M8 12h8", key: "1wcyev" }],
-  ["path", { d: "M12 8v8", key: "napkw2" }]
+  ["path", { d: "m15 9-6 6", key: "1uzhvr" }],
+  ["path", { d: "m9 9 6 6", key: "z0biqf" }]
 ];
-const CirclePlus = createLucideIcon("circle-plus", __iconNode$1c);
+const CircleX = createLucideIcon("circle-x", __iconNode$1c);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1b = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["rect", { x: "9", y: "9", width: "6", height: "6", rx: "1", key: "1ssd4o" }]
-];
-const CircleStop = createLucideIcon("circle-stop", __iconNode$1b);
+const __iconNode$1b = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
+const Circle = createLucideIcon("circle", __iconNode$1b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34502,26 +34615,6 @@ const CircleStop = createLucideIcon("circle-stop", __iconNode$1b);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1a = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m15 9-6 6", key: "1uzhvr" }],
-  ["path", { d: "m9 9 6 6", key: "z0biqf" }]
-];
-const CircleX = createLucideIcon("circle-x", __iconNode$1a);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$19 = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
-const Circle = createLucideIcon("circle", __iconNode$19);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$18 = [
   ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
   [
     "path",
@@ -34532,14 +34625,14 @@ const __iconNode$18 = [
   ],
   ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
 ];
-const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$18);
+const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$1a);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$17 = [
+const __iconNode$19 = [
   ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
   [
     "path",
@@ -34553,25 +34646,25 @@ const __iconNode$17 = [
   ["path", { d: "M8 11h.01", key: "1dfujw" }],
   ["path", { d: "M8 16h.01", key: "18s6g9" }]
 ];
-const ClipboardList = createLucideIcon("clipboard-list", __iconNode$17);
+const ClipboardList = createLucideIcon("clipboard-list", __iconNode$19);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$16 = [
+const __iconNode$18 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
 ];
-const Clock = createLucideIcon("clock", __iconNode$16);
+const Clock = createLucideIcon("clock", __iconNode$18);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$15 = [
+const __iconNode$17 = [
   [
     "path",
     {
@@ -34584,14 +34677,25 @@ const __iconNode$15 = [
   ["path", { d: "M14 19.8v-8.1", key: "159ecu" }],
   ["path", { d: "M18 17.5V9.4", key: "11uown" }]
 ];
-const Container = createLucideIcon("container", __iconNode$15);
+const Container = createLucideIcon("container", __iconNode$17);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$14 = [
+const __iconNode$16 = [
+  ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
+  ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
+];
+const Copy = createLucideIcon("copy", __iconNode$16);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$15 = [
   [
     "path",
     {
@@ -34601,7 +34705,19 @@ const __iconNode$14 = [
   ],
   ["path", { d: "M5 21h14", key: "11awu3" }]
 ];
-const Crown = createLucideIcon("crown", __iconNode$14);
+const Crown = createLucideIcon("crown", __iconNode$15);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$14 = [
+  ["path", { d: "M12 15V3", key: "m9g1x1" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
+  ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
+];
+const Download = createLucideIcon("download", __iconNode$14);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34609,18 +34725,6 @@ const Crown = createLucideIcon("crown", __iconNode$14);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$13 = [
-  ["path", { d: "M12 15V3", key: "m9g1x1" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
-  ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
-];
-const Download = createLucideIcon("download", __iconNode$13);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$12 = [
   [
     "path",
     {
@@ -34636,7 +34740,19 @@ const __iconNode$12 = [
     }
   ]
 ];
-const Droplets = createLucideIcon("droplets", __iconNode$12);
+const Droplets = createLucideIcon("droplets", __iconNode$13);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$12 = [
+  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+];
+const ExternalLink = createLucideIcon("external-link", __iconNode$12);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34644,18 +34760,6 @@ const Droplets = createLucideIcon("droplets", __iconNode$12);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$11 = [
-  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
-  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
-  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
-];
-const ExternalLink = createLucideIcon("external-link", __iconNode$11);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$10 = [
   [
     "path",
     {
@@ -34673,14 +34777,14 @@ const __iconNode$10 = [
   ],
   ["path", { d: "m2 2 20 20", key: "1ooewy" }]
 ];
-const EyeOff = createLucideIcon("eye-off", __iconNode$10);
+const EyeOff = createLucideIcon("eye-off", __iconNode$11);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$$ = [
+const __iconNode$10 = [
   [
     "path",
     {
@@ -34690,7 +34794,19 @@ const __iconNode$$ = [
   ],
   ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
 ];
-const Eye = createLucideIcon("eye", __iconNode$$);
+const Eye = createLucideIcon("eye", __iconNode$10);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$$ = [
+  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
+  ["path", { d: "m9 15 2 2 4-4", key: "1grp1n" }]
+];
+const FileCheck = createLucideIcon("file-check", __iconNode$$);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34700,9 +34816,12 @@ const Eye = createLucideIcon("eye", __iconNode$$);
 const __iconNode$_ = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
   ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "m9 15 2 2 4-4", key: "1grp1n" }]
+  ["path", { d: "M8 13h2", key: "yr2amv" }],
+  ["path", { d: "M14 13h2", key: "un5t4a" }],
+  ["path", { d: "M8 17h2", key: "2yhykz" }],
+  ["path", { d: "M14 17h2", key: "10kma7" }]
 ];
-const FileCheck = createLucideIcon("file-check", __iconNode$_);
+const FileSpreadsheet = createLucideIcon("file-spreadsheet", __iconNode$_);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34712,12 +34831,11 @@ const FileCheck = createLucideIcon("file-check", __iconNode$_);
 const __iconNode$Z = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
   ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "M8 13h2", key: "yr2amv" }],
-  ["path", { d: "M14 13h2", key: "un5t4a" }],
-  ["path", { d: "M8 17h2", key: "2yhykz" }],
-  ["path", { d: "M14 17h2", key: "10kma7" }]
+  ["path", { d: "M10 9H8", key: "b1mrlr" }],
+  ["path", { d: "M16 13H8", key: "t4e002" }],
+  ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileSpreadsheet = createLucideIcon("file-spreadsheet", __iconNode$Z);
+const FileText = createLucideIcon("file-text", __iconNode$Z);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34726,12 +34844,10 @@ const FileSpreadsheet = createLucideIcon("file-spreadsheet", __iconNode$Z);
  */
 const __iconNode$Y = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "M10 9H8", key: "b1mrlr" }],
-  ["path", { d: "M16 13H8", key: "t4e002" }],
-  ["path", { d: "M16 17H8", key: "z1uh3a" }]
+  ["path", { d: "M12 9v4", key: "juzpu7" }],
+  ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$Y);
+const FileWarning = createLucideIcon("file-warning", __iconNode$Y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34740,10 +34856,9 @@ const FileText = createLucideIcon("file-text", __iconNode$Y);
  */
 const __iconNode$X = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M12 9v4", key: "juzpu7" }],
-  ["path", { d: "M12 17h.01", key: "p32p05" }]
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }]
 ];
-const FileWarning = createLucideIcon("file-warning", __iconNode$X);
+const File$1 = createLucideIcon("file", __iconNode$X);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34751,17 +34866,6 @@ const FileWarning = createLucideIcon("file-warning", __iconNode$X);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$W = [
-  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }]
-];
-const File$1 = createLucideIcon("file", __iconNode$W);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$V = [
   [
     "path",
     {
@@ -34772,7 +34876,23 @@ const __iconNode$V = [
   ["path", { d: "m5 22 14-4", key: "1brv4h" }],
   ["path", { d: "m5 18 14 4", key: "lgyyje" }]
 ];
-const FlameKindling = createLucideIcon("flame-kindling", __iconNode$V);
+const FlameKindling = createLucideIcon("flame-kindling", __iconNode$W);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$V = [
+  [
+    "path",
+    {
+      d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z",
+      key: "96xj49"
+    }
+  ]
+];
+const Flame = createLucideIcon("flame", __iconNode$V);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34783,12 +34903,12 @@ const __iconNode$U = [
   [
     "path",
     {
-      d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z",
-      key: "96xj49"
+      d: "M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z",
+      key: "sc7q7i"
     }
   ]
 ];
-const Flame = createLucideIcon("flame", __iconNode$U);
+const Funnel = createLucideIcon("funnel", __iconNode$U);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34799,22 +34919,6 @@ const __iconNode$T = [
   [
     "path",
     {
-      d: "M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z",
-      key: "sc7q7i"
-    }
-  ]
-];
-const Funnel = createLucideIcon("funnel", __iconNode$T);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$S = [
-  [
-    "path",
-    {
       d: "M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z",
       key: "j76jl0"
     }
@@ -34822,7 +34926,20 @@ const __iconNode$S = [
   ["path", { d: "M22 10v6", key: "1lu8f3" }],
   ["path", { d: "M6 12.5V16a6 3 0 0 0 12 0v-3.5", key: "1r8lef" }]
 ];
-const GraduationCap = createLucideIcon("graduation-cap", __iconNode$S);
+const GraduationCap = createLucideIcon("graduation-cap", __iconNode$T);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$S = [
+  ["path", { d: "M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5", key: "1p9q5i" }],
+  ["path", { d: "M14 6a6 6 0 0 1 6 6v3", key: "1hnv84" }],
+  ["path", { d: "M4 15v-3a6 6 0 0 1 6-6", key: "9ciidu" }],
+  ["rect", { x: "2", y: "15", width: "20", height: "4", rx: "1", key: "g3x8cw" }]
+];
+const HardHat = createLucideIcon("hard-hat", __iconNode$S);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34830,12 +34947,12 @@ const GraduationCap = createLucideIcon("graduation-cap", __iconNode$S);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$R = [
-  ["path", { d: "M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5", key: "1p9q5i" }],
-  ["path", { d: "M14 6a6 6 0 0 1 6 6v3", key: "1hnv84" }],
-  ["path", { d: "M4 15v-3a6 6 0 0 1 6-6", key: "9ciidu" }],
-  ["rect", { x: "2", y: "15", width: "20", height: "4", rx: "1", key: "g3x8cw" }]
+  ["line", { x1: "4", x2: "20", y1: "9", y2: "9", key: "4lhtct" }],
+  ["line", { x1: "4", x2: "20", y1: "15", y2: "15", key: "vyu0kd" }],
+  ["line", { x1: "10", x2: "8", y1: "3", y2: "21", key: "1ggp8o" }],
+  ["line", { x1: "16", x2: "14", y1: "3", y2: "21", key: "weycgp" }]
 ];
-const HardHat = createLucideIcon("hard-hat", __iconNode$R);
+const Hash$2 = createLucideIcon("hash", __iconNode$R);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34843,19 +34960,6 @@ const HardHat = createLucideIcon("hard-hat", __iconNode$R);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$Q = [
-  ["line", { x1: "4", x2: "20", y1: "9", y2: "9", key: "4lhtct" }],
-  ["line", { x1: "4", x2: "20", y1: "15", y2: "15", key: "vyu0kd" }],
-  ["line", { x1: "10", x2: "8", y1: "3", y2: "21", key: "1ggp8o" }],
-  ["line", { x1: "16", x2: "14", y1: "3", y2: "21", key: "weycgp" }]
-];
-const Hash$2 = createLucideIcon("hash", __iconNode$Q);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$P = [
   [
     "path",
     {
@@ -34864,7 +34968,19 @@ const __iconNode$P = [
     }
   ]
 ];
-const Heart = createLucideIcon("heart", __iconNode$P);
+const Heart = createLucideIcon("heart", __iconNode$Q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$P = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
+];
+const Image = createLucideIcon("image", __iconNode$P);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34872,11 +34988,11 @@ const Heart = createLucideIcon("heart", __iconNode$P);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$O = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "M12 16v-4", key: "1dtifu" }],
+  ["path", { d: "M12 8h.01", key: "e9boi3" }]
 ];
-const Image = createLucideIcon("image", __iconNode$O);
+const Info = createLucideIcon("info", __iconNode$O);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34884,11 +35000,16 @@ const Image = createLucideIcon("image", __iconNode$O);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$N = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M12 16v-4", key: "1dtifu" }],
-  ["path", { d: "M12 8h.01", key: "e9boi3" }]
+  [
+    "path",
+    {
+      d: "M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z",
+      key: "1s6t7t"
+    }
+  ],
+  ["circle", { cx: "16.5", cy: "7.5", r: ".5", fill: "currentColor", key: "w0ekpg" }]
 ];
-const Info = createLucideIcon("info", __iconNode$N);
+const KeyRound = createLucideIcon("key-round", __iconNode$N);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -48933,7 +49054,7 @@ function AdminRolesTab() {
               {
                 className: "font-mono text-xs px-1.5 py-0.5 rounded",
                 style: { background: "rgba(168,85,247,0.15)", color: "#c084fc" },
-                children: "sumesh.j@rktrwheels.com"
+                children: "Employee #230034 (Sumesh J)"
               }
             ),
             "."
@@ -49067,7 +49188,7 @@ function AdminRolesTab() {
                     color: "#a855f7",
                     border: "1px solid rgba(168,85,247,0.3)"
                   },
-                  title: "sumesh.j@rktrwheels.com — permanent, read-only",
+                  title: "Employee #230034 (Sumesh J) — permanent, read-only",
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(Lock, { className: "w-2.5 h-2.5" }),
                     "1 user only"
@@ -49081,7 +49202,7 @@ function AdminRolesTab() {
               {
                 className: "mt-2 text-[11px] font-mono",
                 style: { color: "#c084fc" },
-                children: "sumesh.j@rktrwheels.com"
+                children: "Employee #230034 (Sumesh J)"
               }
             )
           ]
@@ -49528,16 +49649,53 @@ const ROLES = [
   "contractorAdmin"
 ];
 const DEPARTMENTS$3 = RKTR_DEPARTMENTS;
-const BOOTSTRAP_ADMIN_EMAIL = "sumesh.j@rktrwheels.com";
+const BOOTSTRAP_ADMIN_EMP = "230034";
+const BOOTSTRAP_ADMIN_NAME_DISPLAY = "Sumesh J";
+const BOOTSTRAP_USERS = [
+  {
+    id: "sumesh-bootstrap",
+    name: "Sumesh J",
+    employeeNumber: "230034",
+    email: "sumesh.j@rktrwheels.com",
+    role: "systemAdmin",
+    department: "EHS",
+    active: true,
+    mobileNumber: ""
+  },
+  {
+    id: "pramod-bootstrap",
+    name: "Pramod",
+    employeeNumber: "230035",
+    email: "pramod@rktrwheels.com",
+    role: "safetyOfficer",
+    department: "EHS",
+    active: true,
+    mobileNumber: ""
+  }
+];
+const isBootstrapUser = (u2) => u2.employeeNumber === BOOTSTRAP_ADMIN_EMP || u2.name.toLowerCase().includes("pramod");
+const isPendingRegistration = (u2) => !u2.active && !isBootstrapUser(u2);
+function mergeWithBootstrap(fetched) {
+  const merged = [...fetched];
+  for (const bootstrap of BOOTSTRAP_USERS) {
+    const alreadyPresent = fetched.some(
+      (u2) => u2.employeeNumber === bootstrap.employeeNumber || u2.name.toLowerCase().includes(bootstrap.name.toLowerCase())
+    );
+    if (!alreadyPresent) {
+      merged.unshift(bootstrap);
+    }
+  }
+  return merged;
+}
 const defaultForm$1 = {
   name: "",
-  email: "",
+  employeeNumber: "",
   password: "",
   role: "employee",
   department: "EHS",
-  employeeId: "",
   phone: "",
-  active: true
+  active: true,
+  empNumError: ""
 };
 function UserAvatar({ name }) {
   const initials = name.split(" ").map((n2) => n2[0]).slice(0, 2).join("").toUpperCase();
@@ -49551,7 +49709,7 @@ function UserAvatar({ name }) {
   );
 }
 function AdminUserTab() {
-  const { data: users = [], isLoading } = useUsers();
+  const { data: rawUsers, isLoading } = useUsers();
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();
   const activateUser = useActivateUser();
@@ -49563,14 +49721,18 @@ function AdminUserTab() {
   const [editingUser, setEditingUser] = reactExports.useState(null);
   const [form, setForm] = reactExports.useState(defaultForm$1);
   const [deleteTarget, setDeleteTarget] = reactExports.useState(null);
-  const filtered = users.filter((u2) => {
+  const [rejectTarget, setRejectTarget] = reactExports.useState(null);
+  const users = mergeWithBootstrap(rawUsers ?? []);
+  const pendingUsers = users.filter(isPendingRegistration);
+  const activeUsers = users.filter((u2) => isBootstrapUser(u2) || u2.active);
+  const filtered = activeUsers.filter((u2) => {
     const matchSearch = u2.name.toLowerCase().includes(search.toLowerCase()) || u2.email.toLowerCase().includes(search.toLowerCase());
     const matchRole = roleFilter === "all" || u2.role === roleFilter;
     const matchStatus = statusFilter === "all" || statusFilter === "active" && u2.active || statusFilter === "inactive" && !u2.active;
     return matchSearch && matchRole && matchStatus;
   });
   const roleCounts = ROLES.reduce((acc, r2) => {
-    acc[r2] = users.filter((u2) => u2.role === r2).length;
+    acc[r2] = activeUsers.filter((u2) => u2.role === r2).length;
     return acc;
   }, {});
   function openCreate() {
@@ -49579,43 +49741,43 @@ function AdminUserTab() {
     setShowModal(true);
   }
   function openEdit(u2) {
-    if (u2.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL) return;
+    if (u2.employeeNumber === BOOTSTRAP_ADMIN_EMP) return;
     setEditingUser(u2);
     setForm({
       name: u2.name,
-      email: u2.email,
+      employeeNumber: u2.employeeNumber ?? "",
       password: "",
       role: u2.role,
       department: u2.department,
-      employeeId: "",
-      phone: "",
-      active: u2.active
+      phone: u2.mobileNumber ?? "",
+      active: u2.active,
+      empNumError: ""
     });
     setShowModal(true);
   }
   async function handleSave() {
-    if (!form.name || !form.email) {
-      ue.error("Name and email are required");
+    if (!form.name.trim()) {
+      ue.error("Full name is required");
       return;
     }
-    if (!form.email.endsWith("@rktrwheels.com")) {
-      ue.error("Email must end with @rktrwheels.com");
+    if (!/^23\d{4}$/.test(form.employeeNumber.trim())) {
+      ue.error("Employee number must start with 23 and be exactly 6 digits");
       return;
     }
-    if (form.role === "systemAdmin" && form.email.toLowerCase() !== BOOTSTRAP_ADMIN_EMAIL) {
+    if (form.role === "systemAdmin" && form.employeeNumber.trim() !== BOOTSTRAP_ADMIN_EMP) {
       ue.error(
-        "System Admin role is reserved exclusively for Sumesh J (sumesh.j@rktrwheels.com). Only one System Admin is allowed."
+        `System Admin role is reserved exclusively for ${BOOTSTRAP_ADMIN_NAME_DISPLAY} (Employee #${BOOTSTRAP_ADMIN_EMP}).`
       );
       return;
     }
     const record = {
       id: (editingUser == null ? void 0 : editingUser.id) ?? `u_${Date.now()}`,
       name: form.name,
-      email: form.email,
+      email: "",
       role: form.role,
       department: form.department,
-      employeeNumber: "",
-      mobileNumber: "",
+      employeeNumber: form.employeeNumber.trim(),
+      mobileNumber: form.phone,
       active: form.active
     };
     try {
@@ -49634,9 +49796,28 @@ function AdminUserTab() {
   async function handleActivate(u2) {
     try {
       await activateUser.mutateAsync(u2.id);
-      ue.success(`${u2.name}'s account has been activated`);
+      ue.success(
+        `${u2.name}'s account has been activated — they can now sign in`
+      );
     } catch (e3) {
       ue.error(e3 instanceof Error ? e3.message : "Activation failed");
+    }
+  }
+  async function handleApprovePending(u2) {
+    try {
+      await activateUser.mutateAsync(u2.id);
+      ue.success(`${u2.name} approved — account is now active`);
+    } catch (e3) {
+      ue.error(e3 instanceof Error ? e3.message : "Approval failed");
+    }
+  }
+  async function handleRejectPending(u2) {
+    try {
+      await deleteUser.mutateAsync(u2.id);
+      ue.success(`Registration for ${u2.name} has been rejected`);
+      setRejectTarget(null);
+    } catch (e3) {
+      ue.error(e3 instanceof Error ? e3.message : "Rejection failed");
     }
   }
   async function handleDelete(u2) {
@@ -49681,7 +49862,7 @@ function AdminUserTab() {
                 {
                   className: "font-mono text-xs px-1.5 py-0.5 rounded",
                   style: { background: "rgba(168,85,247,0.15)", color: "#c084fc" },
-                  children: "sumesh.j@rktrwheels.com"
+                  children: "Employee #230034 (Sumesh J)"
                 }
               ),
               " ",
@@ -49691,24 +49872,187 @@ function AdminUserTab() {
         ]
       }
     ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        className: "rounded-xl overflow-hidden",
+        style: {
+          background: "rgba(8,20,38,0.6)",
+          border: pendingUsers.length > 0 ? "1px solid rgba(245,158,11,0.35)" : "1px solid rgba(255,255,255,0.08)"
+        },
+        "data-ocid": "admin.pending.section",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              className: "flex items-center justify-between px-4 py-3",
+              style: {
+                background: pendingUsers.length > 0 ? "rgba(245,158,11,0.08)" : "rgba(255,255,255,0.03)",
+                borderBottom: "1px solid rgba(255,255,255,0.08)"
+              },
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2.5", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "div",
+                    {
+                      className: "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0",
+                      style: {
+                        background: pendingUsers.length > 0 ? "rgba(245,158,11,0.18)" : "rgba(255,255,255,0.06)"
+                      },
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        Bell,
+                        {
+                          className: "w-3.5 h-3.5",
+                          style: {
+                            color: pendingUsers.length > 0 ? "#f59e0b" : "#6b7280"
+                          }
+                        }
+                      )
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "span",
+                    {
+                      className: "font-semibold text-sm",
+                      style: { color: pendingUsers.length > 0 ? "#f59e0b" : "#9ca3af" },
+                      children: "Pending Registrations"
+                    }
+                  ),
+                  pendingUsers.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "span",
+                    {
+                      className: "inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-bold",
+                      style: {
+                        background: "rgba(245,158,11,0.25)",
+                        color: "#f59e0b",
+                        border: "1px solid rgba(245,158,11,0.4)"
+                      },
+                      "data-ocid": "admin.pending.count_badge",
+                      children: pendingUsers.length
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-muted-foreground", children: pendingUsers.length === 0 ? "No pending registrations" : `${pendingUsers.length} awaiting approval` })
+              ]
+            }
+          ),
+          pendingUsers.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              className: "flex items-center gap-3 px-4 py-5 text-sm text-muted-foreground",
+              "data-ocid": "admin.pending.empty_state",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { className: "w-4 h-4 flex-shrink-0 opacity-50" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "All registrations have been reviewed. New sign-ups will appear here automatically." })
+              ]
+            }
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "divide-y divide-white/5", children: pendingUsers.map((u2, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            motion.div,
+            {
+              initial: { opacity: 0, y: -6 },
+              animate: { opacity: 1, y: 0 },
+              exit: { opacity: 0, height: 0 },
+              transition: { delay: i * 0.05 },
+              className: "flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3.5",
+              "data-ocid": `admin.pending.item.${i + 1}`,
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 flex-1 min-w-0", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(UserAvatar, { name: u2.name }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 flex-wrap", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-sm text-foreground truncate", children: u2.name }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                        "span",
+                        {
+                          className: "inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0",
+                          style: {
+                            background: "rgba(245,158,11,0.15)",
+                            color: "#f59e0b",
+                            border: "1px solid rgba(245,158,11,0.3)"
+                          },
+                          children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(Clock, { className: "w-2.5 h-2.5" }),
+                            "Pending"
+                          ]
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 mt-0.5 flex-wrap", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-xs text-muted-foreground font-mono", children: [
+                        "#",
+                        u2.employeeNumber
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-muted-foreground", children: u2.department }),
+                      u2.mobileNumber && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-muted-foreground", children: u2.mobileNumber })
+                    ] })
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 flex-shrink-0 pl-11 sm:pl-0", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": `admin.pending.approve_button.${i + 1}`,
+                      onClick: () => handleApprovePending(u2),
+                      disabled: activateUser.isPending,
+                      className: "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-smooth hover:opacity-90 disabled:opacity-50",
+                      style: {
+                        background: "rgba(24,195,126,0.18)",
+                        color: "#18C37E",
+                        border: "1px solid rgba(24,195,126,0.35)"
+                      },
+                      "aria-label": `Approve registration for ${u2.name}`,
+                      children: [
+                        activateUser.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "w-3 h-3 animate-spin" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { className: "w-3.5 h-3.5" }),
+                        "Approve"
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": `admin.pending.reject_button.${i + 1}`,
+                      onClick: () => setRejectTarget(u2),
+                      className: "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-smooth hover:opacity-90",
+                      style: {
+                        background: "rgba(220,38,38,0.12)",
+                        color: "#f87171",
+                        border: "1px solid rgba(220,38,38,0.3)"
+                      },
+                      "aria-label": `Reject registration for ${u2.name}`,
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(CircleX, { className: "w-3.5 h-3.5" }),
+                        "Reject"
+                      ]
+                    }
+                  )
+                ] })
+              ]
+            },
+            u2.id
+          )) })
+        ]
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(StatCard$3, { label: "Total Users", value: users.length, color: "#18C37E" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        StatCard$3,
+        {
+          label: "Total Users",
+          value: activeUsers.length,
+          color: "#18C37E"
+        }
+      ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         StatCard$3,
         {
           label: "Active",
-          value: users.filter((u2) => u2.active).length,
+          value: activeUsers.filter((u2) => u2.active).length,
           color: "#3b82f6"
         }
       ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        StatCard$3,
-        {
-          label: "Inactive",
-          value: users.filter((u2) => !u2.active).length,
-          color: "#f59e0b"
-        }
-      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(StatCard$3, { label: "Pending", value: pendingUsers.length, color: "#f59e0b" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "div",
         {
@@ -49789,172 +50133,176 @@ function AdminUserTab() {
         }
       )
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "div",
       {
         className: "glass rounded-xl overflow-hidden",
         style: { background: "rgba(8,20,38,0.5)" },
-        children: isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "div",
-          {
-            className: "flex items-center justify-center py-16",
-            "data-ocid": "admin.users.loading_state",
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-              LoaderCircle,
-              {
-                className: "w-8 h-8 animate-spin",
-                style: { color: "#18C37E" }
-              }
-            )
-          }
-        ) : filtered.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "div",
-          {
-            className: "text-center py-16 text-muted-foreground",
-            "data-ocid": "admin.users.empty_state",
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "w-12 h-12 mx-auto mb-3 opacity-30" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "No users found" })
-            ]
-          }
-        ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("table", { className: "w-full text-sm", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("thead", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("tr", { className: "border-b border-white/10", children: ["User", "Role", "Department", "Status", "Actions"].map(
-            (h2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "th",
-              {
-                className: "text-left px-4 py-3 text-xs text-muted-foreground font-medium uppercase tracking-wide",
-                children: h2
-              },
-              h2
-            )
-          ) }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { children: filtered.map((u2, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            motion.tr,
+        children: [
+          isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
             {
-              initial: { opacity: 0, x: -8 },
-              animate: { opacity: 1, x: 0 },
-              transition: { delay: i * 0.04 },
-              className: "border-b border-white/5 hover:bg-white/5 transition-smooth",
-              "data-ocid": `admin.users.item.${i + 1}`,
+              className: "h-0.5 w-full overflow-hidden",
+              "data-ocid": "admin.users.loading_state",
+              style: { background: "rgba(255,255,255,0.06)" },
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "div",
+                {
+                  className: "h-full animate-pulse",
+                  style: { background: "#18C37E", width: "60%" }
+                }
+              )
+            }
+          ),
+          filtered.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              className: "text-center py-16 text-muted-foreground",
+              "data-ocid": "admin.users.empty_state",
               children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    UserAvatar,
-                    {
-                      name: u2.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL ? "Sumesh J" : u2.name
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground truncate", children: u2.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL ? "Sumesh J" : u2.name }),
-                      u2.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL && /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                        "span",
-                        {
-                          className: "inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0",
-                          style: {
-                            background: "linear-gradient(135deg, rgba(234,179,8,0.25), rgba(168,85,247,0.25))",
-                            color: "#f59e0b",
-                            border: "1px solid rgba(234,179,8,0.4)"
-                          },
-                          title: "Permanent System Administrator — protected account",
-                          children: [
-                            /* @__PURE__ */ jsxRuntimeExports.jsx(Crown, { className: "w-2.5 h-2.5" }),
-                            "System Admin"
-                          ]
-                        }
-                      )
-                    ] }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground truncate", children: u2.email })
-                  ] })
-                ] }) }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: u2.role === "systemAdmin" && u2.email.toLowerCase() !== BOOTSTRAP_ADMIN_EMAIL ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 text-xs px-2 py-1 rounded border font-medium bg-destructive/20 text-destructive border-destructive/30", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(TriangleAlert, { className: "w-3 h-3" }),
-                  "Role Error"
-                ] }) : u2.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 text-xs px-2 py-1 rounded border font-medium bg-purple-500/20 text-purple-300 border-purple-500/30", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "w-3 h-3" }),
-                  "System Admin",
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(Lock, { className: "w-2.5 h-2.5 opacity-70" })
-                ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "span",
-                  {
-                    className: `text-xs px-2 py-1 rounded border font-medium ${ROLE_BADGE[u2.role] ?? "bg-muted text-muted-foreground"}`,
-                    children: ROLE_LABELS[u2.role] ?? u2.role
-                  }
-                ) }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3 text-muted-foreground", children: u2.department }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
-                  u2.active ? /* @__PURE__ */ jsxRuntimeExports.jsx(UserCheck, { className: "w-4 h-4 text-[#18C37E]" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(UserX, { className: "w-4 h-4 text-muted-foreground" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "w-12 h-12 mx-auto mb-3 opacity-30" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "No users found" })
+              ]
+            }
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("table", { className: "w-full text-sm", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("thead", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("tr", { className: "border-b border-white/10", children: ["User", "Role", "Department", "Status", "Actions"].map(
+              (h2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "th",
+                {
+                  className: "text-left px-4 py-3 text-xs text-muted-foreground font-medium uppercase tracking-wide",
+                  children: h2
+                },
+                h2
+              )
+            ) }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { children: filtered.map((u2, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              motion.tr,
+              {
+                initial: { opacity: 0, x: -8 },
+                animate: { opacity: 1, x: 0 },
+                transition: { delay: i * 0.04 },
+                className: "border-b border-white/5 hover:bg-white/5 transition-smooth",
+                "data-ocid": `admin.users.item.${i + 1}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      UserAvatar,
+                      {
+                        name: u2.employeeNumber === BOOTSTRAP_ADMIN_EMP ? BOOTSTRAP_ADMIN_NAME_DISPLAY : u2.name
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground truncate", children: u2.employeeNumber === BOOTSTRAP_ADMIN_EMP ? BOOTSTRAP_ADMIN_NAME_DISPLAY : u2.name }),
+                        u2.employeeNumber === BOOTSTRAP_ADMIN_EMP && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                          "span",
+                          {
+                            className: "inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0",
+                            style: {
+                              background: "linear-gradient(135deg, rgba(234,179,8,0.25), rgba(168,85,247,0.25))",
+                              color: "#f59e0b",
+                              border: "1px solid rgba(234,179,8,0.4)"
+                            },
+                            title: "Permanent System Administrator — protected account",
+                            children: [
+                              /* @__PURE__ */ jsxRuntimeExports.jsx(Crown, { className: "w-2.5 h-2.5" }),
+                              "System Admin"
+                            ]
+                          }
+                        )
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground truncate", children: u2.email })
+                    ] })
+                  ] }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: u2.role === "systemAdmin" && u2.employeeNumber !== BOOTSTRAP_ADMIN_EMP ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 text-xs px-2 py-1 rounded border font-medium bg-destructive/20 text-destructive border-destructive/30", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(TriangleAlert, { className: "w-3 h-3" }),
+                    "Role Error"
+                  ] }) : u2.employeeNumber === BOOTSTRAP_ADMIN_EMP ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 text-xs px-2 py-1 rounded border font-medium bg-purple-500/20 text-purple-300 border-purple-500/30", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "w-3 h-3" }),
+                    "System Admin",
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Lock, { className: "w-2.5 h-2.5 opacity-70" })
+                  ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
                     "span",
                     {
-                      className: `text-xs ${u2.active ? "text-[#18C37E]" : "text-muted-foreground"}`,
-                      children: u2.active ? "Active" : "Inactive"
+                      className: `text-xs px-2 py-1 rounded border font-medium ${ROLE_BADGE[u2.role] ?? "bg-muted text-muted-foreground"}`,
+                      children: ROLE_LABELS[u2.role] ?? u2.role
                     }
-                  )
-                ] }) }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: u2.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center gap-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                  "span",
-                  {
-                    className: "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg font-medium",
-                    style: {
-                      background: "linear-gradient(135deg, rgba(234,179,8,0.15), rgba(168,85,247,0.15))",
-                      color: "#f59e0b",
-                      border: "1px solid rgba(234,179,8,0.35)"
-                    },
-                    children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(Crown, { className: "w-3 h-3" }),
-                      "System Administrator"
-                    ]
-                  }
-                ) }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-                  !u2.active && /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                    "button",
+                  ) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3 text-muted-foreground", children: u2.department }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
+                    u2.active ? /* @__PURE__ */ jsxRuntimeExports.jsx(UserCheck, { className: "w-4 h-4 text-[#18C37E]" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(UserX, { className: "w-4 h-4 text-muted-foreground" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "span",
+                      {
+                        className: `text-xs ${u2.active ? "text-[#18C37E]" : "text-muted-foreground"}`,
+                        children: u2.active ? "Active" : "Inactive"
+                      }
+                    )
+                  ] }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: u2.employeeNumber === BOOTSTRAP_ADMIN_EMP ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center gap-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "span",
                     {
-                      type: "button",
-                      "data-ocid": `admin.users.activate_button.${i + 1}`,
-                      onClick: () => handleActivate(u2),
-                      disabled: activateUser.isPending,
-                      className: "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-smooth hover:opacity-90 disabled:opacity-50",
+                      className: "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg font-medium",
                       style: {
-                        background: "rgba(24,195,126,0.15)",
-                        color: "#18C37E",
-                        border: "1px solid rgba(24,195,126,0.3)"
+                        background: "linear-gradient(135deg, rgba(234,179,8,0.15), rgba(168,85,247,0.15))",
+                        color: "#f59e0b",
+                        border: "1px solid rgba(234,179,8,0.35)"
                       },
-                      "aria-label": "Activate user",
                       children: [
-                        activateUser.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "w-3 h-3 animate-spin" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(UserCheck, { className: "w-3 h-3" }),
-                        "Activate"
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(Crown, { className: "w-3 h-3" }),
+                        "System Administrator"
                       ]
                     }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    "button",
-                    {
-                      type: "button",
-                      "data-ocid": `admin.users.edit_button.${i + 1}`,
-                      onClick: () => openEdit(u2),
-                      className: "p-1.5 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground transition-smooth",
-                      "aria-label": "Edit user",
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Pen, { className: "w-3.5 h-3.5" })
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    "button",
-                    {
-                      type: "button",
-                      "data-ocid": `admin.users.delete_button.${i + 1}`,
-                      onClick: () => setDeleteTarget(u2),
-                      className: "p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-smooth",
-                      "aria-label": "Delete user",
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "w-3.5 h-3.5" })
-                    }
-                  )
-                ] }) })
-              ]
-            },
-            u2.id
-          )) })
-        ] })
+                  ) }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                    !u2.active && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "button",
+                      {
+                        type: "button",
+                        "data-ocid": `admin.users.activate_button.${i + 1}`,
+                        onClick: () => handleActivate(u2),
+                        disabled: activateUser.isPending,
+                        className: "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-smooth hover:opacity-90 disabled:opacity-50",
+                        style: {
+                          background: "rgba(24,195,126,0.15)",
+                          color: "#18C37E",
+                          border: "1px solid rgba(24,195,126,0.3)"
+                        },
+                        "aria-label": "Activate user",
+                        children: [
+                          activateUser.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "w-3 h-3 animate-spin" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(UserCheck, { className: "w-3 h-3" }),
+                          "Activate"
+                        ]
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "button",
+                      {
+                        type: "button",
+                        "data-ocid": `admin.users.edit_button.${i + 1}`,
+                        onClick: () => openEdit(u2),
+                        className: "p-1.5 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground transition-smooth",
+                        "aria-label": "Edit user",
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Pen, { className: "w-3.5 h-3.5" })
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "button",
+                      {
+                        type: "button",
+                        "data-ocid": `admin.users.delete_button.${i + 1}`,
+                        onClick: () => setDeleteTarget(u2),
+                        className: "p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-smooth",
+                        "aria-label": "Delete user",
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "w-3.5 h-3.5" })
+                      }
+                    )
+                  ] }) })
+                ]
+              },
+              u2.id
+            )) })
+          ] })
+        ]
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: showModal && /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -49975,6 +50323,15 @@ function AdminUserTab() {
         isPending: deleteUser.isPending,
         onConfirm: () => handleDelete(deleteTarget),
         onCancel: () => setDeleteTarget(null)
+      }
+    ) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: rejectTarget && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      RejectConfirmModal,
+      {
+        name: rejectTarget.name,
+        isPending: deleteUser.isPending,
+        onConfirm: () => handleRejectPending(rejectTarget),
+        onCancel: () => setRejectTarget(null)
       }
     ) })
   ] });
@@ -50004,23 +50361,48 @@ function UserFormModal({
   onClose,
   isPending
 }) {
-  const isBootstrapAdmin = form.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL;
+  const isBootstrapAdmin = form.employeeNumber === BOOTSTRAP_ADMIN_EMP;
   const systemAdminBlocked = form.role === "systemAdmin" && !isBootstrapAdmin;
+  function handleEmpNumChange(e3) {
+    const value = e3.target.value.replace(/\D/g, "").slice(0, 6);
+    let error = "";
+    if (value.length > 0 && !/^23/.test(value) && value.length >= 2) {
+      error = "Employee number must start with 23 and be exactly 6 digits";
+    } else if (value.length > 0 && value.length < 6 && value.length >= 2 && /^23/.test(value)) {
+      error = "";
+    } else if (value.length === 6 && !/^23\d{4}$/.test(value)) {
+      error = "Employee number must start with 23 and be exactly 6 digits";
+    }
+    if (value !== BOOTSTRAP_ADMIN_EMP && form.role === "systemAdmin") {
+      setForm({
+        ...form,
+        employeeNumber: value,
+        role: "employee",
+        empNumError: error
+      });
+    } else {
+      setForm({ ...form, employeeNumber: value, empNumError: error });
+    }
+  }
+  function handleEmpNumBlur() {
+    const value = form.employeeNumber.trim();
+    if (value.length > 0 && !/^23\d{4}$/.test(value)) {
+      setForm({
+        ...form,
+        empNumError: "Employee number must start with 23 and be exactly 6 digits"
+      });
+    } else {
+      setForm({ ...form, empNumError: "" });
+    }
+  }
   function field(key) {
     return (e3) => {
-      const value = e3.target.value;
-      if (key === "email" && value.toLowerCase() !== BOOTSTRAP_ADMIN_EMAIL && form.role === "systemAdmin") {
-        setForm({ ...form, email: value, role: "employee" });
-      } else {
-        setForm({ ...form, [key]: value });
-      }
+      setForm({ ...form, [key]: e3.target.value });
     };
   }
   function handleRoleChange(e3) {
     const selected = e3.target.value;
-    if (selected === "systemAdmin" && !isBootstrapAdmin) {
-      return;
-    }
+    if (selected === "systemAdmin" && !isBootstrapAdmin) return;
     setForm({ ...form, role: selected });
   }
   const availableRoles = ROLES.filter(
@@ -50073,17 +50455,32 @@ function UserFormModal({
                   className: "bg-white/5 border-white/10"
                 }
               ) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(FormField, { label: "Email *", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Input,
-                {
-                  "data-ocid": "admin.users.email_input",
-                  type: "email",
-                  value: form.email,
-                  onChange: field("email"),
-                  placeholder: "name@rktrwheels.com",
-                  className: "bg-white/5 border-white/10"
-                }
-              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(FormField, { label: "Employee Number *", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Input,
+                  {
+                    "data-ocid": "admin.users.employee_number_input",
+                    value: form.employeeNumber,
+                    onChange: handleEmpNumChange,
+                    onBlur: handleEmpNumBlur,
+                    placeholder: "e.g. 230034",
+                    maxLength: 6,
+                    inputMode: "numeric",
+                    className: `bg-white/5 ${form.empNumError ? "border-destructive" : "border-white/10"}`
+                  }
+                ),
+                form.empNumError && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "p",
+                  {
+                    className: "mt-1.5 flex items-center gap-1 text-[11px] text-destructive",
+                    "data-ocid": "admin.users.emp_number.field_error",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(TriangleAlert, { className: "w-3 h-3 flex-shrink-0" }),
+                      form.empNumError
+                    ]
+                  }
+                )
+              ] }),
               !isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(FormField, { label: "Password *", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 Input,
                 {
@@ -50120,7 +50517,7 @@ function UserFormModal({
                   ),
                   systemAdminBlocked && /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-1.5 flex items-start gap-1 text-[11px] text-destructive", children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(TriangleAlert, { className: "w-3 h-3 mt-0.5 flex-shrink-0" }),
-                    "System Admin role is reserved exclusively for Sumesh J (sumesh.j@rktrwheels.com). Only one System Admin is allowed."
+                    "System Admin role is reserved exclusively for Sumesh J. Only one System Admin is allowed."
                   ] })
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(FormField, { label: "Department", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -50134,28 +50531,16 @@ function UserFormModal({
                   }
                 ) })
               ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-4", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(FormField, { label: "Employee ID", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Input,
-                  {
-                    "data-ocid": "admin.users.employee_id_input",
-                    value: form.employeeId,
-                    onChange: field("employeeId"),
-                    placeholder: "EMP-001",
-                    className: "bg-white/5 border-white/10"
-                  }
-                ) }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(FormField, { label: "Phone", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Input,
-                  {
-                    "data-ocid": "admin.users.phone_input",
-                    value: form.phone,
-                    onChange: field("phone"),
-                    placeholder: "+91 XXXXXXXXXX",
-                    className: "bg-white/5 border-white/10"
-                  }
-                ) })
-              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(FormField, { label: "Phone", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Input,
+                {
+                  "data-ocid": "admin.users.phone_input",
+                  value: form.phone,
+                  onChange: field("phone"),
+                  placeholder: "+91 XXXXXXXXXX",
+                  className: "bg-white/5 border-white/10"
+                }
+              ) }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   "button",
@@ -50191,7 +50576,7 @@ function UserFormModal({
                     /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Role assignment blocked." }),
                     " System Admin is reserved exclusively for",
                     " ",
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono", children: "sumesh.j@rktrwheels.com" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono", children: "Employee #230034 (Sumesh J)" }),
                     ". Only one System Admin is allowed in this application."
                   ] })
                 ]
@@ -50292,6 +50677,78 @@ function DeleteConfirmModal({
                   variant: "destructive",
                   className: "flex-1",
                   children: isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "w-4 h-4 animate-spin" }) : "Remove"
+                }
+              )
+            ] })
+          ]
+        }
+      )
+    }
+  );
+}
+function RejectConfirmModal({
+  name,
+  isPending,
+  onConfirm,
+  onCancel
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    motion.div,
+    {
+      initial: { opacity: 0 },
+      animate: { opacity: 1 },
+      exit: { opacity: 0 },
+      className: "fixed inset-0 z-50 flex items-center justify-center p-4",
+      style: { background: "rgba(0,0,0,0.7)" },
+      "data-ocid": "admin.pending.reject_dialog",
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        motion.div,
+        {
+          initial: { scale: 0.92 },
+          animate: { scale: 1 },
+          exit: { scale: 0.92 },
+          className: "glass-elevated rounded-2xl p-6 w-full max-w-sm",
+          style: {
+            background: "rgba(8,20,38,0.95)",
+            borderColor: "rgba(245,158,11,0.35)"
+          },
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "div",
+              {
+                className: "w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4",
+                style: { background: "rgba(245,158,11,0.12)" },
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleX, { className: "w-6 h-6", style: { color: "#f59e0b" } })
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-lg font-bold text-foreground text-center mb-2", children: "Reject Registration?" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-muted-foreground text-center", children: [
+              "Rejecting ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-foreground font-medium", children: name }),
+              "'s registration will permanently delete their account. This cannot be undone."
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-3 mt-6", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  type: "button",
+                  "data-ocid": "admin.pending.reject_cancel_button",
+                  variant: "outline",
+                  onClick: onCancel,
+                  className: "flex-1 border-white/10",
+                  children: "Cancel"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  type: "button",
+                  "data-ocid": "admin.pending.reject_confirm_button",
+                  onClick: onConfirm,
+                  disabled: isPending,
+                  variant: "destructive",
+                  className: "flex-1",
+                  children: isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "w-4 h-4 animate-spin" }) : "Reject Registration"
                 }
               )
             ] })
@@ -102697,7 +103154,7 @@ function AnalyticsPage() {
     const toastId = ue.loading("Generating PDF report…");
     try {
       const { jsPDF } = await __vitePreload(async () => {
-        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-DPKm-kit.js").then((n2) => n2.j);
+        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BOnYQx2X.js").then((n2) => n2.j);
         return { jsPDF: jsPDF2 };
       }, true ? [] : void 0);
       const doc = new jsPDF({
@@ -109522,7 +109979,7 @@ function ESGPage() {
     const tid = ue.loading("Generating PDF report…");
     try {
       const { jsPDF } = await __vitePreload(async () => {
-        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-DPKm-kit.js").then((n3) => n3.j);
+        const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BOnYQx2X.js").then((n3) => n3.j);
         return { jsPDF: jsPDF2 };
       }, true ? [] : void 0);
       const doc = new jsPDF({
@@ -116129,7 +116586,7 @@ function LoginPage() {
   const { isAuthenticated, login, register } = useAuth();
   const navigate = useNavigate();
   const [view, setView] = reactExports.useState("login");
-  const [loginEmail, setLoginEmail] = reactExports.useState("");
+  const [loginEmployeeNumber, setLoginEmployeeNumber] = reactExports.useState("");
   const [loginPassword, setLoginPassword] = reactExports.useState("");
   const [showLoginPassword, setShowLoginPassword] = reactExports.useState(false);
   const [remember, setRemember] = reactExports.useState(false);
@@ -116147,12 +116604,24 @@ function LoginPage() {
   const [regLoading, setRegLoading] = reactExports.useState(false);
   const [regError, setRegError] = reactExports.useState("");
   const [regSuccess, setRegSuccess] = reactExports.useState(false);
+  const [resetEmpNo, setResetEmpNo] = reactExports.useState("");
+  const [resetMobile, setResetMobile] = reactExports.useState("");
+  const [resetNewPassword, setResetNewPassword] = reactExports.useState("");
+  const [resetError, setResetError] = reactExports.useState("");
+  const [resetCopied, setResetCopied] = reactExports.useState(false);
+  const resetMutation = useResetPasswordByMobile();
   if (isAuthenticated) return /* @__PURE__ */ jsxRuntimeExports.jsx(Navigate, { to: "/dashboard", replace: true });
   const handleLogin = async (e3) => {
     e3.preventDefault();
     setLoginError("");
-    if (!loginEmail) {
-      setLoginError("Email is required.");
+    if (!loginEmployeeNumber) {
+      setLoginError("Employee number is required.");
+      return;
+    }
+    if (!isValidEmployeeNumber(loginEmployeeNumber)) {
+      setLoginError(
+        "Employee number must start with 23 and be exactly 6 digits."
+      );
       return;
     }
     if (!loginPassword) {
@@ -116161,7 +116630,7 @@ function LoginPage() {
     }
     setLoginLoading(true);
     const result = await login(
-      loginEmail.trim().toLowerCase(),
+      loginEmployeeNumber.trim(),
       loginPassword,
       remember
     );
@@ -116215,11 +116684,10 @@ function LoginPage() {
       setRegError("Passwords do not match.");
       return;
     }
-    const placeholderEmail = `${regEmployeeNumber.trim()}@rktrwheels.com`;
     setRegLoading(true);
     const result = await register(
       regName,
-      placeholderEmail,
+      "",
       regPassword,
       regDepartment,
       regEmployeeNumber,
@@ -116236,14 +116704,66 @@ function LoginPage() {
       });
     }
   };
+  const handleReset = async (e3) => {
+    e3.preventDefault();
+    setResetError("");
+    if (!resetEmpNo.trim()) {
+      setResetError("Employee number is required.");
+      return;
+    }
+    if (!isValidEmployeeNumber(resetEmpNo)) {
+      setResetError(
+        "Employee number must start with 23 and be exactly 6 digits."
+      );
+      return;
+    }
+    if (!resetMobile.trim()) {
+      setResetError("Mobile number is required.");
+      return;
+    }
+    if (resetEmpNo.trim() === "230034") {
+      setResetError("For System Admin password reset, contact your IT team.");
+      return;
+    }
+    try {
+      const newPwd = await resetMutation.mutateAsync({
+        employeeNumber: resetEmpNo.trim(),
+        mobileNumber: resetMobile.trim()
+      });
+      setResetNewPassword(newPwd);
+    } catch (err) {
+      setResetError(
+        err instanceof Error ? err.message : "Password reset failed."
+      );
+    }
+  };
+  const handleCopyPassword = () => {
+    navigator.clipboard.writeText(resetNewPassword).then(() => {
+      setResetCopied(true);
+      setTimeout(() => setResetCopied(false), 2e3);
+    });
+  };
   const switchToLogin = () => {
     setView("login");
     setRegError("");
     setRegSuccess(false);
+    setResetEmpNo("");
+    setResetMobile("");
+    setResetNewPassword("");
+    setResetError("");
+    resetMutation.reset();
   };
   const switchToRegister = () => {
     setView("register");
     setLoginError("");
+  };
+  const switchToReset = () => {
+    setView("reset");
+    setLoginError("");
+    setResetEmpNo("");
+    setResetMobile("");
+    setResetNewPassword("");
+    setResetError("");
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
@@ -116349,7 +116869,7 @@ function LoginPage() {
                           ]
                         }
                       ),
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      view !== "reset" && /* @__PURE__ */ jsxRuntimeExports.jsxs(
                         "div",
                         {
                           className: "flex rounded-xl p-1 mb-6",
@@ -116392,7 +116912,231 @@ function LoginPage() {
                         }
                       )
                     ] }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-8 pb-8", children: /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { mode: "wait", initial: false, children: view === "login" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-8 pb-8", children: /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { mode: "wait", initial: false, children: view === "reset" ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      motion.div,
+                      {
+                        initial: { opacity: 0, x: 20 },
+                        animate: { opacity: 1, x: 0 },
+                        exit: { opacity: 0, x: -20 },
+                        transition: { duration: 0.25, ease: "easeInOut" },
+                        children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mb-5", children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(
+                              "div",
+                              {
+                                className: "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
+                                style: {
+                                  background: "rgba(24,195,126,0.12)",
+                                  border: "1px solid rgba(24,195,126,0.25)"
+                                },
+                                children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                  KeyRound,
+                                  {
+                                    className: "w-4 h-4",
+                                    style: { color: "#18C37E" }
+                                  }
+                                )
+                              }
+                            ),
+                            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-white font-semibold text-sm", children: "Reset Password" }),
+                              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-white/40 text-xs", children: "Verify with your registered mobile number" })
+                            ] })
+                          ] }),
+                          resetNewPassword ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                            motion.div,
+                            {
+                              initial: { opacity: 0, scale: 0.96 },
+                              animate: { opacity: 1, scale: 1 },
+                              className: "space-y-4",
+                              "data-ocid": "reset.success_state",
+                              children: [
+                                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                                  "div",
+                                  {
+                                    className: "rounded-xl p-4 space-y-3",
+                                    style: {
+                                      background: "rgba(24,195,126,0.08)",
+                                      border: "1px solid rgba(24,195,126,0.2)"
+                                    },
+                                    children: [
+                                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-white/60 leading-relaxed", children: "Your new password is shown below. Please log in and change it from your profile." }),
+                                      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                                        "div",
+                                        {
+                                          className: "flex items-center gap-3 rounded-lg px-4 py-3",
+                                          style: {
+                                            background: "rgba(0,0,0,0.35)",
+                                            border: "1px solid rgba(255,255,255,0.1)"
+                                          },
+                                          children: [
+                                            /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                              "span",
+                                              {
+                                                className: "font-mono text-lg font-bold tracking-widest flex-1",
+                                                style: { color: "#18C37E" },
+                                                children: resetNewPassword
+                                              }
+                                            ),
+                                            /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                              "button",
+                                              {
+                                                type: "button",
+                                                "data-ocid": "reset.copy_button",
+                                                onClick: handleCopyPassword,
+                                                title: "Copy password",
+                                                className: "shrink-0 p-1.5 rounded-lg transition-colors",
+                                                style: {
+                                                  background: resetCopied ? "rgba(24,195,126,0.2)" : "rgba(255,255,255,0.06)",
+                                                  border: "1px solid rgba(255,255,255,0.1)",
+                                                  color: resetCopied ? "#18C37E" : "rgba(255,255,255,0.5)"
+                                                },
+                                                children: resetCopied ? /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { className: "w-4 h-4" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "w-4 h-4" })
+                                              }
+                                            )
+                                          ]
+                                        }
+                                      ),
+                                      resetCopied && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs", style: { color: "#18C37E" }, children: "Copied to clipboard!" })
+                                    ]
+                                  }
+                                ),
+                                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                  Button,
+                                  {
+                                    type: "button",
+                                    onClick: switchToLogin,
+                                    "data-ocid": "reset.back_to_login_button",
+                                    className: "w-full h-11 font-display font-semibold text-sm tracking-wide",
+                                    style: {
+                                      background: "#18C37E",
+                                      color: "#081426",
+                                      border: "none"
+                                    },
+                                    children: "Back to Sign In"
+                                  }
+                                )
+                              ]
+                            }
+                          ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                            "form",
+                            {
+                              onSubmit: handleReset,
+                              className: "space-y-4",
+                              "data-ocid": "reset.form",
+                              children: [
+                                resetError && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                                  motion.div,
+                                  {
+                                    initial: { opacity: 0, y: -8 },
+                                    animate: { opacity: 1, y: 0 },
+                                    className: "flex items-start gap-2.5 p-3 rounded-lg text-sm",
+                                    style: {
+                                      background: "rgba(239,68,68,0.1)",
+                                      border: "1px solid rgba(239,68,68,0.25)",
+                                      color: "#fca5a5"
+                                    },
+                                    "data-ocid": "reset.error_state",
+                                    children: [
+                                      /* @__PURE__ */ jsxRuntimeExports.jsx(CircleAlert, { className: "w-4 h-4 flex-shrink-0 mt-0.5" }),
+                                      resetError
+                                    ]
+                                  }
+                                ),
+                                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5", children: [
+                                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                    "label",
+                                    {
+                                      htmlFor: "reset-empno",
+                                      className: "text-xs font-medium text-white/50 uppercase tracking-wide",
+                                      children: "Employee Number"
+                                    }
+                                  ),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx(Hash$2, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                      "input",
+                                      {
+                                        id: "reset-empno",
+                                        type: "text",
+                                        value: resetEmpNo,
+                                        onChange: (e3) => {
+                                          setResetEmpNo(e3.target.value.replace(/\D/g, ""));
+                                          setResetError("");
+                                        },
+                                        maxLength: 6,
+                                        placeholder: "Enter your employee number",
+                                        "data-ocid": "reset.employee_number_input",
+                                        className: "w-full pl-10 h-11 rounded-md text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/20 focus:outline-none focus:border-[#18C37E]/50"
+                                      }
+                                    )
+                                  ] })
+                                ] }),
+                                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5", children: [
+                                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                    "label",
+                                    {
+                                      htmlFor: "reset-mobile",
+                                      className: "text-xs font-medium text-white/50 uppercase tracking-wide",
+                                      children: "Registered Mobile Number"
+                                    }
+                                  ),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx(Phone, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                      "input",
+                                      {
+                                        id: "reset-mobile",
+                                        type: "tel",
+                                        value: resetMobile,
+                                        onChange: (e3) => {
+                                          setResetMobile(e3.target.value);
+                                          setResetError("");
+                                        },
+                                        placeholder: "Enter your registered mobile number",
+                                        "data-ocid": "reset.mobile_number_input",
+                                        className: "w-full pl-10 h-11 rounded-md text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/20 focus:outline-none focus:border-[#18C37E]/50"
+                                      }
+                                    )
+                                  ] })
+                                ] }),
+                                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                  Button,
+                                  {
+                                    type: "submit",
+                                    disabled: resetMutation.isPending,
+                                    "data-ocid": "reset.submit_button",
+                                    className: "w-full h-11 font-display font-semibold text-sm tracking-wide",
+                                    style: {
+                                      background: resetMutation.isPending ? "rgba(24,195,126,0.5)" : "#18C37E",
+                                      color: "#081426",
+                                      border: "none"
+                                    },
+                                    children: resetMutation.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                                      /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "w-4 h-4 animate-spin mr-2" }),
+                                      " ",
+                                      "Verifying…"
+                                    ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: "Reset Password" })
+                                  }
+                                ),
+                                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                  "button",
+                                  {
+                                    type: "button",
+                                    onClick: switchToLogin,
+                                    "data-ocid": "reset.back_to_login_link",
+                                    className: "w-full text-center text-xs transition-smooth hover:underline py-1",
+                                    style: { color: "rgba(255,255,255,0.40)" },
+                                    children: "← Back to Sign In"
+                                  }
+                                )
+                              ]
+                            }
+                          )
+                        ]
+                      },
+                      "reset"
+                    ) : view === "login" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
                       motion.div,
                       {
                         initial: { opacity: 0, x: -20 },
@@ -116428,26 +117172,29 @@ function LoginPage() {
                                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                                   "label",
                                   {
-                                    htmlFor: "login-email",
+                                    htmlFor: "login-empno",
                                     className: "text-xs font-medium text-white/50 uppercase tracking-wide",
-                                    children: "Corporate Email"
+                                    children: "Employee Number"
                                   }
                                 ),
                                 /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
-                                  /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" }),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsx(Hash$2, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" }),
                                   /* @__PURE__ */ jsxRuntimeExports.jsx(
                                     Input,
                                     {
-                                      id: "login-email",
-                                      type: "email",
-                                      value: loginEmail,
+                                      id: "login-empno",
+                                      type: "text",
+                                      value: loginEmployeeNumber,
                                       onChange: (e3) => {
-                                        setLoginEmail(e3.target.value);
+                                        setLoginEmployeeNumber(
+                                          e3.target.value.replace(/\D/g, "")
+                                        );
                                         setLoginError("");
                                       },
-                                      placeholder: "you@rktrwheels.com",
-                                      autoComplete: "email",
-                                      "data-ocid": "login.email_input",
+                                      maxLength: 6,
+                                      placeholder: "Enter your employee number",
+                                      autoComplete: "username",
+                                      "data-ocid": "login.employee_number_input",
                                       className: INPUT_CLASS
                                     }
                                   )
@@ -116513,9 +117260,7 @@ function LoginPage() {
                                   {
                                     type: "button",
                                     "data-ocid": "login.forgot_password",
-                                    onClick: () => ue.info(
-                                      "Password reset link sent to your corporate email."
-                                    ),
+                                    onClick: switchToReset,
                                     className: "text-xs transition-smooth hover:underline",
                                     style: { color: "#18C37E" },
                                     children: "Forgot password?"
@@ -116896,7 +117641,7 @@ function LoginPage() {
                 {
                   className: "text-center text-xs mt-4",
                   style: { color: "rgba(255,255,255,0.18)" },
-                  children: view === "login" ? "Restricted access — @rktrwheels.com employees only" : "New accounts require admin approval before access is granted"
+                  children: view === "login" ? "Restricted access — RKTR Wheels employees only" : view === "reset" ? "Enter your registered mobile number to reset your password" : "New accounts require admin approval before access is granted"
                 }
               )
             ]
@@ -120561,7 +121306,7 @@ function PermitQrCard({ permit }) {
   const handleDownloadPdf = async () => {
     if (!qrDataUrl) return;
     const { jsPDF } = await __vitePreload(async () => {
-      const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-DPKm-kit.js").then((n2) => n2.j);
+      const { jsPDF: jsPDF2 } = await import("./jspdf.es.min-BOnYQx2X.js").then((n2) => n2.j);
       return { jsPDF: jsPDF2 };
     }, true ? [] : void 0);
     const hazardRows = permit.hazardControls ?? [];

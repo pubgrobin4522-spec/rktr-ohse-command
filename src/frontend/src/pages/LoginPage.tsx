@@ -9,17 +9,19 @@ import {
 } from "@/components/ui/select";
 import { RKTR_DEPARTMENTS } from "@/constants/departments";
 import { useAuth } from "@/contexts/AuthContext";
+import { useResetPasswordByMobile } from "@/hooks/useBackend";
 import {
   AlertCircle,
   Building2,
   CheckCircle2,
   CheckSquare,
+  Copy,
   Eye,
   EyeOff,
   Hash,
+  KeyRound,
   Loader2,
   Lock,
-  Mail,
   Phone,
   Square,
   User,
@@ -31,7 +33,7 @@ import { toast } from "sonner";
 
 const DEPARTMENTS = RKTR_DEPARTMENTS;
 
-type View = "login" | "register";
+type View = "login" | "register" | "reset";
 
 /** Validates employee number: exactly 6 digits starting with '23' */
 function isValidEmployeeNumber(val: string): boolean {
@@ -48,7 +50,7 @@ export default function LoginPage() {
   const [view, setView] = useState<View>("login");
 
   // Login state
-  const [loginEmail, setLoginEmail] = useState("");
+  const [loginEmployeeNumber, setLoginEmployeeNumber] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -69,13 +71,27 @@ export default function LoginPage() {
   const [regError, setRegError] = useState("");
   const [regSuccess, setRegSuccess] = useState(false);
 
+  // Reset state
+  const [resetEmpNo, setResetEmpNo] = useState("");
+  const [resetMobile, setResetMobile] = useState("");
+  const [resetNewPassword, setResetNewPassword] = useState("");
+  const [resetError, setResetError] = useState("");
+  const [resetCopied, setResetCopied] = useState(false);
+  const resetMutation = useResetPasswordByMobile();
+
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
-    if (!loginEmail) {
-      setLoginError("Email is required.");
+    if (!loginEmployeeNumber) {
+      setLoginError("Employee number is required.");
+      return;
+    }
+    if (!isValidEmployeeNumber(loginEmployeeNumber)) {
+      setLoginError(
+        "Employee number must start with 23 and be exactly 6 digits.",
+      );
       return;
     }
     if (!loginPassword) {
@@ -84,7 +100,7 @@ export default function LoginPage() {
     }
     setLoginLoading(true);
     const result = await login(
-      loginEmail.trim().toLowerCase(),
+      loginEmployeeNumber.trim(),
       loginPassword,
       remember,
     );
@@ -139,12 +155,10 @@ export default function LoginPage() {
       setRegError("Passwords do not match.");
       return;
     }
-    // Generate placeholder email from employee number
-    const placeholderEmail = `${regEmployeeNumber.trim()}@rktrwheels.com`;
     setRegLoading(true);
     const result = await register(
       regName,
-      placeholderEmail,
+      "",
       regPassword,
       regDepartment,
       regEmployeeNumber,
@@ -162,15 +176,70 @@ export default function LoginPage() {
     }
   };
 
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetError("");
+    if (!resetEmpNo.trim()) {
+      setResetError("Employee number is required.");
+      return;
+    }
+    if (!isValidEmployeeNumber(resetEmpNo)) {
+      setResetError(
+        "Employee number must start with 23 and be exactly 6 digits.",
+      );
+      return;
+    }
+    if (!resetMobile.trim()) {
+      setResetError("Mobile number is required.");
+      return;
+    }
+    if (resetEmpNo.trim() === "230034") {
+      setResetError("For System Admin password reset, contact your IT team.");
+      return;
+    }
+    try {
+      const newPwd = await resetMutation.mutateAsync({
+        employeeNumber: resetEmpNo.trim(),
+        mobileNumber: resetMobile.trim(),
+      });
+      setResetNewPassword(newPwd);
+    } catch (err) {
+      setResetError(
+        err instanceof Error ? err.message : "Password reset failed.",
+      );
+    }
+  };
+
+  const handleCopyPassword = () => {
+    navigator.clipboard.writeText(resetNewPassword).then(() => {
+      setResetCopied(true);
+      setTimeout(() => setResetCopied(false), 2000);
+    });
+  };
+
   const switchToLogin = () => {
     setView("login");
     setRegError("");
     setRegSuccess(false);
+    setResetEmpNo("");
+    setResetMobile("");
+    setResetNewPassword("");
+    setResetError("");
+    resetMutation.reset();
   };
 
   const switchToRegister = () => {
     setView("register");
     setLoginError("");
+  };
+
+  const switchToReset = () => {
+    setView("reset");
+    setLoginError("");
+    setResetEmpNo("");
+    setResetMobile("");
+    setResetNewPassword("");
+    setResetError("");
   };
 
   return (
@@ -267,59 +336,278 @@ export default function LoginPage() {
               </div>
             </motion.div>
 
-            {/* Tab switcher */}
-            <div
-              className="flex rounded-xl p-1 mb-6"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.07)",
-              }}
-            >
-              <button
-                type="button"
-                onClick={switchToLogin}
-                data-ocid="login.tab"
-                className="flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200"
+            {/* Tab switcher — hidden on reset view */}
+            {view !== "reset" && (
+              <div
+                className="flex rounded-xl p-1 mb-6"
                 style={{
-                  background:
-                    view === "login" ? "rgba(24,195,126,0.15)" : "transparent",
-                  color:
-                    view === "login" ? "#18C37E" : "rgba(255,255,255,0.35)",
-                  border:
-                    view === "login"
-                      ? "1px solid rgba(24,195,126,0.25)"
-                      : "1px solid transparent",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.07)",
                 }}
               >
-                Sign In
-              </button>
-              <button
-                type="button"
-                onClick={switchToRegister}
-                data-ocid="register.tab"
-                className="flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200"
-                style={{
-                  background:
-                    view === "register"
-                      ? "rgba(24,195,126,0.15)"
-                      : "transparent",
-                  color:
-                    view === "register" ? "#18C37E" : "rgba(255,255,255,0.35)",
-                  border:
-                    view === "register"
-                      ? "1px solid rgba(24,195,126,0.25)"
-                      : "1px solid transparent",
-                }}
-              >
-                Register
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={switchToLogin}
+                  data-ocid="login.tab"
+                  className="flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200"
+                  style={{
+                    background:
+                      view === "login"
+                        ? "rgba(24,195,126,0.15)"
+                        : "transparent",
+                    color:
+                      view === "login" ? "#18C37E" : "rgba(255,255,255,0.35)",
+                    border:
+                      view === "login"
+                        ? "1px solid rgba(24,195,126,0.25)"
+                        : "1px solid transparent",
+                  }}
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={switchToRegister}
+                  data-ocid="register.tab"
+                  className="flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200"
+                  style={{
+                    background:
+                      view === "register"
+                        ? "rgba(24,195,126,0.15)"
+                        : "transparent",
+                    color:
+                      view === "register"
+                        ? "#18C37E"
+                        : "rgba(255,255,255,0.35)",
+                    border:
+                      view === "register"
+                        ? "1px solid rgba(24,195,126,0.25)"
+                        : "1px solid transparent",
+                  }}
+                >
+                  Register
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Animated panel */}
           <div className="px-8 pb-8">
             <AnimatePresence mode="wait" initial={false}>
-              {view === "login" ? (
+              {view === "reset" ? (
+                <motion.div
+                  key="reset"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                >
+                  {/* Reset header */}
+                  <div className="flex items-center gap-2 mb-5">
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                      style={{
+                        background: "rgba(24,195,126,0.12)",
+                        border: "1px solid rgba(24,195,126,0.25)",
+                      }}
+                    >
+                      <KeyRound
+                        className="w-4 h-4"
+                        style={{ color: "#18C37E" }}
+                      />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold text-sm">
+                        Reset Password
+                      </p>
+                      <p className="text-white/40 text-xs">
+                        Verify with your registered mobile number
+                      </p>
+                    </div>
+                  </div>
+
+                  {resetNewPassword ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="space-y-4"
+                      data-ocid="reset.success_state"
+                    >
+                      <div
+                        className="rounded-xl p-4 space-y-3"
+                        style={{
+                          background: "rgba(24,195,126,0.08)",
+                          border: "1px solid rgba(24,195,126,0.2)",
+                        }}
+                      >
+                        <p className="text-xs text-white/60 leading-relaxed">
+                          Your new password is shown below. Please log in and
+                          change it from your profile.
+                        </p>
+                        <div
+                          className="flex items-center gap-3 rounded-lg px-4 py-3"
+                          style={{
+                            background: "rgba(0,0,0,0.35)",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        >
+                          <span
+                            className="font-mono text-lg font-bold tracking-widest flex-1"
+                            style={{ color: "#18C37E" }}
+                          >
+                            {resetNewPassword}
+                          </span>
+                          <button
+                            type="button"
+                            data-ocid="reset.copy_button"
+                            onClick={handleCopyPassword}
+                            title="Copy password"
+                            className="shrink-0 p-1.5 rounded-lg transition-colors"
+                            style={{
+                              background: resetCopied
+                                ? "rgba(24,195,126,0.2)"
+                                : "rgba(255,255,255,0.06)",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              color: resetCopied
+                                ? "#18C37E"
+                                : "rgba(255,255,255,0.5)",
+                            }}
+                          >
+                            {resetCopied ? (
+                              <CheckCircle2 className="w-4 h-4" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
+                        {resetCopied && (
+                          <p className="text-xs" style={{ color: "#18C37E" }}>
+                            Copied to clipboard!
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={switchToLogin}
+                        data-ocid="reset.back_to_login_button"
+                        className="w-full h-11 font-display font-semibold text-sm tracking-wide"
+                        style={{
+                          background: "#18C37E",
+                          color: "#081426",
+                          border: "none",
+                        }}
+                      >
+                        Back to Sign In
+                      </Button>
+                    </motion.div>
+                  ) : (
+                    <form
+                      onSubmit={handleReset}
+                      className="space-y-4"
+                      data-ocid="reset.form"
+                    >
+                      {resetError && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-start gap-2.5 p-3 rounded-lg text-sm"
+                          style={{
+                            background: "rgba(239,68,68,0.1)",
+                            border: "1px solid rgba(239,68,68,0.25)",
+                            color: "#fca5a5",
+                          }}
+                          data-ocid="reset.error_state"
+                        >
+                          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                          {resetError}
+                        </motion.div>
+                      )}
+
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="reset-empno"
+                          className="text-xs font-medium text-white/50 uppercase tracking-wide"
+                        >
+                          Employee Number
+                        </label>
+                        <div className="relative">
+                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                          <input
+                            id="reset-empno"
+                            type="text"
+                            value={resetEmpNo}
+                            onChange={(e) => {
+                              setResetEmpNo(e.target.value.replace(/\D/g, ""));
+                              setResetError("");
+                            }}
+                            maxLength={6}
+                            placeholder="Enter your employee number"
+                            data-ocid="reset.employee_number_input"
+                            className="w-full pl-10 h-11 rounded-md text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/20 focus:outline-none focus:border-[#18C37E]/50"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="reset-mobile"
+                          className="text-xs font-medium text-white/50 uppercase tracking-wide"
+                        >
+                          Registered Mobile Number
+                        </label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                          <input
+                            id="reset-mobile"
+                            type="tel"
+                            value={resetMobile}
+                            onChange={(e) => {
+                              setResetMobile(e.target.value);
+                              setResetError("");
+                            }}
+                            placeholder="Enter your registered mobile number"
+                            data-ocid="reset.mobile_number_input"
+                            className="w-full pl-10 h-11 rounded-md text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/20 focus:outline-none focus:border-[#18C37E]/50"
+                          />
+                        </div>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={resetMutation.isPending}
+                        data-ocid="reset.submit_button"
+                        className="w-full h-11 font-display font-semibold text-sm tracking-wide"
+                        style={{
+                          background: resetMutation.isPending
+                            ? "rgba(24,195,126,0.5)"
+                            : "#18C37E",
+                          color: "#081426",
+                          border: "none",
+                        }}
+                      >
+                        {resetMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />{" "}
+                            Verifying…
+                          </>
+                        ) : (
+                          <>Reset Password</>
+                        )}
+                      </Button>
+
+                      <button
+                        type="button"
+                        onClick={switchToLogin}
+                        data-ocid="reset.back_to_login_link"
+                        className="w-full text-center text-xs transition-smooth hover:underline py-1"
+                        style={{ color: "rgba(255,255,255,0.40)" }}
+                      >
+                        ← Back to Sign In
+                      </button>
+                    </form>
+                  )}
+                </motion.div>
+              ) : view === "login" ? (
                 <motion.div
                   key="login"
                   initial={{ opacity: 0, x: -20 }}
@@ -350,27 +638,30 @@ export default function LoginPage() {
                       </motion.div>
                     )}
 
-                    {/* Email */}
+                    {/* Employee Number */}
                     <div className="space-y-1.5">
                       <label
-                        htmlFor="login-email"
+                        htmlFor="login-empno"
                         className="text-xs font-medium text-white/50 uppercase tracking-wide"
                       >
-                        Corporate Email
+                        Employee Number
                       </label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                        <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
                         <Input
-                          id="login-email"
-                          type="email"
-                          value={loginEmail}
+                          id="login-empno"
+                          type="text"
+                          value={loginEmployeeNumber}
                           onChange={(e) => {
-                            setLoginEmail(e.target.value);
+                            setLoginEmployeeNumber(
+                              e.target.value.replace(/\D/g, ""),
+                            );
                             setLoginError("");
                           }}
-                          placeholder="you@rktrwheels.com"
-                          autoComplete="email"
-                          data-ocid="login.email_input"
+                          maxLength={6}
+                          placeholder="Enter your employee number"
+                          autoComplete="username"
+                          data-ocid="login.employee_number_input"
                           className={INPUT_CLASS}
                         />
                       </div>
@@ -433,11 +724,7 @@ export default function LoginPage() {
                       <button
                         type="button"
                         data-ocid="login.forgot_password"
-                        onClick={() =>
-                          toast.info(
-                            "Password reset link sent to your corporate email.",
-                          )
-                        }
+                        onClick={switchToReset}
                         className="text-xs transition-smooth hover:underline"
                         style={{ color: "#18C37E" }}
                       >
@@ -817,8 +1104,10 @@ export default function LoginPage() {
           style={{ color: "rgba(255,255,255,0.18)" }}
         >
           {view === "login"
-            ? "Restricted access — @rktrwheels.com employees only"
-            : "New accounts require admin approval before access is granted"}
+            ? "Restricted access — RKTR Wheels employees only"
+            : view === "reset"
+              ? "Enter your registered mobile number to reset your password"
+              : "New accounts require admin approval before access is granted"}
         </p>
       </motion.div>
     </div>

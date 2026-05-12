@@ -39,9 +39,11 @@ export interface EmergencyContact {
 }
 export interface ActivityFeedItem {
     id: RecordId;
+    recipient?: string;
     message: string;
     timestamp: Timestamp;
     category: string;
+    recipientRole?: string;
 }
 export interface ModuleOpenCounts {
     incidents: bigint;
@@ -484,7 +486,9 @@ export interface backendInterface {
     getUsers(): Promise<Array<UserRecord>>;
     login(email: string, password: string): Promise<Result_4>;
     markNotificationsRead(): Promise<void>;
+    registerCallerPrincipal(employeeNumber: string): Promise<void>;
     removeIncidentAttachment(incidentId: string, attachmentId: string): Promise<Result_1>;
+    resetPasswordByMobile(employeeNumber: string, mobileNumber: string): Promise<Result_3>;
     runDeadlineChecks(): Promise<void>;
     seedMockData(): Promise<string>;
     sendMobileOtp(email: string, mobileNumber: string): Promise<Result_3>;

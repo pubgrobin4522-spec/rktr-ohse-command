@@ -6,6 +6,7 @@ import Time "mo:core/Time";
 import Nat "mo:core/Nat";
 import EmailClient "mo:caffeineai-email/emailClient";
 import Int "mo:core/Int";
+import Text "mo:core/Text";
 
 module {
   public type State = {
@@ -16,8 +17,33 @@ module {
     otpStore : Map.Map<Text, Types.OtpRecord>;
   };
 
+  public type PasswordState = {
+    passwords : Map.Map<Text, Text>;
+  };
+
+
   let FROM_USERNAME = "ohse-noreply";
   let OTP_TTL_NS : Int = 600_000_000_000; // 10 minutes in nanoseconds
+
+  /// Generate a random 8-char password: uppercase + lowercase + digits
+  func genPassword(seed : Int) : Text {
+    let palette : [Text] = [
+      "A","B","C","D","E","F","G","H","J","K","L","M","N","P","Q","R","S","T","U","V","W","X","Y","Z",
+      "a","b","c","d","e","f","g","h","j","k","m","n","p","q","r","s","t","u","v","w","x","y","z",
+      "2","3","4","5","6","7","8","9"
+    ];
+    let len = palette.size();
+    var result = "";
+    var s = Int.abs(seed);
+    var i = 0;
+    while (i < 8) {
+      let idx = s % len;
+      s := (s * 1_664_525 + 1_013_904_223) % 4_294_967_296;
+      result := result # palette[idx];
+      i += 1;
+    };
+    result;
+  };
 
   public func login(
     state : State,
@@ -131,6 +157,36 @@ module {
     count;
   };
 
+
+  /// Reset a user's password by verifying their employeeNumber and mobileNumber.
+  /// Generates a new random password, stores it, and returns it in plaintext.
+  public func resetPasswordByMobile(
+    state : State,
+    pwState : PasswordState,
+    employeeNumber : Text,
+    mobileNumber : Text,
+  ) : Common.Result<Text, Text> {
+    if (employeeNumber == "230034") {
+      return #err("For System Admin password reset, contact your IT team.");
+    };
+    var found : ?Types.UserRecord = null;
+    for ((_, u) in state.users.entries()) {
+      if (u.employeeNumber == employeeNumber) { found := ?u };
+    };
+    switch (found) {
+      case null { #err("Employee Number and Mobile Number do not match our records.") };
+      case (?user) {
+        let storedMobile = user.mobileNumber.trim(#char ' ');
+        let inputMobile = mobileNumber.trim(#char ' ');
+        if (storedMobile != inputMobile or storedMobile == "") {
+          return #err("Employee Number and Mobile Number do not match our records.");
+        };
+        let newPwd = genPassword(Time.now() + Int.abs(employeeNumber.size()));
+        pwState.passwords.add(employeeNumber, newPwd);
+        #ok(newPwd);
+      };
+    };
+  };
 
   public func sendMobileOtp(
     otpState : OtpState,
